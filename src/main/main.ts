@@ -1,78 +1,109 @@
-import { app, BrowserWindow } from "electron";
-import installExtension, {
-  REACT_DEVELOPER_TOOLS,
-} from "electron-devtools-installer";
+/* eslint global-require: off, no-console: off, promise/always-return: off */
 
-declare global {
-  const MAIN_WINDOW_WEBPACK_ENTRY: string;
+import 'dotenv/config'
+import path from 'path'
+import { app, BrowserWindow, shell, ipcMain } from 'electron'
+import MenuBuilder from './menu'
+import { resolveHtmlPath } from './util'
+
+let mainWindow: BrowserWindow | null = null
+
+ipcMain.on('ipc-example', async (event, arg) => {
+  const msgTemplate = (pingPong: string) => `IPC test: ${pingPong}`
+  console.log(msgTemplate(arg))
+  event.reply('ipc-example', msgTemplate('pong'))
+})
+
+if (process.env.NODE_ENV === 'production') {
+  const sourceMapSupport = require('source-map-support')
+  sourceMapSupport.install()
 }
 
-// Handle creating/removing shortcuts on Windows when installing/uninstalling.
-if (require("electron-squirrel-startup")) {
-  // eslint-disable-line global-require
-  app.quit();
+const isDevelopment =
+  process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true'
+
+if (isDevelopment) {
+  require('electron-debug')()
 }
 
-app.whenReady().then(() => {
-  installExtension(REACT_DEVELOPER_TOOLS, {
-    loadExtensionOptions: { allowFileAccess: true },
-    forceDownload: false,
-  })
-    .then((name) => console.log(`Added Extension:  ${name}`))
-    .catch((err) => console.log("An error occurred: ", err));
-});
+const installExtensions = async () => {
+  const installer = require('electron-devtools-installer')
+  const forceDownload = !!process.env.UPGRADE_EXTENSIONS
+  const extensions = ['REACT_DEVELOPER_TOOLS']
 
-// Keep a global reference of the window object, if you don't, the window will
-// be closed automatically when the JavaScript object is garbage collected.
-let mainWindow: null | BrowserWindow;
+  return installer
+    .default(
+      extensions.map((name) => installer[name]),
+      forceDownload,
+    )
+    .catch(console.log)
+}
 
-const createWindow = () => {
-  // Create the browser window.
+const createWindow = async () => {
+  if (isDevelopment) {
+    await installExtensions()
+  }
+
+  const RESOURCES_PATH = app.isPackaged
+    ? path.join(process.resourcesPath, 'assets')
+    : path.join(__dirname, '../../assets')
+
+  const getAssetPath = (...paths: string[]): string => {
+    return path.join(RESOURCES_PATH, ...paths)
+  }
+
   mainWindow = new BrowserWindow({
+    show: false,
+    width: 1024,
+    height: 728,
+    icon: getAssetPath('icon.png'),
     webPreferences: {
-      nodeIntegration: true,
-      contextIsolation: false,
+      preload: path.join(__dirname, 'preload.js'),
     },
-  });
+  })
 
-  mainWindow.maximize();
+  mainWindow.loadURL(resolveHtmlPath('index.html'))
 
-  // and load the index.html of the app.
-  mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
+  mainWindow.on('ready-to-show', () => {
+    if (!mainWindow) {
+      throw new Error('"mainWindow" is not defined')
+    }
+    if (process.env.START_MINIMIZED) {
+      mainWindow.minimize()
+    } else {
+      mainWindow.show()
+    }
+  })
 
-  // Open the DevTools.
-  mainWindow.webContents.openDevTools();
+  mainWindow.on('closed', () => {
+    mainWindow = null
+  })
 
-  // Emitted when the window is closed.
-  mainWindow.on("closed", () => {
-    // Dereference the window object, usually you would store windows
-    // in an array if your app supports multi windows, this is the time
-    // when you should delete the corresponding element.
-    mainWindow = null;
-  });
-};
+  const menuBuilder = new MenuBuilder(mainWindow)
+  menuBuilder.buildMenu()
 
-// This method will be called when Electron has finished
-// initialization and is ready to create browser windows.
-// Some APIs can only be used after this event occurs.
-app.on("ready", createWindow);
+  // Open urls in the user's browser
+  mainWindow.webContents.setWindowOpenHandler((edata) => {
+    shell.openExternal(edata.url)
+    return { action: 'deny' }
+  })
 
-// Quit when all windows are closed.
-app.on("window-all-closed", () => {
-  // On OS X it is common for applications and their menu bar
-  // to stay active until the user quits explicitly with Cmd + Q
-  if (process.platform !== "darwin") {
-    app.quit();
+  mainWindow.webContents.openDevTools()
+}
+
+app.on('window-all-closed', () => {
+  if (process.platform !== 'darwin') {
+    app.quit()
   }
-});
+})
 
-app.on("activate", () => {
-  // On OS X it's common to re-create a window in the app when the
-  // dock icon is clicked and there are no other windows open.
-  if (mainWindow === null) {
-    createWindow();
-  }
-});
-
-// In this file you can include the rest of your app's specific main process
-// code. You can also put them in separate files and import them here.
+app
+  .whenReady()
+  .then(() => {
+    createWindow()
+    require('../services/authorization')
+    app.on('activate', () => {
+      if (mainWindow === null) createWindow()
+    })
+  })
+  .catch(console.log)
