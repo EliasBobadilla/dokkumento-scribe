@@ -11,8 +11,10 @@ export type FormFieldModel = {
   FormId: number
   FieldTypeId: number
   Name: string
+  Label: string
   Description: string
   Length: number
+  Required: boolean
 }
 
 export interface CurrentFormModel {

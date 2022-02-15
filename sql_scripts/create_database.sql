@@ -54,8 +54,10 @@ CREATE TABLE FormFields(
 	[FormId] INTEGER,
 	[FieldTypeId] INTEGER,
 	[Name] VARCHAR(50) not null,
+	[Label] VARCHAR(50) not null,
 	[Description] VARCHAR(500) not null,
 	[Length] INTEGER not null,
+	[Required] BIT DEFAULT 0,
 	[CreatedOn] DATETIME DEFAULT GETDATE(),
 	[UpdatedOn] DATETIME DEFAULT GETDATE(),
 	[Deleted] BIT DEFAULT 0,
@@ -63,7 +65,6 @@ CREATE TABLE FormFields(
 	FOREIGN KEY (FieldTypeId) REFERENCES [FieldTypes](Id),
 	FOREIGN KEY (ProjectId) REFERENCES [Projects](Id)
 )
-
 
 
 INSERT INTO Roles ([Name], [Description]) VALUES ('TYPIST','Digitador de documentos');
@@ -82,12 +83,12 @@ INSERT INTO Forms (ProjectId, [Name], [Description]) VALUES (1, 'Area Emision', 
 INSERT INTO FieldTypes ([Name], [Value], [Description]) VALUES ('Texto abierto', '', 'Campo de texto abierto sin validaciones')
 INSERT INTO FieldTypes ([Name], [Value], [Description]) VALUES ('Numero', '', 'Numero sin validaciones')
 
-INSERT INTO FormFields (ProjectId, FormId, FieldTypeId, [Name], [Description], [Length]) VALUES (1, 1, 1, 'DESC', 'Descripcion', 100)
-INSERT INTO FormFields (ProjectId, FormId, FieldTypeId, [Name], [Description], [Length]) VALUES (1, 1, 1, 'FECHA', 'Fecha', 100)
-INSERT INTO FormFields (ProjectId, FormId, FieldTypeId, [Name], [Description], [Length]) VALUES (1, 1, 1, 'UDF1', 'UDF1', 100)
-INSERT INTO FormFields (ProjectId, FormId, FieldTypeId, [Name], [Description], [Length]) VALUES (1, 1, 1, 'UDF2', 'UDF2', 100)
-INSERT INTO FormFields (ProjectId, FormId, FieldTypeId, [Name], [Description], [Length]) VALUES (1, 1, 1, 'UDF3', 'UDF3', 100)
-INSERT INTO FormFields (ProjectId, FormId, FieldTypeId, [Name], [Description], [Length]) VALUES (1, 1, 1, 'DESC_INT', 'Descripcion Interna', 100)
+INSERT INTO FormFields (ProjectId, FormId, FieldTypeId, [Name], [Label], [Description], [Length], [Required]) VALUES (1, 1, 1, 'DESC', 'DESC', 'Descripcion bla, bla, bla', 100, 1)
+INSERT INTO FormFields (ProjectId, FormId, FieldTypeId, [Name], [Label], [Description], [Length], [Required]) VALUES (1, 1, 1, 'FECHA', 'Fecha de Emision','Fecha bla, bla, bla', 100, 1)
+INSERT INTO FormFields (ProjectId, FormId, FieldTypeId, [Name], [Label], [Description], [Length], [Required]) VALUES (1, 1, 1, 'UDF1', 'UDF #1','UDF1 bla, bla, bla', 100, 1)
+INSERT INTO FormFields (ProjectId, FormId, FieldTypeId, [Name], [Label], [Description], [Length], [Required]) VALUES (1, 1, 1, 'UDF2', 'UDF #2','UDF2 bla, bla, bla', 100, 1)
+INSERT INTO FormFields (ProjectId, FormId, FieldTypeId, [Name], [Label], [Description], [Length], [Required]) VALUES (1, 1, 1, 'UDF3', 'UDF #3','UDF3 bla, bla, bla', 100, 1)
+INSERT INTO FormFields (ProjectId, FormId, FieldTypeId, [Name], [Label], [Description], [Length], [Required]) VALUES (1, 1, 1, 'DESC_INT', 'Descripcion interna','Descripcion Interna bla, bla, bla', 100, 1)
 
 select * from Roles
 select * from Users

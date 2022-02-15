@@ -21,7 +21,7 @@ contextBridge.exposeInMainWorld('electron', {
     },
   },
   ipc: {
-    async invoke(channel, arg) {
+    invoke(channel, arg) {
       return ipcRenderer.invoke(channel, arg)
     },
   },

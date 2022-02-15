@@ -3,4 +3,5 @@ export type FieldTypeModel = {
   Name: string
   Value: string
   Description: string
+  ValidationMessage: string
 }
