@@ -1,26 +1,26 @@
-import path from 'path';
-import fs from 'fs';
-import webpack from 'webpack';
-import HtmlWebpackPlugin from 'html-webpack-plugin';
-import chalk from 'chalk';
-import { merge } from 'webpack-merge';
-import { spawn, execSync } from 'child_process';
-import baseConfig from './webpack.config.base';
-import webpackPaths from './webpack.paths';
-import checkNodeEnv from '../scripts/check-node-env';
-import ReactRefreshWebpackPlugin from '@pmmmwh/react-refresh-webpack-plugin';
+import path from 'path'
+import fs from 'fs'
+import webpack from 'webpack'
+import HtmlWebpackPlugin from 'html-webpack-plugin'
+import chalk from 'chalk'
+import { merge } from 'webpack-merge'
+import { spawn, execSync } from 'child_process'
+import ReactRefreshWebpackPlugin from '@pmmmwh/react-refresh-webpack-plugin'
+import baseConfig from './webpack.config.base'
+import webpackPaths from './webpack.paths'
+import checkNodeEnv from '../scripts/check-node-env'
 
 // When an ESLint server is running, we can't set the NODE_ENV so we'll check if it's
 // at the dev webpack config is not accidentally run in a production environment
 if (process.env.NODE_ENV === 'production') {
-  checkNodeEnv('development');
+  checkNodeEnv('development')
 }
 
-const port = process.env.PORT || 1212;
-const manifest = path.resolve(webpackPaths.dllPath, 'renderer.json');
+const port = process.env.PORT || 1212
+const manifest = path.resolve(webpackPaths.dllPath, 'renderer.json')
 const requiredByDLLConfig = module.parent!.filename.includes(
-  'webpack.config.renderer.dev.dll'
-);
+  'webpack.config.renderer.dev.dll',
+)
 
 /**
  * Warn if the DLL is not built
@@ -31,10 +31,10 @@ if (
 ) {
   console.log(
     chalk.black.bgYellow.bold(
-      'The DLL files are missing. Sit back while we build them for you with "npm run build-dll"'
-    )
-  );
-  execSync('npm run postinstall');
+      'The DLL files are missing. Sit back while we build them for you with "npm run build-dll"',
+    ),
+  )
+  execSync('npm run postinstall')
 }
 
 const configuration: webpack.Configuration = {
@@ -162,16 +162,16 @@ const configuration: webpack.Configuration = {
       verbose: true,
     },
     onBeforeSetupMiddleware() {
-      console.log('Starting Main Process...');
+      console.log('Starting Main Process...')
       spawn('npm', ['run', 'start:main'], {
         shell: true,
         env: process.env,
         stdio: 'inherit',
       })
         .on('close', (code: number) => process.exit(code!))
-        .on('error', (spawnError) => console.error(spawnError));
+        .on('error', (spawnError) => console.error(spawnError))
     },
   },
-};
+}
 
-export default merge(baseConfig, configuration);
+export default merge(baseConfig, configuration)

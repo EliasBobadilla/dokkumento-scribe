@@ -101,7 +101,7 @@ app
   .whenReady()
   .then(() => {
     createWindow()
-    require('../services/authorization')
+    require('../services/ipc')
     app.on('activate', () => {
       if (mainWindow === null) createWindow()
     })

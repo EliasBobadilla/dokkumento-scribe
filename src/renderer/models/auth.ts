@@ -12,6 +12,12 @@ export type RoleModel = {
   Description: string
 }
 
+export enum Roles {
+  TYPIST = 'TYPIST',
+  ADMIN = 'ADMIN',
+  SYS_ADMIN = 'SYS_ADMIN',
+}
+
 export interface AuthModel {
   User: UserModel
   Role: RoleModel

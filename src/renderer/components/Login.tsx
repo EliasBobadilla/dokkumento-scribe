@@ -4,15 +4,9 @@ import { useAppContext } from '../context'
 import { AuthModel } from '../models/auth'
 
 const Login = () => {
-  const { userContext, roleContext, setUserContext, setRoleContext } =
-    useAppContext()
+  const { setUserContext, setRoleContext } = useAppContext()
   const [user, setUser] = React.useState('')
   const [pwd, setPwd] = React.useState('')
-
-  const read = () => {
-    console.log(userContext)
-    console.log(roleContext)
-  }
 
   const getAuth = async () => {
     try {
@@ -26,6 +20,8 @@ const Login = () => {
         request,
       )
       const { User, Role } = response
+
+      console.log({ User, Role })
       setUserContext(User)
       setRoleContext(Role)
     } catch (error) {
@@ -53,9 +49,6 @@ const Login = () => {
       />
       <Button onClick={getAuth} marginRight={16}>
         INGRESAR
-      </Button>
-      <Button onClick={read} marginRight={16}>
-        READ CONTEXT
       </Button>
     </>
   )
