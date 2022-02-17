@@ -1,6 +1,7 @@
 export type FormModel = {
   Id: number
   ProjectId: number
+  Code: string
   Name: string
   Description: string
 }
@@ -10,14 +11,21 @@ export type FormFieldModel = {
   ProjectId: number
   FormId: number
   FieldTypeId: number
+  Code: string
   Name: string
-  Label: string
   Description: string
-  Length: number
+  MinLength: number
+  MaxLength: number
   Required: boolean
 }
 
-export interface CurrentFormModel {
+export type SubmitDataModel = {
+  Table: string
+  Properties: string[]
+  Values: unknown[]
+}
+
+export type CurrentFormModel = {
   Forms: FormModel[]
   FormFields: FormFieldModel[]
 }

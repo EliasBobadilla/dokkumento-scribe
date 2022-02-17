@@ -73,17 +73,9 @@ const Header = ({
   return (
     <div>
       <p>{`Hola ${userContext.Firstname} ${userContext.Lastname}`}</p>
-      <p>{roleContext.Description}</p>
-      <Button onClick={changeProject} marginRight={16}>
-        cambiar proyecto
-      </Button>
-
-      <Button onClick={changeForm} marginRight={16}>
-        cambiar formulario
-      </Button>
-
-      <p>{selectedProjectId}</p>
-      <p>{selectedFormId}</p>
+      <p>{roleContext.Name}</p>
+      <Button onClick={changeProject}>seleccionar proyecto</Button>
+      <Button onClick={changeForm}>seleccionar formulario</Button>
     </div>
   )
 }

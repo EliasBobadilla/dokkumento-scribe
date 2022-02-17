@@ -10,10 +10,7 @@ export const formDefaultState: CurrentFormModel = {
 export function formReducer(state: CurrentFormModel, action: FormAction) {
   switch (action.type) {
     case 'set':
-      return {
-        Forms: action.payload.Forms,
-        FormFields: action.payload.FormFields,
-      }
+      return action.payload
     default:
       return state
   }

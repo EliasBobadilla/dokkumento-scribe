@@ -8,8 +8,8 @@ export type UserModel = {
 
 export type RoleModel = {
   Id: number
+  Code: string
   Name: string
-  Description: string
 }
 
 export enum Roles {

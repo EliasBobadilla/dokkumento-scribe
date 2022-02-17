@@ -18,9 +18,11 @@ const Main = () => {
         selectedFormId={selectedFormId}
         setSelectedFormId={setSelectedFormId}
       />
-      {roleContext.Name === Roles.TYPIST && <Typist />}
-      {roleContext.Name === Roles.ADMIN && <Admin />}
-      {roleContext.Name === Roles.SYS_ADMIN && <SysAdmin />}
+      {roleContext.Code === Roles.TYPIST && (
+        <Typist projectId={selectedProjectId} formId={selectedFormId} />
+      )}
+      {roleContext.Code === Roles.ADMIN && <Admin />}
+      {roleContext.Code === Roles.SYS_ADMIN && <SysAdmin />}
     </>
   )
 }

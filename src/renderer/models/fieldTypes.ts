@@ -1,7 +1,7 @@
 export type FieldTypeModel = {
   Id: number
+  Code: string
   Name: string
-  Value: string
-  Description: string
   ValidationMessage: string
+  Pattern: string
 }

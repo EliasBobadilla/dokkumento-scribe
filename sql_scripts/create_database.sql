@@ -1,7 +1,7 @@
 CREATE TABLE Roles (
 	[Id] INTEGER IDENTITY(1,1) PRIMARY KEY,
+	[Code] VARCHAR(50) UNIQUE not null,
 	[Name] VARCHAR(50) not null,
-	[Description] VARCHAR(50) not null,
 	[CreatedOn] DATETIME DEFAULT GETDATE(),
 	[UpdatedOn] DATETIME DEFAULT GETDATE() 
 );
@@ -19,8 +19,20 @@ CREATE TABLE Users(
 	FOREIGN KEY (RoleId) REFERENCES [Roles](Id)
 );
 
+CREATE TABLE FieldTypes(
+	[Id] INTEGER IDENTITY(1,1) PRIMARY KEY,
+	[Code] VARCHAR(50) UNIQUE not null,
+	[Name] VARCHAR(50) not null,
+	[ValidationMessage] VARCHAR(250) null,
+	[Pattern] VARCHAR(250) null,
+	[CreatedOn] DATETIME DEFAULT GETDATE(),
+	[UpdatedOn] DATETIME DEFAULT GETDATE(),
+	[Deleted] BIT DEFAULT 0
+);
+
 CREATE TABLE Projects(
 	[Id] INTEGER IDENTITY(1,1) PRIMARY KEY,
+	[Code] VARCHAR(15) UNIQUE not null,
 	[Name] VARCHAR(100) not null,
 	[CreatedOn] DATETIME DEFAULT GETDATE(),
 	[UpdatedOn] DATETIME DEFAULT GETDATE(),
@@ -30,22 +42,13 @@ CREATE TABLE Projects(
 CREATE TABLE Forms(
 	[Id] INTEGER IDENTITY(1,1) PRIMARY KEY,
 	[ProjectId] INTEGER,
+	[Code] VARCHAR(15) UNIQUE not null,
 	[Name] VARCHAR(50) not null,
-	[Description] VARCHAR(500) not null,
+	[Description] VARCHAR(500) null,
 	[CreatedOn] DATETIME DEFAULT GETDATE(),
 	[UpdatedOn] DATETIME DEFAULT GETDATE(),
 	[Deleted] BIT DEFAULT 0,
 	FOREIGN KEY (ProjectId) REFERENCES [Projects](Id)
-);
-
-CREATE TABLE FieldTypes(
-	[Id] INTEGER IDENTITY(1,1) PRIMARY KEY,
-	[Name] VARCHAR(50) not null,
-	[Value] VARCHAR(125) not null,
-	[Description] VARCHAR(500) not null,	
-	[CreatedOn] DATETIME DEFAULT GETDATE(),
-	[UpdatedOn] DATETIME DEFAULT GETDATE(),
-	[Deleted] BIT DEFAULT 0
 );
 
 CREATE TABLE FormFields(
@@ -53,10 +56,11 @@ CREATE TABLE FormFields(
 	[ProjectId] INTEGER,
 	[FormId] INTEGER,
 	[FieldTypeId] INTEGER,
+	[Code] VARCHAR(15) UNIQUE not null,
 	[Name] VARCHAR(50) not null,
-	[Label] VARCHAR(50) not null,
-	[Description] VARCHAR(500) not null,
-	[Length] INTEGER not null,
+	[Description] VARCHAR(500) null,
+	[MinLength] INTEGER DEFAULT 0,
+	[MaxLength] INTEGER DEFAULT 0,
 	[Required] BIT DEFAULT 0,
 	[CreatedOn] DATETIME DEFAULT GETDATE(),
 	[UpdatedOn] DATETIME DEFAULT GETDATE(),
@@ -67,28 +71,31 @@ CREATE TABLE FormFields(
 )
 
 
-INSERT INTO Roles ([Name], [Description]) VALUES ('TYPIST','Digitador de documentos');
-INSERT INTO Roles ([Name], [Description]) VALUES ('ADMIN','Administrador de proyecto');
-INSERT INTO Roles ([Name], [Description]) VALUES ('SYS_ADMIN','Administrador del sistema');
+INSERT INTO Roles ([Code], [Name]) VALUES ('TYPIST','Digitador de documentos');
+INSERT INTO Roles ([Code], [Name]) VALUES ('ADMIN','Administrador de proyecto');
+INSERT INTO Roles ([Code], [Name]) VALUES ('SYS_ADMIN','Administrador del sistema');
 
-INSERT INTO Users (FirstName, Lastname, Username, [Password], RoleId) VALUES('Elias', 'Bobadilla', 'saile', '42972966', 1);
-INSERT INTO Users (FirstName, Lastname, Username, [Password], RoleId) VALUES('Sebastian', 'Bobadilla', 'sebas', '42972966', 2);
-INSERT INTO Users (FirstName, Lastname, Username, [Password], RoleId) VALUES('Tilsa', 'Bobadilla', 'tili', '42972966', 3);
-INSERT INTO Users (FirstName, Lastname, Username, [Password], RoleId) VALUES('Myriam', 'Camarena', 'myriam', '42972966', 3);
+INSERT INTO Users ([FirstName], [Lastname], [Username], [Password], [RoleId]) VALUES('Elias', 'Bobadilla', 'saile', '42972966', 1);
+INSERT INTO Users ([FirstName], [Lastname], [Username], [Password], [RoleId]) VALUES('Sebastian', 'Bobadilla', 'sebas', '42972966', 2);
+INSERT INTO Users ([FirstName], [Lastname], [Username], [Password], [RoleId]) VALUES('Tilsa', 'Bobadilla', 'tili', '42972966', 3);
+INSERT INTO Users ([FirstName], [Lastname], [Username], [Password], [RoleId]) VALUES('Myriam', 'Camarena', 'myriam', '42972966', 3);
 
-INSERT INTO Projects ([Name]) VALUES ('Dokkumento')
+INSERT INTO FieldTypes ([Code], [Name], [ValidationMessage], [Pattern]) VALUES ('TEXT', 'Solo letras y espacios', 'Se permiten letras de la a-z A-Z y espacios', '^[A-Za-z\s]*$')
+INSERT INTO FieldTypes ([Code], [Name], [ValidationMessage], [Pattern]) VALUES ('NUMBER', 'Solo numeros', 'Se permiten numeros, punto y coma', '^[0-9.,]*$')
+INSERT INTO FieldTypes ([Code], [Name], [ValidationMessage], [Pattern]) VALUES ('DATE', 'Fecha', 'Se permite fecha dd/mm/[aa|aaaa] dd-mm-[aa|aaaa]', '^(0[1-9]|1\d|2\d|3[01])[-/.](0[1-9]|1[0-2])[-/.](((19|20)\d{2})|(\d{2}))$')
+INSERT INTO FieldTypes ([Code], [Name]) VALUES ('FREE', 'Sin validacion')
 
-INSERT INTO Forms (ProjectId, [Name], [Description]) VALUES (1, 'Area Emision', 'Proyecto de prueba para digitacion');
+INSERT INTO Projects ([Code], [Name]) VALUES ('DEMO', 'Dokkumento')
 
-INSERT INTO FieldTypes ([Name], [Value], [Description]) VALUES ('Texto abierto', '', 'Campo de texto abierto sin validaciones')
-INSERT INTO FieldTypes ([Name], [Value], [Description]) VALUES ('Numero', '', 'Numero sin validaciones')
+INSERT INTO Forms ([ProjectId], [Code], [Name], [Description]) VALUES (1, 'TEST1', 'Area Emision', 'Proyecto de prueba para digitacion');
+INSERT INTO Forms ([ProjectId], [Code], [Name], [Description]) VALUES (1, 'TEST2', 'Area Emision #2', 'Proyecto de prueba para digitacion #2');
 
-INSERT INTO FormFields (ProjectId, FormId, FieldTypeId, [Name], [Label], [Description], [Length], [Required]) VALUES (1, 1, 1, 'DESC', 'DESC', 'Descripcion bla, bla, bla', 100, 1)
-INSERT INTO FormFields (ProjectId, FormId, FieldTypeId, [Name], [Label], [Description], [Length], [Required]) VALUES (1, 1, 1, 'FECHA', 'Fecha de Emision','Fecha bla, bla, bla', 100, 1)
-INSERT INTO FormFields (ProjectId, FormId, FieldTypeId, [Name], [Label], [Description], [Length], [Required]) VALUES (1, 1, 1, 'UDF1', 'UDF #1','UDF1 bla, bla, bla', 100, 1)
-INSERT INTO FormFields (ProjectId, FormId, FieldTypeId, [Name], [Label], [Description], [Length], [Required]) VALUES (1, 1, 1, 'UDF2', 'UDF #2','UDF2 bla, bla, bla', 100, 1)
-INSERT INTO FormFields (ProjectId, FormId, FieldTypeId, [Name], [Label], [Description], [Length], [Required]) VALUES (1, 1, 1, 'UDF3', 'UDF #3','UDF3 bla, bla, bla', 100, 1)
-INSERT INTO FormFields (ProjectId, FormId, FieldTypeId, [Name], [Label], [Description], [Length], [Required]) VALUES (1, 1, 1, 'DESC_INT', 'Descripcion interna','Descripcion Interna bla, bla, bla', 100, 1)
+INSERT INTO FormFields ([ProjectId], [FormId], [FieldTypeId], [Code], [Name], [Description], [MinLength], [MaxLength], [Required]) VALUES (1, 1, 1, 'DESC', 'Descripcion principal', 'Descripcion bla, bla, bla', 5, 100, 1)
+INSERT INTO FormFields ([ProjectId], [FormId], [FieldTypeId], [Code], [Name], [Description], [MinLength], [MaxLength], [Required]) VALUES (1, 1, 3, 'FECHA', 'Fecha','Fecha bla, bla, bla', 8, 12, 1)
+INSERT INTO FormFields ([ProjectId], [FormId], [FieldTypeId], [Code], [Name], [Description], [MinLength], [MaxLength], [Required]) VALUES (1, 1, 2, 'UDF1', 'UDF #1','UDF1 bla, bla, bla', 5, 25, 1)
+INSERT INTO FormFields ([ProjectId], [FormId], [FieldTypeId], [Code], [Name], [Description], [MinLength], [MaxLength], [Required]) VALUES (1, 1, 2, 'UDF2', 'UDF #2','UDF2 bla, bla, bla', 5, 25, 1)
+INSERT INTO FormFields ([ProjectId], [FormId], [FieldTypeId], [Code], [Name], [Description], [MinLength], [MaxLength], [Required]) VALUES (1, 1, 2, 'UDF3', 'UDF #3','UDF3 bla, bla, bla', 5, 25, 1)
+INSERT INTO FormFields ([ProjectId], [FormId], [FieldTypeId], [Code], [Name], [Description]) VALUES (1, 1, 4, 'DESC_INT', 'Descripcion Interna','Descripcion Interna bla, bla, bla')
 
 select * from Roles
 select * from Users
@@ -97,3 +104,22 @@ select * from FieldTypes
 select * from Projects
 select * from Forms
 select * from FormFields
+
+create table DIG_DEMO_TEST1 (
+	[Id] INTEGER IDENTITY(1,1) PRIMARY KEY,
+	[DESC] VARCHAR(250) null,
+	[FECHA] VARCHAR(250) null,
+	[UDF1] VARCHAR(250) null,
+	[UDF2] VARCHAR(250) null,
+	[UDF3] VARCHAR(250) null,
+	[DESC_INT] VARCHAR(250) null,
+	[Forced] BIT DEFAULT 0,
+	[CreatedBy] INTEGER,
+	[CreatedOn] DATETIME DEFAULT GETDATE(),
+	FOREIGN KEY (CreatedBy) REFERENCES [Users](Id),
+)
+
+DROP TABLE DIG_DEMO_TEST1
+select * from DIG_DEMO_TEST1
+
+insert into [DIG_DEMO_TEST1] ([DESC],FECHA,UDF1,UDF2,UDF3,DESC_INT) values ('aaaaaaaa','24/05/1985','222222','3333333','444444','555555')

@@ -7,6 +7,7 @@ import {
   getFormFields,
   getForms,
   getProjects,
+  saveForm,
 } from './documents'
 
 const sqlErrorHandler = (error) => {
@@ -67,5 +68,14 @@ ipcMain.handle('getFormFields', async (_, args) => {
     return await getFormFields(cnn, args)
   } catch (error) {
     return sqlErrorHandler({ origin: 'getFormFields', ...error })
+  }
+})
+
+ipcMain.handle('submitForm', async (_, args) => {
+  try {
+    const cnn = await pool.connect()
+    return await saveForm(cnn, args)
+  } catch (error) {
+    return sqlErrorHandler({ origin: 'submitForm', ...error })
   }
 })
