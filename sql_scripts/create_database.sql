@@ -119,7 +119,4 @@ create table DIG_DEMO_TEST1 (
 	FOREIGN KEY (CreatedBy) REFERENCES [Users](Id),
 )
 
-DROP TABLE DIG_DEMO_TEST1
 select * from DIG_DEMO_TEST1
-
-insert into [DIG_DEMO_TEST1] ([DESC],FECHA,UDF1,UDF2,UDF3,DESC_INT) values ('aaaaaaaa','24/05/1985','222222','3333333','444444','555555')

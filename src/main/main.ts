@@ -2,8 +2,7 @@
 
 import 'dotenv/config'
 import path from 'path'
-import { app, BrowserWindow, shell, ipcMain } from 'electron'
-import MenuBuilder from './menu'
+import { app, BrowserWindow, ipcMain, shell } from 'electron'
 import { resolveHtmlPath } from './util'
 
 let mainWindow: BrowserWindow | null = null
@@ -79,16 +78,19 @@ const createWindow = async () => {
     mainWindow = null
   })
 
-  const menuBuilder = new MenuBuilder(mainWindow)
-  menuBuilder.buildMenu()
-
   // Open urls in the user's browser
   mainWindow.webContents.setWindowOpenHandler((edata) => {
     shell.openExternal(edata.url)
     return { action: 'deny' }
   })
 
-  mainWindow.webContents.openDevTools()
+  mainWindow.maximize()
+  mainWindow.setMenuBarVisibility(false)
+
+  mainWindow.webContents.on('new-window', function (event, url) {
+    event.preventDefault()
+    shell.openExternal(url)
+  })
 }
 
 app.on('window-all-closed', () => {

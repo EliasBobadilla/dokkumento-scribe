@@ -1,4 +1,3 @@
-// import icon from '../../assets/icon.svg'
 import Login from './components/Login'
 import Principal from './components/Principal'
 import { useAppContext } from './context'
