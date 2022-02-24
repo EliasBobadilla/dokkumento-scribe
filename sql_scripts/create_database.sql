@@ -1,3 +1,5 @@
+CREATE database dokkumento
+
 CREATE TABLE Roles (
 	[Id] INTEGER IDENTITY(1,1) PRIMARY KEY,
 	[Code] VARCHAR(50) UNIQUE not null,
@@ -70,6 +72,16 @@ CREATE TABLE FormFields(
 	FOREIGN KEY (ProjectId) REFERENCES [Projects](Id)
 )
 
+CREATE TABLE Logs(
+	[Id] INTEGER IDENTITY(1,1) PRIMARY KEY,
+	[Query] VARCHAR(500) not null,
+	[Stack] VARCHAR(100) not null,
+	[CreatedOn] DATETIME DEFAULT GETDATE()
+)
+
+
+
+
 
 INSERT INTO Roles ([Code], [Name]) VALUES ('TYPIST','Digitador de documentos');
 INSERT INTO Roles ([Code], [Name]) VALUES ('ADMIN','Administrador de proyecto');
@@ -113,7 +125,7 @@ create table DIG_DEMO_TEST1 (
 	[UDF2] VARCHAR(250) null,
 	[UDF3] VARCHAR(250) null,
 	[DESC_INT] VARCHAR(250) null,
-	[Forced] BIT DEFAULT 0,
+	[FORCED] BIT DEFAULT 0,
 	[CreatedBy] INTEGER,
 	[CreatedOn] DATETIME DEFAULT GETDATE(),
 	FOREIGN KEY (CreatedBy) REFERENCES [Users](Id),

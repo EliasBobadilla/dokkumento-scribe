@@ -1,15 +1,18 @@
-import type { FieldTypeModel } from '../models/fieldTypes'
+import type { FieldTypeDto } from '../dtos/documents'
 
-export type FieldTypeAction = { type: 'set'; payload: FieldTypeModel[] }
+export type FieldTypeAction = {
+  type: 'set-fieldTypes'
+  payload: FieldTypeDto[]
+}
 
-export const fieldTypeDefaultState: FieldTypeModel[] = []
+export const fieldTypesDefaultState: FieldTypeDto[] = []
 
 export function fieldTypeReducer(
-  state: FieldTypeModel[],
+  state: FieldTypeDto[],
   action: FieldTypeAction,
 ) {
   switch (action.type) {
-    case 'set': {
+    case 'set-fieldTypes': {
       return action.payload
     }
     default:

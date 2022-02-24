@@ -1,15 +1,17 @@
 import { useState } from 'react'
-import { Roles } from '../models/auth'
-import Typist from './Typist'
+import { Roles } from '../dtos/management'
+import TypistModule from './TypistModule'
 import Admin from './Admin'
 import SysAdmin from './SysAdmin'
-import Header from './Header'
 import { useAppContext } from '../context'
+import Header from './Header'
 
 const Main = () => {
   const [selectedProjectId, setSelectedProjectId] = useState(0)
   const [selectedFormId, setSelectedFormId] = useState(0)
-  const { roleContext } = useAppContext()
+  const { userContext, roleContext } = useAppContext()
+  const role = roleContext.find((r) => r.id === userContext.id)
+
   return (
     <>
       <Header
@@ -17,14 +19,15 @@ const Main = () => {
         setSelectedProjectId={setSelectedProjectId}
         selectedFormId={selectedFormId}
         setSelectedFormId={setSelectedFormId}
+        currentRole={role}
       />
-      {roleContext.Code === Roles.TYPIST &&
+      {role?.code === Roles.TYPIST &&
         selectedProjectId > 0 &&
         selectedFormId > 0 && (
-          <Typist projectId={selectedProjectId} formId={selectedFormId} />
+          <TypistModule projectId={selectedProjectId} formId={selectedFormId} />
         )}
-      {roleContext.Code === Roles.ADMIN && <Admin />}
-      {roleContext.Code === Roles.SYS_ADMIN && <SysAdmin />}
+      {role?.code === Roles.ADMIN && <Admin />}
+      {role?.code === Roles.SYS_ADMIN && <SysAdmin />}
     </>
   )
 }
