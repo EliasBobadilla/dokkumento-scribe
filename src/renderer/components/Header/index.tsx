@@ -7,45 +7,24 @@ import {
   EditIcon,
   ManualIcon,
 } from 'evergreen-ui'
-import styled from '@emotion/styled'
-import { useAppContext } from '../context'
-import { FieldTypeModel } from '../models/fieldTypes'
-import { ProjectModel } from '../models/projects'
-import { CurrentFormModel, FormFieldModel, FormModel } from '../models/form'
+import { useAppContext } from '../../context'
+import { UserSection, Container, Section } from './styles'
+import { RoleDto } from '../../dtos/management'
+import {
+  getFieldTypes,
+  getFormFields,
+  getForms,
+  getProjects,
+} from '../../helpers/db'
 
-const Container = styled.div`
-  width: 100%;
-  height: 8vh;
-  background: #52bd95;
-  display: flex;
-  flex-direction: row;
-  justify-content: left;
-  align-items: center;
-  position: relative;
-`
-
-const Section = styled.div`
-  min-width: 20%;
-  margin-left: 1em;
-`
-
-const UserSection = styled.div`
-  display: flex;
-  flex-direction: column;
-  text-align: right;
-  font-size: 0.9em;
-  color: #000000;
-  margin-right: 1em;
-  justify-content: right;
-  position: absolute;
-  right: 1em;
-`
-
-interface Props {
+export interface Props {
   selectedProjectId: number
   setSelectedProjectId: (value: number) => void
   selectedFormId: number
   setSelectedFormId: (value: number) => void
+  currentRole?: RoleDto,
+  tags: string[],
+  setTags: (value: string[]) => void
 }
 
 const Header = ({
@@ -53,43 +32,37 @@ const Header = ({
   setSelectedProjectId,
   selectedFormId,
   setSelectedFormId,
+  currentRole,
+  tags,
+  setTags,
 }: Props) => {
   const {
+    language,
     userContext,
-    roleContext,
     projectContext,
     formContext,
     setFieldTypeContext,
     setFormContext,
+    setFormFieldContext,
     setProjectContext,
   } = useAppContext()
 
   const projectList = projectContext.map((p) => ({
-    label: p.Name,
-    value: p.Id,
+    label: p.name,
+    value: p.id,
   }))
 
-  const projectPlaceholder = 'Selecciona un proyecto'
-
-  const formList = formContext.Forms.map((p) => ({
-    label: p.Name,
-    value: p.Id,
+  const formList = formContext.map((p) => ({
+    label: p.name,
+    value: p.id,
   }))
-
-  const formPlaceholder = 'Selecciona un formulario'
-
-  const [batch, setBatch] = useState<string[]>([])
 
   useEffect(() => {
-    ;(async () => {
-      const fieldTypes = await window.electron.ipc.invoke<FieldTypeModel[]>(
-        'getFieldTypes',
-        null,
-      )
-      const projects = await window.electron.ipc.invoke<ProjectModel[]>(
-        'getProjects',
-        null,
-      )
+    ; (async () => {
+      const [fieldTypes, projects] = await Promise.all([
+        getFieldTypes(),
+        getProjects(),
+      ])
       setFieldTypeContext(fieldTypes)
       setProjectContext(projects)
     })()
@@ -97,34 +70,26 @@ const Header = ({
 
   useEffect(() => {
     if (!selectedProjectId) return
-    const request = { projectId: selectedProjectId }
-    ;(async () => {
-      const formFields = await window.electron.ipc.invoke<FormFieldModel[]>(
-        'getFormFields',
-        request,
-      )
-      const forms = await window.electron.ipc.invoke<FormModel[]>(
-        'getForms',
-        request,
-      )
-      const currentForms: CurrentFormModel = {
-        Forms: forms,
-        FormFields: formFields,
-      }
-      setFormContext(currentForms)
-    })()
+      ; (async () => {
+        const [forms, formFields] = await Promise.all([
+          getForms(selectedProjectId),
+          getFormFields(selectedProjectId),
+        ])
+        setFormContext(forms)
+        setFormFieldContext(formFields)
+      })()
   }, [selectedProjectId])
 
   const handleBatchChange = (values: string[]) => {
     const lastItem = values.pop()
-    setBatch([lastItem!.toUpperCase()])
+    setTags([lastItem!.toUpperCase()])
   }
 
   return (
     <Container>
       <Section>
         <SelectMenu
-          title={projectPlaceholder}
+          title={language.projectButtonPlaceholder}
           options={projectList}
           selected={selectedProjectId.toString()}
           hasFilter={false}
@@ -133,13 +98,13 @@ const Header = ({
         >
           <Button width='100%' iconBefore={ManualIcon}>
             {projectList.find((x) => x.value === selectedProjectId)?.label ||
-              projectPlaceholder}
+              language.projectButtonPlaceholder}
           </Button>
         </SelectMenu>
       </Section>
       <Section>
         <SelectMenu
-          title={formPlaceholder}
+          title={language.formButtonPlaceholder}
           options={formList}
           selected={selectedFormId.toString()}
           hasFilter={false}
@@ -148,14 +113,14 @@ const Header = ({
         >
           <Button width='100%' iconBefore={EditIcon}>
             {formList.find((x) => x.value === selectedFormId)?.label ||
-              formPlaceholder}
+              language.formButtonPlaceholder}
           </Button>
         </SelectMenu>
       </Section>
       <Section>
         <TagInput
-          inputProps={{ placeholder: 'Lote' }}
-          values={batch}
+          inputProps={{ placeholder: language.batchLabelPlaceHolder }}
+          values={tags}
           width='100%'
           disabled={selectedFormId <= 0 || selectedProjectId <= 0}
           onChange={(values) => {
@@ -164,8 +129,8 @@ const Header = ({
         />
       </Section>
       <UserSection>
-        <strong>{`${userContext.Firstname} ${userContext.Lastname}`}</strong>
-        <strong>{roleContext.Name}</strong>
+        <strong>{`${userContext.firstname} ${userContext.lastname}`}</strong>
+        {currentRole?.name}
       </UserSection>
     </Container>
   )

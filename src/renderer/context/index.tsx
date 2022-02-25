@@ -1,73 +1,93 @@
 import { createContext, ReactNode, useContext, useReducer } from 'react'
-import { userReducer, userDefaultState } from './userReducer'
-import { roleReducer, roleDefaultState } from './roleReducer'
-import { UserModel, RoleModel } from '../models/auth'
-import { fieldTypeDefaultState, fieldTypeReducer } from './fieldTypesReducer'
-import { formDefaultState, formReducer } from './formReducer'
-import { projectDefaultState, projectReducer } from './projectReducer'
-import { FieldTypeModel } from '../models/fieldTypes'
-import { CurrentFormModel } from '../models/form'
-import { ProjectModel } from '../models/projects'
+import { userDefaultState, usersReducer } from './usersReducer'
+import { rolesDefaultState, rolesReducer } from './rolesReducer'
+import { fieldTypeReducer, fieldTypesDefaultState } from './fieldTypesReducer'
+import { formsDefaultState, formsReducer } from './formsReducer'
+import { projectsDefaultState, projectsReducer } from './projectsReducer'
+import { formFieldsDefaultState, formFieldsReducer } from './FormFieldsReducer'
+import {
+  FieldTypeDto,
+  FormDto,
+  FormFieldDto,
+  ProjectDto,
+} from '../dtos/documents'
+import { Language, languages } from '../components/languages'
+import { RoleDto, UserDto } from '../dtos/management'
 
 type ContextType = {
-  userContext: UserModel
-  roleContext: RoleModel
-  fieldTypeContext: FieldTypeModel[]
-  projectContext: ProjectModel[]
-  formContext: CurrentFormModel
-  setUserContext: (model?: UserModel) => void
-  setRoleContext: (model?: RoleModel) => void
-  setFieldTypeContext: (model: FieldTypeModel[]) => void
-  setFormContext: (model: CurrentFormModel) => void
-  setProjectContext: (model: ProjectModel[]) => void
+  language: Language
+  userContext: UserDto
+  roleContext: RoleDto[]
+  fieldTypeContext: FieldTypeDto[]
+  projectContext: ProjectDto[]
+  formContext: FormDto[]
+  formFieldContext: FormFieldDto[]
+  setUserContext: (model: UserDto) => void
+  setRoleContext: (model: RoleDto[]) => void
+  setFieldTypeContext: (model: FieldTypeDto[]) => void
+  setFormContext: (model: FormDto[]) => void
+  setFormFieldContext: (model: FormFieldDto[]) => void
+  setProjectContext: (model: ProjectDto[]) => void
 }
 
 const AppContext = createContext<ContextType>({} as ContextType)
 
 export function AppContextProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useReducer(userReducer, userDefaultState)
-  const [role, setRole] = useReducer(roleReducer, roleDefaultState)
+  const [user, setUser] = useReducer(usersReducer, userDefaultState)
+  const [role, setRole] = useReducer(rolesReducer, rolesDefaultState)
   const [fieldType, setFieldType] = useReducer(
     fieldTypeReducer,
-    fieldTypeDefaultState,
+    fieldTypesDefaultState,
   )
-  const [form, setForm] = useReducer(formReducer, formDefaultState)
-  const [project, setProject] = useReducer(projectReducer, projectDefaultState)
+  const [form, setForm] = useReducer(formsReducer, formsDefaultState)
+  const [formField, setFormField] = useReducer(
+    formFieldsReducer,
+    formFieldsDefaultState,
+  )
+  const [project, setProject] = useReducer(
+    projectsReducer,
+    projectsDefaultState,
+  )
 
-  const setUserContext = (model?: UserModel) => {
-    if (!model) setUser({ type: 'logout' })
-    setUser({ type: 'login', payload: model })
+  const setUserContext = (model: UserDto) => {
+    setUser({ type: 'set-user', payload: model })
   }
 
-  const setRoleContext = (model?: RoleModel) => {
-    if (!model) setRole({ type: 'logout' })
-    setRole({ type: 'login', payload: model })
+  const setRoleContext = (model: RoleDto[]) => {
+    setRole({ type: 'set-roles', payload: model })
   }
 
-  const setFieldTypeContext = (model: FieldTypeModel[]) => {
-    setFieldType({ type: 'set', payload: model })
+  const setFieldTypeContext = (model: FieldTypeDto[]) => {
+    setFieldType({ type: 'set-fieldTypes', payload: model })
   }
 
-  const setFormContext = (model: CurrentFormModel) => {
-    setForm({ type: 'set', payload: model })
+  const setFormContext = (model: FormDto[]) => {
+    setForm({ type: 'set-forms', payload: model })
   }
 
-  const setProjectContext = (model: ProjectModel[]) => {
-    setProject({ type: 'set', payload: model })
+  const setFormFieldContext = (model: FormFieldDto[]) => {
+    setFormField({ type: 'set-formFields', payload: model })
+  }
+
+  const setProjectContext = (model: ProjectDto[]) => {
+    setProject({ type: 'set-projects', payload: model })
   }
 
   return (
     <AppContext.Provider
       value={{
+        language: languages.spanish,
         userContext: user,
         roleContext: role,
         fieldTypeContext: fieldType,
         formContext: form,
+        formFieldContext: formField,
         projectContext: project,
         setUserContext,
         setRoleContext,
         setFieldTypeContext,
         setFormContext,
+        setFormFieldContext,
         setProjectContext,
       }}
     >
@@ -77,6 +97,5 @@ export function AppContextProvider({ children }: { children: ReactNode }) {
 }
 
 export function useAppContext() {
-  const context = useContext(AppContext)
-  return context
+  return useContext(AppContext)
 }

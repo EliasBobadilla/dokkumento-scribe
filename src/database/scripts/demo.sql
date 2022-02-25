@@ -1,75 +1,4 @@
-CREATE TABLE Roles (
-	[Id] INTEGER IDENTITY(1,1) PRIMARY KEY,
-	[Code] VARCHAR(50) UNIQUE not null,
-	[Name] VARCHAR(50) not null,
-	[CreatedOn] DATETIME DEFAULT GETDATE(),
-	[UpdatedOn] DATETIME DEFAULT GETDATE() 
-);
-
-CREATE TABLE Users(
-	[Id] INTEGER IDENTITY(1,1) PRIMARY KEY,
-	[RoleId] INTEGER,
-	[Firstname] VARCHAR(50) not null,
-	[Lastname] VARCHAR(50) not null,
-	[Username] VARCHAR(50) not null,
-	[Password] VARCHAR(50) not null,
-	[CreatedOn] DATETIME DEFAULT GETDATE(),
-	[UpdatedOn] DATETIME DEFAULT GETDATE(),
-	[Deleted] BIT DEFAULT 0,
-	FOREIGN KEY (RoleId) REFERENCES [Roles](Id)
-);
-
-CREATE TABLE FieldTypes(
-	[Id] INTEGER IDENTITY(1,1) PRIMARY KEY,
-	[Code] VARCHAR(50) UNIQUE not null,
-	[Name] VARCHAR(50) not null,
-	[ValidationMessage] VARCHAR(250) null,
-	[Pattern] VARCHAR(250) null,
-	[CreatedOn] DATETIME DEFAULT GETDATE(),
-	[UpdatedOn] DATETIME DEFAULT GETDATE(),
-	[Deleted] BIT DEFAULT 0
-);
-
-CREATE TABLE Projects(
-	[Id] INTEGER IDENTITY(1,1) PRIMARY KEY,
-	[Code] VARCHAR(15) UNIQUE not null,
-	[Name] VARCHAR(100) not null,
-	[CreatedOn] DATETIME DEFAULT GETDATE(),
-	[UpdatedOn] DATETIME DEFAULT GETDATE(),
-	[Deleted] BIT DEFAULT 0
-);
-
-CREATE TABLE Forms(
-	[Id] INTEGER IDENTITY(1,1) PRIMARY KEY,
-	[ProjectId] INTEGER,
-	[Code] VARCHAR(15) UNIQUE not null,
-	[Name] VARCHAR(50) not null,
-	[Description] VARCHAR(500) null,
-	[CreatedOn] DATETIME DEFAULT GETDATE(),
-	[UpdatedOn] DATETIME DEFAULT GETDATE(),
-	[Deleted] BIT DEFAULT 0,
-	FOREIGN KEY (ProjectId) REFERENCES [Projects](Id)
-);
-
-CREATE TABLE FormFields(
-	[Id] INTEGER IDENTITY(1,1) PRIMARY KEY,
-	[ProjectId] INTEGER,
-	[FormId] INTEGER,
-	[FieldTypeId] INTEGER,
-	[Code] VARCHAR(15) UNIQUE not null,
-	[Name] VARCHAR(50) not null,
-	[Description] VARCHAR(500) null,
-	[MinLength] INTEGER DEFAULT 0,
-	[MaxLength] INTEGER DEFAULT 0,
-	[Required] BIT DEFAULT 0,
-	[CreatedOn] DATETIME DEFAULT GETDATE(),
-	[UpdatedOn] DATETIME DEFAULT GETDATE(),
-	[Deleted] BIT DEFAULT 0,
-	FOREIGN KEY (FormId) REFERENCES [Forms](Id),
-	FOREIGN KEY (FieldTypeId) REFERENCES [FieldTypes](Id),
-	FOREIGN KEY (ProjectId) REFERENCES [Projects](Id)
-)
-
+USE dokkumento
 
 INSERT INTO Roles ([Code], [Name]) VALUES ('TYPIST','Digitador de documentos');
 INSERT INTO Roles ([Code], [Name]) VALUES ('ADMIN','Administrador de proyecto');
@@ -105,18 +34,6 @@ select * from Projects
 select * from Forms
 select * from FormFields
 
-create table DIG_DEMO_TEST1 (
-	[Id] INTEGER IDENTITY(1,1) PRIMARY KEY,
-	[DESC] VARCHAR(250) null,
-	[FECHA] VARCHAR(250) null,
-	[UDF1] VARCHAR(250) null,
-	[UDF2] VARCHAR(250) null,
-	[UDF3] VARCHAR(250) null,
-	[DESC_INT] VARCHAR(250) null,
-	[Forced] BIT DEFAULT 0,
-	[CreatedBy] INTEGER,
-	[CreatedOn] DATETIME DEFAULT GETDATE(),
-	FOREIGN KEY (CreatedBy) REFERENCES [Users](Id),
-)
-
 select * from DIG_DEMO_TEST1
+
+INSERT INTO [DIG_DEMO_TEST1] ([CreatedBy],[DESC],[FECHA],[UDF1],[UDF2],[UDF3],[Tags]) VALUES ('1','DFSDFSDFSD','24-05-1985','34343434','5464654','465465465','mela hola',' joder',' uno')

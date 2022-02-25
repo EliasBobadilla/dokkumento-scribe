@@ -12,7 +12,6 @@ coverage
 .eslintcache
 
 # Dependency directory
-# https://www.npmjs.org/doc/misc/npm-faq.html#should-i-check-my-node_modules-folder-into-git
 node_modules
 
 # OSX
@@ -23,7 +22,15 @@ release/build
 .erb/dll
 
 .idea
+
 npm-debug.log.*
 *.css.d.ts
 *.sass.d.ts
 *.scss.d.ts
+
+# package-lock files
+package-lock.json
+
+# out
+out
+
