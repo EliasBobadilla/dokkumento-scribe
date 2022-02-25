@@ -93,6 +93,13 @@ const createWindow = async () => {
   })
 }
 
+mainWindow.on('closed', () => {
+  mainWindow = null
+  if (process.platform !== 'darwin') {
+    app.quit()
+  }
+})
+
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
     app.quit()
