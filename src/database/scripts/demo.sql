@@ -34,19 +34,6 @@ select * from Projects
 select * from Forms
 select * from FormFields
 
-create table DIG_DEMO_TEST1 (
-	[Id] INTEGER IDENTITY(1,1) PRIMARY KEY,
-	[DESC] VARCHAR(250) null,
-	[FECHA] VARCHAR(250) null,
-	[UDF1] VARCHAR(250) null,
-	[UDF2] VARCHAR(250) null,
-	[UDF3] VARCHAR(250) null,
-	[DESC_INT] VARCHAR(250) null,
-	[FORCED] BIT DEFAULT 0,
-	[Batch] VARCHAR(250) null,
-	[CreatedBy] INTEGER,
-	[CreatedOn] DATETIME DEFAULT GETDATE(),
-	FOREIGN KEY (CreatedBy) REFERENCES [Users](Id),
-)
-
 select * from DIG_DEMO_TEST1
+
+INSERT INTO [DIG_DEMO_TEST1] ([CreatedBy],[DESC],[FECHA],[UDF1],[UDF2],[UDF3],[Tags]) VALUES ('1','DFSDFSDFSD','24-05-1985','34343434','5464654','465465465','mela hola',' joder',' uno')
