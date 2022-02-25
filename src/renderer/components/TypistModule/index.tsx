@@ -18,13 +18,14 @@ import useEventListener from '@use-it/event-listener'
 interface Props {
   projectId: number
   formId: number
+  tags: string[]
 }
 
 interface KeyValidation {
   [key: string]: boolean
 }
 
-const TypistModule = ({ projectId, formId }: Props) => {
+const TypistModule = ({ projectId, formId, tags }: Props) => {
   const inputRef = useRef<HTMLInputElement[]>([])
   const {
     language,
@@ -41,7 +42,9 @@ const TypistModule = ({ projectId, formId }: Props) => {
   const [data, setData] = useState<FormData>({})
   const [isInvalidValid, setIsInvalidValid] = useState<KeyValidation>({})
 
-  const keyDownHandler = ({ key }: any) => {
+  const keyDownHandler = ({ key, target }: any) => {
+    if (target.id.includes('TagInput')) return
+
     if (String(key) == 'Enter') {
       handleSubmit()
     }
@@ -87,6 +90,11 @@ const TypistModule = ({ projectId, formId }: Props) => {
   }
 
   const handleSubmit = async () => {
+    if (!tags.length) {
+      toaster.danger(language.emptyTagsMessage)
+      return
+    }
+
     if (!Object.values(isInvalidValid).every((value) => !value)) {
       toaster.danger(language.invalidFormMessage)
       return
@@ -95,22 +103,30 @@ const TypistModule = ({ projectId, formId }: Props) => {
       toaster.danger(language.emptyFormMessage)
       return
     }
+
     const submitModel = buildSubmitData(
       project!,
       form!,
       formFieldContext,
       data,
+      tags,
       userContext.id,
     )
     await submit(submitModel)
   }
 
   const handleForceSubmit = async () => {
+    if (!tags.length) {
+      toaster.danger(language.emptyTagsMessage)
+      return
+    }
+
     const submitModel = buildSubmitData(
       project!,
       form!,
       formFieldContext,
       data,
+      tags,
       userContext.id,
       true,
     )

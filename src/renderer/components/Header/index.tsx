@@ -22,7 +22,9 @@ export interface Props {
   setSelectedProjectId: (value: number) => void
   selectedFormId: number
   setSelectedFormId: (value: number) => void
-  currentRole?: RoleDto
+  currentRole?: RoleDto,
+  tags: string[],
+  setTags: (value: string[]) => void
 }
 
 const Header = ({
@@ -31,6 +33,8 @@ const Header = ({
   selectedFormId,
   setSelectedFormId,
   currentRole,
+  tags,
+  setTags,
 }: Props) => {
   const {
     language,
@@ -53,10 +57,8 @@ const Header = ({
     value: p.id,
   }))
 
-  const [batch, setBatch] = useState<string[]>([])
-
   useEffect(() => {
-    ;(async () => {
+    ; (async () => {
       const [fieldTypes, projects] = await Promise.all([
         getFieldTypes(),
         getProjects(),
@@ -68,19 +70,19 @@ const Header = ({
 
   useEffect(() => {
     if (!selectedProjectId) return
-    ;(async () => {
-      const [forms, formFields] = await Promise.all([
-        getForms(selectedProjectId),
-        getFormFields(selectedProjectId),
-      ])
-      setFormContext(forms)
-      setFormFieldContext(formFields)
-    })()
+      ; (async () => {
+        const [forms, formFields] = await Promise.all([
+          getForms(selectedProjectId),
+          getFormFields(selectedProjectId),
+        ])
+        setFormContext(forms)
+        setFormFieldContext(formFields)
+      })()
   }, [selectedProjectId])
 
   const handleBatchChange = (values: string[]) => {
     const lastItem = values.pop()
-    setBatch([lastItem!.toUpperCase()])
+    setTags([lastItem!.toUpperCase()])
   }
 
   return (
@@ -118,7 +120,7 @@ const Header = ({
       <Section>
         <TagInput
           inputProps={{ placeholder: language.batchLabelPlaceHolder }}
-          values={batch}
+          values={tags}
           width='100%'
           disabled={selectedFormId <= 0 || selectedProjectId <= 0}
           onChange={(values) => {

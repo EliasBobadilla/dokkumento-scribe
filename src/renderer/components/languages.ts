@@ -13,6 +13,7 @@ export interface Language {
   projectButtonPlaceholder: string
   formButtonPlaceholder: string
   batchLabelPlaceHolder: string
+  emptyTagsMessage: string
 }
 
 type AvailableLanguages = {
@@ -35,6 +36,7 @@ export const languages: AvailableLanguages = {
     projectButtonPlaceholder: 'Choice a project',
     formButtonPlaceholder: 'Choice a form',
     batchLabelPlaceHolder: 'Batch',
+    emptyTagsMessage: 'Batch can not be empty'
   },
   spanish: {
     unauthorized: 'Por favor, ingresa un usuario y contraseña correctos',
@@ -52,5 +54,6 @@ export const languages: AvailableLanguages = {
     projectButtonPlaceholder: 'Selecciona un proyecto',
     formButtonPlaceholder: 'Selecciona un formulario',
     batchLabelPlaceHolder: 'Lote',
+    emptyTagsMessage: 'Debe ingresar un lote como minimo'
   },
 }

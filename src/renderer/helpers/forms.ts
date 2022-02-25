@@ -34,6 +34,7 @@ export const buildSubmitData = (
   form: FormDto,
   formFields: FormFieldDto[],
   data: FormData,
+  tags: string[],
   userId: number,
   forced?: boolean,
 ): SubmitFormDto => {
@@ -49,6 +50,11 @@ export const buildSubmitData = (
       model.values.push(formField?.uppercase ? value.toUpperCase() : value)
     }
   })
+
+  if (tags.length) {
+    model.properties.push('Tags')
+    model.values.push(tags[0])
+  }
 
   if (forced) {
     model.properties.push('FORCED')
