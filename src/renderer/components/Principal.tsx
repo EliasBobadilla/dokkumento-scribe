@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import { Roles } from '../dtos/management'
 import TypistModule from './TypistModule'
-import Admin from './Admin'
-import SysAdmin from './SysAdmin'
+import AdminModule from './AdminModule'
+import CoordinatoModule from './CoordinatoModule'
 import { useAppContext } from '../context'
 import Header from './Header'
 
@@ -10,7 +10,7 @@ const Main = () => {
   const [selectedProjectId, setSelectedProjectId] = useState(0)
   const [selectedFormId, setSelectedFormId] = useState(0)
   const { userContext, roleContext } = useAppContext()
-  const role = roleContext.find((r) => r.id === userContext.id)
+  const role = roleContext.find((r) => r.id === userContext.roleId)
   const [tags, setTags] = useState<string[]>([])
 
   return (
@@ -29,8 +29,8 @@ const Main = () => {
         selectedFormId > 0 && (
           <TypistModule projectId={selectedProjectId} formId={selectedFormId} tags={tags} />
         )}
-      {role?.code === Roles.ADMIN && <Admin />}
-      {role?.code === Roles.SYS_ADMIN && <SysAdmin />}
+      {role?.code === Roles.ADMIN && <CoordinatoModule />}
+      {role?.code === Roles.SYS_ADMIN && <AdminModule />}
     </>
   )
 }

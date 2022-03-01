@@ -48,12 +48,10 @@ Form.init(
     },
     description: {
       type: DataTypes.STRING,
-      allowNull: false,
       field: 'Description',
     },
     deleted: {
       type: DataTypes.BOOLEAN,
-      allowNull: false,
       field: 'Deleted',
     },
   },

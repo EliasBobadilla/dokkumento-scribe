@@ -61,7 +61,6 @@ User.init(
     },
     deleted: {
       type: DataTypes.BOOLEAN,
-      allowNull: false,
       field: 'Deleted',
     },
   },

@@ -70,32 +70,26 @@ FormField.init(
     },
     description: {
       type: DataTypes.STRING,
-      allowNull: false,
       field: 'Description',
     },
     minLength: {
       type: DataTypes.INTEGER,
-      allowNull: false,
       field: 'MinLength',
     },
     maxLength: {
       type: DataTypes.INTEGER,
-      allowNull: false,
       field: 'MaxLength',
     },
     required: {
       type: DataTypes.BOOLEAN,
-      allowNull: false,
       field: 'Required',
     },
     uppercase: {
       type: DataTypes.BOOLEAN,
-      allowNull: false,
       field: 'Uppercase',
     },
     deleted: {
       type: DataTypes.BOOLEAN,
-      allowNull: false,
       field: 'Deleted',
     },
   },

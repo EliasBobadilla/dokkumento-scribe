@@ -27,3 +27,15 @@ export const getForms = (projectId: number) =>
 
 export const submitForm = async (model: SubmitFormDto) =>
   window.electron.ipc.invoke<FieldTypeDto[]>('saveForm', model)
+
+export const upsertProject = async (model: ProjectDto) =>
+  window.electron.ipc.invoke<ProjectDto>('upsertProject', model)
+
+export const upsertForm = async (model: FormDto) =>
+  window.electron.ipc.invoke<FormDto>('upsertForm', model)
+
+export const upsertFormFields = async (model: FormDto) =>
+  window.electron.ipc.invoke<FormFieldDto[]>('upsertFormFields', model)
+
+export const upsertField = async (model: SubmitFormDto) =>
+  window.electron.ipc.invoke<FieldTypeDto[]>('upsertField', model)

@@ -29,7 +29,7 @@ export interface FormFieldDto {
 }
 
 export interface ProjectDto {
-  id: number
+  id?: number
   code: string
   name: string
 }

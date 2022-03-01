@@ -25,5 +25,5 @@ export const UserSection = styled.div`
   margin-right: 1em;
   justify-content: right;
   position: absolute;
-  right: 1em;
+  right: calc(1em + 40px);
 `

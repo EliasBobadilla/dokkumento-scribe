@@ -1,6 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { Button, TextInputField, toaster } from 'evergreen-ui'
 import { useEffect, useState, useRef, ChangeEvent } from 'react'
+import useEventListener from '@use-it/event-listener'
 import { useAppContext } from '../../context'
 import {
   FormFieldDto,
@@ -13,7 +14,6 @@ import {
 import { buildSubmitData, validateFormData } from '../../helpers/forms'
 import { Container, FormSection, ButtonSection } from './styles'
 import { submitForm } from '../../helpers/db'
-import useEventListener from '@use-it/event-listener'
 
 interface Props {
   projectId: number
@@ -41,19 +41,6 @@ const TypistModule = ({ projectId, formId, tags }: Props) => {
 
   const [data, setData] = useState<FormData>({})
   const [isInvalidValid, setIsInvalidValid] = useState<KeyValidation>({})
-
-  const keyDownHandler = ({ key, target }: any) => {
-    if (target.id.includes('TagInput')) return
-
-    if (String(key) == 'Enter') {
-      handleSubmit()
-    }
-    if (String(key) == 'F8') {
-      handleForceSubmit()
-    }
-  }
-
-  useEventListener('keydown', keyDownHandler);
 
   useEffect(() => {
     const selectedProject = projectContext.find((x) => x.id === projectId)
@@ -132,6 +119,19 @@ const TypistModule = ({ projectId, formId, tags }: Props) => {
     )
     await submit(submitModel)
   }
+
+  const keyDownHandler = ({ key, target }: any) => {
+    if (target.id.includes('TagInput')) return
+
+    if (String(key) === 'Enter') {
+      handleSubmit()
+    }
+    if (String(key) === 'F8') {
+      handleForceSubmit()
+    }
+  }
+
+  useEventListener('keydown', keyDownHandler)
 
   const handleData = (
     code: string,

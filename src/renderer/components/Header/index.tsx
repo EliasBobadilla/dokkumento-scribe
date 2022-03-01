@@ -1,11 +1,12 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import {
   Button,
   SelectMenu,
   TagInput,
   EditIcon,
   ManualIcon,
+  Avatar,
 } from 'evergreen-ui'
 import { useAppContext } from '../../context'
 import { UserSection, Container, Section } from './styles'
@@ -22,8 +23,8 @@ export interface Props {
   setSelectedProjectId: (value: number) => void
   selectedFormId: number
   setSelectedFormId: (value: number) => void
-  currentRole?: RoleDto,
-  tags: string[],
+  currentRole?: RoleDto
+  tags: string[]
   setTags: (value: string[]) => void
 }
 
@@ -58,7 +59,7 @@ const Header = ({
   }))
 
   useEffect(() => {
-    ; (async () => {
+    ;(async () => {
       const [fieldTypes, projects] = await Promise.all([
         getFieldTypes(),
         getProjects(),
@@ -70,19 +71,20 @@ const Header = ({
 
   useEffect(() => {
     if (!selectedProjectId) return
-      ; (async () => {
-        const [forms, formFields] = await Promise.all([
-          getForms(selectedProjectId),
-          getFormFields(selectedProjectId),
-        ])
-        setFormContext(forms)
-        setFormFieldContext(formFields)
-      })()
+    ;(async () => {
+      const [forms, formFields] = await Promise.all([
+        getForms(selectedProjectId),
+        getFormFields(selectedProjectId),
+      ])
+      setFormContext(forms)
+      setFormFieldContext(formFields)
+    })()
   }, [selectedProjectId])
 
   const handleBatchChange = (values: string[]) => {
+    if (!values || !values.length) return
     const lastItem = values.pop()
-    setTags([lastItem!.toUpperCase()])
+    setTags([lastItem.toUpperCase()])
   }
 
   return (
@@ -132,6 +134,11 @@ const Header = ({
         <strong>{`${userContext.firstname} ${userContext.lastname}`}</strong>
         {currentRole?.name}
       </UserSection>
+      <Avatar
+        style={{ position: 'absolute', right: '1em' }}
+        name={`${userContext.firstname} ${userContext.lastname}`}
+        size={40}
+      />
     </Container>
   )
 }

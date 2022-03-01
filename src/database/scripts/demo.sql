@@ -14,7 +14,7 @@ INSERT INTO FieldTypes ([Code], [Name], [ValidationMessage], [Pattern]) VALUES (
 INSERT INTO FieldTypes ([Code], [Name], [ValidationMessage], [Pattern]) VALUES ('DATE', 'Fecha', 'Se permite fecha dd/mm/[aa|aaaa] dd-mm-[aa|aaaa]', '^(0[1-9]|1\d|2\d|3[01])[-/.](0[1-9]|1[0-2])[-/.](((19|20)\d{2})|(\d{2}))$')
 INSERT INTO FieldTypes ([Code], [Name]) VALUES ('FREE', 'Sin validacion')
 
-INSERT INTO Projects ([Code], [Name]) VALUES ('DEMO', 'Dokkumento')
+INSERT INTO Projects ([Code], [Name]) VALUES ('DEMO23', 'mela33')
 
 INSERT INTO Forms ([ProjectId], [Code], [Name], [Description]) VALUES (1, 'TEST1', 'Area Emision', 'Proyecto de prueba para digitacion');
 INSERT INTO Forms ([ProjectId], [Code], [Name], [Description]) VALUES (1, 'TEST2', 'Area Emision #2', 'Proyecto de prueba para digitacion #2');
@@ -37,3 +37,6 @@ select * from FormFields
 select * from DIG_DEMO_TEST1
 
 INSERT INTO [DIG_DEMO_TEST1] ([CreatedBy],[DESC],[FECHA],[UDF1],[UDF2],[UDF3],[Tags]) VALUES ('1','DFSDFSDFSD','24-05-1985','34343434','5464654','465465465','mela hola',' joder',' uno')
+
+
+INSERT INTO [Projects] ([Code],[Name]) OUTPUT INSERTED.[Id],INSERTED.[Code],INSERTED.[Name],INSERTED.[Deleted] VALUES (@0,@1);

@@ -101,8 +101,21 @@ export const saveForm = async (model: any) => {
   const query = `INSERT INTO [${table}] ([${properties
     .join()
     .replaceAll(',', '],[')}]) VALUES ('${values
-      .join()
-      .replaceAll(',', "','")}')`
+    .join()
+    .replaceAll(',', "','")}')`
 
   return rawInsert(query)
+}
+
+export const upsertProject = async (model: any) => {
+  if (!model.id) {
+    const inserted = await await Project.create(model)
+    return inserted.get({ plain: true })
+  }
+
+  const result = await Project.update(model, {
+    where: { id: model.id },
+  })
+
+  return result.length && result[0] ? model : undefined
 }
