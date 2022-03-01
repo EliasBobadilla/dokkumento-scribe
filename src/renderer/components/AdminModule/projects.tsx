@@ -9,10 +9,12 @@ import {
   Alert,
   IconButton,
   TrashIcon,
+  toaster,
 } from 'evergreen-ui'
 import { ProjectDto } from 'renderer/dtos/documents'
 import { useAppContext } from '../../context'
-import { upsertProject } from '../../helpers/db'
+import { upsertProject, deleteProject } from '../../helpers/db'
+import { AdminComboBox } from './styles'
 
 const initialState: ProjectDto = {
   code: '',
@@ -23,7 +25,7 @@ export default () => {
   const [isShown, setIsShown] = useState(false)
   const [current, setCurrent] = useState<ProjectDto>(initialState)
 
-  const { projectContext, setProjectContext } = useAppContext()
+  const { language, projectContext, setProjectContext } = useAppContext()
 
   const onProjectChange = (selectedProject: string) => {
     const code = selectedProject.split('-')[0].trim()
@@ -33,75 +35,97 @@ export default () => {
 
   const onSave = async () => {
     if (!current.name || !current.code) {
-      return // TODO: lanzar error
+      toaster.danger(language.projectOnSaveError)
+      return
     }
     const upperedCode = current.code.toUpperCase()
     const response = await upsertProject({ ...current, code: upperedCode })
 
-    if (response) {
+    if (!response) {
+      toaster.danger(language.projectOnSaveError)
+      return
+    }
+
+    const newContext = [...projectContext]
+    const index = newContext.findIndex((x) => x.id === response.id)
+    if (index >= 0) newContext[index] = response
+    else newContext.push(response)
+
+    setProjectContext(newContext)
+    setCurrent(initialState)
+    setIsShown(!isShown)
+  }
+
+  const onDelete = async () => {
+    if (!current.id) {
+      toaster.danger(language.projectOnSaveError)
+      return
+    }
+    const result = await deleteProject(current.id)
+    if (result) {
       const newContext = [...projectContext]
-      const index = newContext.findIndex((x) => x.id === response.id)
-      if (index >= 0) newContext[index] = response
-      else newContext.push(response)
+      const index = newContext.findIndex((x) => x.id === current.id)
+      newContext.splice(index, 1)
 
       setProjectContext(newContext)
       setCurrent(initialState)
       setIsShown(!isShown)
     }
-
-    //TODO: lanzar error
   }
-
-  const onDelete = () => {}
 
   return (
     <Pane>
       <Dialog
         isShown={isShown}
         width='90%'
-        title='Administrador de proyectos'
-        confirmLabel='Guardar'
+        title={language.projectMainTitle}
+        confirmLabel={language.save}
         hasCancel
         onCancel={() => setIsShown(!isShown)}
         onConfirm={() => onSave()}
       >
         {({ close }) => (
           <Pane>
-            <div>
+            <AdminComboBox>
               <Combobox
                 openOnFocus
-                width='100%'
+                width='98%'
                 height={40}
                 items={projectContext.map((p) => `${p.code} - ${p.name}`)}
                 onChange={(selected) => onProjectChange(selected)}
-                placeholder='Seleccione un proyecto'
+                placeholder={language.projectButtonPlaceholder}
               />
-              <IconButton icon={TrashIcon} intent='danger' />
-            </div>
+              <IconButton
+                icon={TrashIcon}
+                intent='danger'
+                height={40}
+                onClick={() => onDelete()}
+              />
+            </AdminComboBox>
             <Alert
               intent='none'
-              title='El codigo del formulario debe ser  unico xq sera utilizado en el nombre de la tabla en la base de datos'
+              title={language.projectAlert}
               marginTop={20}
               marginBottom={20}
             />
 
             <TextInputField
-              label='Codigo del proyecto'
+              label={language.projectCodeLabel}
               required
               value={current?.code}
               onChange={(e: any) =>
                 setCurrent({ ...current, code: e.target.value })
               }
-              validationMessage='El codigo es obligatorio'
+              validationMessage={language.codeIsRequired}
             />
             <TextInputField
-              label='Nombre del proyecto'
+              label={language.projectNameLabel}
               required
               value={current?.name}
               onChange={(e: any) =>
                 setCurrent({ ...current, name: e.target.value })
               }
-              validationMessage='El nombre es obligatorio'
+              validationMessage={language.nameIsRequired}
             />
           </Pane>
         )}
@@ -113,7 +137,7 @@ export default () => {
         intent='success'
         iconBefore={ProjectsIcon}
       >
-        Administrar Proyectos
+        {language.projectTitle}
       </Button>
     </Pane>
   )

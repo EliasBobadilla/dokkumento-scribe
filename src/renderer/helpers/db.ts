@@ -39,3 +39,9 @@ export const upsertFormFields = async (model: FormDto) =>
 
 export const upsertField = async (model: SubmitFormDto) =>
   window.electron.ipc.invoke<FieldTypeDto[]>('upsertField', model)
+
+export const deleteProject = async (id: number) =>
+  window.electron.ipc.invoke<ProjectDto>('deleteProject', id)
+
+export const deleteForm = async (id: number) =>
+  window.electron.ipc.invoke<ProjectDto>('deleteForm', id)

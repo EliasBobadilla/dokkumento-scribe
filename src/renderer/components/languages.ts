@@ -14,6 +14,15 @@ export interface Language {
   formButtonPlaceholder: string
   batchLabelPlaceHolder: string
   emptyTagsMessage: string
+  nameIsRequired: string
+  codeIsRequired: string
+  projectNameLabel: string
+  projectCodeLabel: string
+  projectAlert: string
+  projectTitle: string
+  projectMainTitle: string
+  save: string
+  projectOnSaveError: string
 }
 
 type AvailableLanguages = {
@@ -36,7 +45,16 @@ export const languages: AvailableLanguages = {
     projectButtonPlaceholder: 'Choice a project',
     formButtonPlaceholder: 'Choice a form',
     batchLabelPlaceHolder: 'Batch',
-    emptyTagsMessage: 'Batch can not be empty'
+    emptyTagsMessage: 'Batch can not be empty',
+    nameIsRequired: 'The name is required',
+    codeIsRequired: 'The name is required',
+    projectNameLabel: 'string',
+    projectCodeLabel: 'string',
+    projectAlert: 'string',
+    projectTitle: 'Administrar Proyectos',
+    projectMainTitle: 'string',
+    projectOnSaveError: 'string',
+    save: 'save',
   },
   spanish: {
     unauthorized: 'Por favor, ingresa un usuario y contraseña correctos',
@@ -54,6 +72,16 @@ export const languages: AvailableLanguages = {
     projectButtonPlaceholder: 'Selecciona un proyecto',
     formButtonPlaceholder: 'Selecciona un formulario',
     batchLabelPlaceHolder: 'Lote',
-    emptyTagsMessage: 'Debe ingresar un lote como minimo'
+    emptyTagsMessage: 'Debe ingresar un lote como minimo',
+    nameIsRequired: 'El nombre es obligatorio',
+    codeIsRequired: 'El codigo es obligatorio',
+    projectNameLabel: 'Nombre del proyecto',
+    projectCodeLabel: 'Codigo del proyecto',
+    projectAlert:
+      'El codigo del formulario debe ser unico xq sera utilizado en el nombre de la tabla en la base de datos',
+    projectTitle: 'Administrar Proyectos',
+    projectMainTitle: 'Administrador de proyectos',
+    save: 'Guardar',
+    projectOnSaveError: 'Error al guardar el proyecto',
   },
 }

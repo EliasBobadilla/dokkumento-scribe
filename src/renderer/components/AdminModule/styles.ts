@@ -7,3 +7,8 @@ export const Container = styled.div`
   align-items: center;
   gap: 2em;
 `
+
+export const AdminComboBox = styled.div`
+  display: flex;
+  flex-direction: row;
+`

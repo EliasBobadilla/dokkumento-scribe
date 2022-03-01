@@ -119,3 +119,14 @@ export const upsertProject = async (model: any) => {
 
   return result.length && result[0] ? model : undefined
 }
+
+export const deleteProject = async (id: number) => {
+  const result = await Project.update(
+    { deleted: true },
+    {
+      where: { id },
+    },
+  )
+
+  return result.length && result[0]
+}
