@@ -55,7 +55,4 @@ INSERT INTO [DIG_DEMO_TEST1] ([CreatedBy],[DESC],[FECHA],[UDF1],[UDF2],[UDF3],[T
 INSERT INTO [Projects] ([Code],[Name]) OUTPUT INSERTED.[Id],INSERTED.[Code],INSERTED.[Name],INSERTED.[Deleted] VALUES (@0,@1);
 
 
-select * from DIG_UNO_DEMO
-
-SELECT [Id] AS [id], [ProjectId] AS [projectId], [FormId] AS [formId], [FieldTypeId] AS [fieldTypeId], [Code] AS [code], [Name] AS [name], [Description] AS [description], [MinLength] AS [minLength], [MaxLength] AS [maxLength], [Required] AS [required], [Uppercase] AS [uppercase], [Deleted] AS [deleted] FROM [FormFields] AS [FormField] WHERE [FormField].[ProjectId] = 41 AND [FormField].[FormId] = 12;
-
+select * from dokkumento.dbo.DIG_GRM_DEMO
