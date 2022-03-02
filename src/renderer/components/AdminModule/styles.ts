@@ -24,8 +24,8 @@ export const FieldContainer = styled.div`
   justify-content: left;
   align-items: left;
   gap: 10px;
-  border: #000 1px solid;
+  border: #3366fe 1px solid;
   border-radius: 10px;
-  padding: 10px;
-  margin: 10px 0;
+  padding: 15px;
+  margin: 15px 0;
 `

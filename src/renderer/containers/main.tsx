@@ -16,6 +16,8 @@ import {
 const Main = () => {
   const [selectedProjectId, setSelectedProjectId] = useState(0)
   const [selectedFormId, setSelectedFormId] = useState(0)
+  const [module, setModule] = useState('TYPIST')
+
   const {
     userContext,
     roleContext,
@@ -52,8 +54,9 @@ const Main = () => {
         currentRole={role}
         tags={tags}
         setTags={setTags}
+        setModule={setModule}
       />
-      {role?.code === Roles.TYPIST &&
+      {Roles[module] === Roles.TYPIST &&
         selectedProjectId > 0 &&
         selectedFormId > 0 && (
           <TypistModule
@@ -62,8 +65,8 @@ const Main = () => {
             tags={tags}
           />
         )}
-      {role?.code === Roles.ADMIN && <CoordinatoModule />}
-      {role?.code === Roles.SYS_ADMIN && <AdminModule />}
+      {Roles[module] === Roles.ADMIN && <CoordinatoModule />}
+      {Roles[module] === Roles.SYS_ADMIN && <AdminModule />}
     </>
   )
 }

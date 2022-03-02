@@ -21,7 +21,6 @@ export interface FormFieldDto {
   fieldTypeId: number
   code: string
   name: string
-  description: string
   minLength: number
   maxLength: number
   uppercase: boolean

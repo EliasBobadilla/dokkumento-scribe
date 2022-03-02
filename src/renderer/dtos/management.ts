@@ -19,7 +19,7 @@ export interface UserRequestDto {
 }
 
 export enum Roles {
-  TYPIST = 'TYPIST',
-  ADMIN = 'ADMIN',
-  SYS_ADMIN = 'SYS_ADMIN',
+  TYPIST = 'Digitador',
+  ADMIN = 'Coordinador',
+  SYS_ADMIN = 'Administrador',
 }

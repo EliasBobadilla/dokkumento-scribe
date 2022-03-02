@@ -35,6 +35,12 @@ select * from Forms
 select * from FormFields
 
 
+drop table Projects
+drop table Forms
+drop table FormFields
+
+
+select * from dokkumento.dbo.DIG_GRM_FELIZ
 truncate table FormFields
 delete from Projects
 delete from Forms

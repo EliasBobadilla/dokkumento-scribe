@@ -34,7 +34,7 @@ CREATE TABLE FieldTypes(
 
 CREATE TABLE Projects(
 	[Id] INTEGER IDENTITY(1,1) PRIMARY KEY,
-	[Code] VARCHAR(15) UNIQUE not null,
+	[Code] VARCHAR(15) not null,
 	[Name] VARCHAR(100) not null,
 	[CreatedOn] DATETIME DEFAULT GETDATE(),
 	[UpdatedOn] DATETIME DEFAULT GETDATE(),
@@ -44,7 +44,7 @@ CREATE TABLE Projects(
 CREATE TABLE Forms(
 	[Id] INTEGER IDENTITY(1,1) PRIMARY KEY,
 	[ProjectId] INTEGER,
-	[Code] VARCHAR(15) UNIQUE not null,
+	[Code] VARCHAR(15) not null,
 	[Name] VARCHAR(50) not null,
 	[Description] VARCHAR(500) null,
 	[CreatedOn] DATETIME DEFAULT GETDATE(),
@@ -58,16 +58,17 @@ CREATE TABLE FormFields(
 	[ProjectId] INTEGER,
 	[FormId] INTEGER,
 	[FieldTypeId] INTEGER,
-	[Code] VARCHAR(15) UNIQUE not null,
+	[Code] VARCHAR(15) not null,
 	[Name] VARCHAR(50) not null,
 	[Description] VARCHAR(500) null,
 	[MinLength] INTEGER DEFAULT 0,
 	[MaxLength] INTEGER DEFAULT 0,
 	[Required] BIT DEFAULT 0,
 	[Default] VARCHAR(250) null,
+	[Uppercase] BIT DEFAULT 0,
 	[CreatedOn] DATETIME DEFAULT GETDATE(),
 	[UpdatedOn] DATETIME DEFAULT GETDATE(),
-	[Deleted] BIT DEFAULT 0,
+	[Deleted] BIT DEFAULT 0,	
 	FOREIGN KEY (FormId) REFERENCES [Forms](Id),
 	FOREIGN KEY (FieldTypeId) REFERENCES [FieldTypes](Id),
 	FOREIGN KEY (ProjectId) REFERENCES [Projects](Id)

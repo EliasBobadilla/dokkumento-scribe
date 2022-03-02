@@ -127,7 +127,7 @@ export const upsertForm = async (model: any) => {
     })
 
     const table = buildTable(project[0].code, code)
-    const query = `CREATE TABLE ${table} ([Id] INTEGER IDENTITY(1,1) PRIMARY KEY, [CreatedBy] INTEGER, [CreatedOn] DATETIME DEFAULT GETDATE(), FOREIGN KEY (CreatedBy) REFERENCES [Users](Id))`
+    const query = `CREATE TABLE ${table} ([Id] INTEGER IDENTITY(1,1) PRIMARY KEY, [CreatedBy] INTEGER, [Tags] VARCHAR(500) null, [CreatedOn] DATETIME DEFAULT GETDATE(), FOREIGN KEY (CreatedBy) REFERENCES [Users](Id))`
     await rawInsert(query)
     return inserted.get({ plain: true })
   }
@@ -181,20 +181,20 @@ export const upsertFormFields = async (model: any[]) => {
 
   const table = buildTable(project[0].code, form[0].code)
 
-  try {
-    const tasks: any[] = []
+  const tasks: any[] = []
 
-    model.forEach(async (element) => {
-      const code = buildCode(element.code)
+  model.forEach(async (element) => {
+    const code = buildCode(element.code)
+    try {
       if (!element.id) {
         const query = `ALTER TABLE ${table} ADD [${code}] VARCHAR(500) NULL`
+        tasks.push(rawInsert(query))
         tasks.push(
           FormField.create({
             ...element,
             code,
           }),
         )
-        tasks.push(rawInsert(query))
       } else {
         tasks.push(
           FormField.update(
@@ -205,18 +205,17 @@ export const upsertFormFields = async (model: any[]) => {
           ),
         )
       }
-    })
+    } catch (error) {
+      console.log(`+++ Field Error: ${code} ==>`, error)
+    }
+  })
 
-    await Promise.all(tasks)
-
-    return await FormField.findAll({
-      raw: true,
-      where: {
-        projectId: model[0].projectId,
-        formId: model[0].formId,
-      },
-    })
-  } catch {
-    return false
-  }
+  await Promise.all(tasks)
+  return FormField.findAll({
+    raw: true,
+    where: {
+      projectId: model[0].projectId,
+      formId: model[0].formId,
+    },
+  })
 }

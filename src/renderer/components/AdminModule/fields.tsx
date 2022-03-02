@@ -64,6 +64,8 @@ export default () => {
       formId: selectedForm.id,
       projectId: selectedForm.projectId,
     }))
+
+    console.log('model =>', model)
     const response = await upsertFormFields(model)
 
     debugger
@@ -87,9 +89,9 @@ export default () => {
   }
 
   const onFormFieldChange = (
+    index: number,
     field: string,
     value: string | boolean | number,
-    index: number,
   ) => {
     const list = [...selectedFields]
     list[index][field] = value
@@ -159,14 +161,17 @@ export default () => {
             />
             {selectedFields.map((field, index) => {
               return (
-                <FieldContainer key={index}>
+                <FieldContainer key={`${field.id}_${index}`}>
                   <div style={{ width: '200px' }}>
                     <Select
                       value={field.fieldTypeId}
                       onChange={(e) =>
-                        onFormFieldChange('fieldTypeId', +e.target.value, index)
+                        onFormFieldChange(index, 'fieldTypeId', +e.target.value)
                       }
                     >
+                      <option key='0' value={0}>
+                        {language.formManager.placeholder}
+                      </option>
                       {fieldTypeContext.map((x) => (
                         <option
                           key={x.id}
@@ -181,14 +186,14 @@ export default () => {
                     value={field.code}
                     placeholder={language.formCreator.code}
                     onChange={(e) =>
-                      onFormFieldChange('code', e.target.value, index)
+                      onFormFieldChange(index, 'code', e.target.value)
                     }
                   />
                   <TextInput
                     value={field.name}
                     placeholder={language.formCreator.name}
                     onChange={(e) =>
-                      onFormFieldChange('name', e.target.value, index)
+                      onFormFieldChange(index, 'name', e.target.value)
                     }
                   />
                   <TextInput
@@ -197,7 +202,7 @@ export default () => {
                     value={field.minLength}
                     placeholder={language.formCreator.minLen}
                     onChange={(e) =>
-                      onFormFieldChange('minLength', +e.target.value, index)
+                      onFormFieldChange(index, 'minLength', +e.target.value)
                     }
                   />
                   <TextInput
@@ -206,7 +211,7 @@ export default () => {
                     value={field.maxLength}
                     placeholder={language.formCreator.maxLen}
                     onChange={(e) =>
-                      onFormFieldChange('maxLength', +e.target.value, index)
+                      onFormFieldChange(index, 'maxLength', +e.target.value)
                     }
                   />
                   <Text>Requerido</Text>
@@ -215,7 +220,7 @@ export default () => {
                     checked={field.required}
                     placeholder={language.formCreator.required}
                     onChange={(e) =>
-                      onFormFieldChange('required', e.target.checked, index)
+                      onFormFieldChange(index, 'required', e.target.checked)
                     }
                   />
                   <Text>Mayusculas</Text>
@@ -224,7 +229,7 @@ export default () => {
                     checked={field.uppercase}
                     placeholder={language.formCreator.uppercase}
                     onChange={(e) =>
-                      onFormFieldChange('uppercase', e.target.checked, index)
+                      onFormFieldChange(index, 'uppercase', e.target.checked)
                     }
                   />
                   <IconButton

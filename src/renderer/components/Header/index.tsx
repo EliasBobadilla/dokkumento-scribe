@@ -8,11 +8,12 @@ import {
   ManualIcon,
   Avatar,
   SelectMenuItem,
+  SelectMenu,
 } from 'evergreen-ui'
 import { FormDto } from 'renderer/dtos/documents'
 import { useAppContext } from '../../context'
 import { UserSection, Container, Section } from './styles'
-import { RoleDto } from '../../dtos/management'
+import { RoleDto, Roles } from '../../dtos/management'
 
 export interface Props {
   selectedProjectId: number
@@ -22,6 +23,7 @@ export interface Props {
   currentRole?: RoleDto
   tags: string[]
   setTags: (value: string[]) => void
+  setModule: (value: string) => void
 }
 
 const Header = ({
@@ -32,6 +34,7 @@ const Header = ({
   currentRole,
   tags,
   setTags,
+  setModule,
 }: Props) => {
   const { language, userContext, projectContext, formContext } = useAppContext()
 
@@ -100,15 +103,27 @@ const Header = ({
           }}
         />
       </Section>
+
       <UserSection>
         <strong>{`${userContext.firstname} ${userContext.lastname}`}</strong>
         {currentRole?.name}
       </UserSection>
-      <Avatar
-        style={{ position: 'absolute', right: '1em' }}
-        name={`${userContext.firstname} ${userContext.lastname}`}
-        size={40}
-      />
+      <SelectMenu
+        height={100}
+        options={Object.entries(Roles).map((r) => ({
+          label: r[1],
+          value: r[0],
+        }))}
+        hasFilter={false}
+        hasTitle={false}
+        onSelect={(item) => setModule(item.value.toString())}
+      >
+        <Avatar
+          style={{ position: 'absolute', right: '1em', cursor: 'pointer' }}
+          name={`${userContext.firstname} ${userContext.lastname}`}
+          size={40}
+        />
+      </SelectMenu>
     </Container>
   )
 }
