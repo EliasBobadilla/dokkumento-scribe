@@ -13,25 +13,15 @@ import {
 } from 'evergreen-ui'
 import { FormDto, ProjectDto } from 'renderer/dtos/documents'
 import { useAppContext } from '../../context'
-import {
-  upsertForm,
-  deleteForm,
-  getForms,
-  getFormFields,
-} from '../../helpers/db'
+import { upsertForm, deleteForm } from '../../helpers/db'
 import { FormDataSection } from './styles'
 
 const projectInitialState = { code: '', name: '' }
 const formInitialState = { projectId: 0, code: '', name: '' }
 
 export default () => {
-  const {
-    language,
-    projectContext,
-    setFormContext,
-    formContext,
-    setFormFieldContext,
-  } = useAppContext()
+  const { language, projectContext, setFormContext, formContext } =
+    useAppContext()
 
   const [isShown, setIsShown] = useState(false)
   const [selectedProject, setSelectedProject] = useState<ProjectDto>(
@@ -43,12 +33,12 @@ export default () => {
 
   const onSave = async () => {
     if (!selectedProject?.id) {
-      toaster.danger(language.formManager.saveError)
+      toaster.danger(language.formCreator.saveError)
       return
     }
 
     if (!selectedForm?.code || !selectedForm?.name) {
-      toaster.danger(language.formManager.saveError)
+      toaster.danger(language.formCreator.saveError)
       return
     }
 
@@ -86,13 +76,7 @@ export default () => {
     setSelectedProject(
       projectContext.find((x) => x.id === id) || { ...projectInitialState },
     )
-    const [forms, formFields] = await Promise.all([
-      getForms(id),
-      getFormFields(id),
-    ])
-    setFormContext(forms)
     setSelectedForm({ ...formInitialState })
-    setFormFieldContext(formFields)
   }
 
   return (
@@ -100,8 +84,8 @@ export default () => {
       <Dialog
         isShown={isShown}
         width='95%'
-        title={language.formManager.title}
-        confirmLabel={language.formManager.save}
+        title={language.formCreator.title}
+        confirmLabel={language.formCreator.save}
         hasCancel
         onCancel={() => setIsShown(!isShown)}
         onConfirm={() => onSave()}
@@ -114,7 +98,7 @@ export default () => {
               onChange={(e) => onProjectChange(+e.target.value)}
             >
               <option key='0' value={0}>
-                {language.formManager.placeholder}
+                {language.formCreator.placeholder1}
               </option>
               {projectContext.map((x) => (
                 <option
@@ -125,7 +109,7 @@ export default () => {
             </Select>
             <Alert
               intent='none'
-              title={language.formManager.alert}
+              title={language.formCreator.alert}
               marginTop={20}
               marginBottom={20}
             />
@@ -142,7 +126,7 @@ export default () => {
                 }
               >
                 <option key='0' value={0}>
-                  {language.formManager.placeholder}
+                  {language.formCreator.placeholder2}
                 </option>
                 {formContext.map((x) => (
                   <option
@@ -154,7 +138,7 @@ export default () => {
               <TextInput
                 height={40}
                 value={selectedForm?.code}
-                placeholder={language.formManager.code}
+                placeholder={language.formCreator.code}
                 onChange={(e) =>
                   setSelectedForm({
                     ...selectedForm,
@@ -165,7 +149,7 @@ export default () => {
               <TextInput
                 height={40}
                 value={selectedForm?.name}
-                placeholder={language.formManager.name}
+                placeholder={language.formCreator.name}
                 onChange={(e) =>
                   setSelectedForm({
                     ...selectedForm,
@@ -190,7 +174,7 @@ export default () => {
         intent='success'
         iconBefore={ProjectsIcon}
       >
-        {language.formManager.title}
+        {language.formCreator.title}
       </Button>
     </Pane>
   )

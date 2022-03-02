@@ -1,7 +1,8 @@
 interface ManagementScreen {
   title: string
   alert: string
-  placeholder: string
+  placeholder1: string
+  placeholder2?: string
   code: string
   name: string
   save: string
@@ -9,15 +10,20 @@ interface ManagementScreen {
   saveError: string
 }
 
-interface FormCreator {
-  fieldType: string
+interface FieldManagementScreen {
+  title: string
+  alert: string
+  placeholder1: string
+  placeholder2: string
   code: string
   name: string
-  description: string
   minLen: string
   maxLen: string
   required: string
   uppercase: string
+  save: string
+  cancel: string
+  saveError: string
 }
 
 export interface Language {
@@ -47,9 +53,9 @@ export interface Language {
   projectOnSaveError: string
   formMainTitle: string
   formTitle: string
-  formCreator: FormCreator
-  projectManager: ManagementScreen
-  formManager: ManagementScreen
+  projectCreator: ManagementScreen
+  formCreator: ManagementScreen
+  fieldCreator: FieldManagementScreen
 }
 
 type AvailableLanguages = {
@@ -84,32 +90,38 @@ export const languages: AvailableLanguages = {
     save: 'save',
     formMainTitle: 'string',
     formTitle: 'string',
-    formCreator: {
-      fieldType: 'string',
-      code: 'string',
-      name: 'string',
-      description: 'string',
-      minLen: 'string',
-      maxLen: 'string',
-      required: 'string',
-      uppercase: 'string',
-    },
-    projectManager: {
+    projectCreator: {
       title: 'string',
       alert: 'string',
-      placeholder: 'string',
+      placeholder1: 'string',
       code: 'string',
       name: 'string',
       save: 'string',
       cancel: 'string',
       saveError: 'string',
     },
-    formManager: {
+    formCreator: {
       title: 'string',
       alert: 'string',
-      placeholder: 'string',
+      placeholder1: 'string',
+      placeholder2: 'string',
       code: 'string',
       name: 'string',
+      save: 'string',
+      cancel: 'string',
+      saveError: 'string',
+    },
+    fieldCreator: {
+      title: 'string',
+      alert: 'string',
+      placeholder1: 'string',
+      placeholder2: 'string',
+      code: 'string',
+      name: 'string',
+      minLen: 'string',
+      maxLen: 'string',
+      required: 'string',
+      uppercase: 'string',
       save: 'string',
       cancel: 'string',
       saveError: 'string',
@@ -144,37 +156,44 @@ export const languages: AvailableLanguages = {
     formMainTitle: 'Administrador de Formuarios',
     save: 'Guardar',
     projectOnSaveError: 'Error al guardar el proyecto',
-    formCreator: {
-      fieldType: 'Tipo',
-      code: 'Codigo',
-      name: 'Nombre',
-      description: 'Descripcion',
-      minLen: 'Min.',
-      maxLen: 'Max.',
-      required: 'Requerido?',
-      uppercase: 'Mayusculas?',
-    },
-    projectManager: {
-      title: 'Administracion de Proyectos',
+    projectCreator: {
+      title: 'Administración de Proyectos',
       alert:
-        'El codigo de proyecto debe ser unico. Para crear un nuevo proyecto escoga "Nuevo proyecto" y llene los demas datos. Si elimina un proyecto, los datos no pueden ser recuperados',
-      placeholder: 'Nuevo proyecto',
+        'Para crear un nuevo proyecto elija "Nuevo proyecto" y llene los demás datos. El código de proyecto debe ser único. Si elimina un proyecto, los datos guardados no podrán ser recuperados.',
+      placeholder1: 'Nuevo proyecto',
       code: 'Codigo del proyecto',
       name: 'Nombre del proyecto',
       save: 'Guardar',
       cancel: 'Cancelar',
       saveError: 'Error al guardar el proyecto, intente nuevamente',
     },
-    formManager: {
-      title: 'Administracion de Formularios',
+    formCreator: {
+      title: 'Administración de Formularios',
       alert:
-        'El codigo de formulario debe ser unico. Para crear un nuevo formulario escoga "Nuevo formulario" y llene los demas datos. Si elimina un formulario, los datos no pueden ser recuperados',
-      placeholder: 'Nuevo formulario',
+        'Para crear un nuevo formulario escoja "Nuevo formulario" y llene los demás datos. El código de formulario debe ser único. Si elimina un formulario, los datos guardados no podrán ser recuperados.',
+      placeholder1: 'Selecciona un proyecto',
+      placeholder2: 'Nuevo formulario',
       code: 'Codigo del formulario',
       name: 'Nombre del formulario',
       save: 'Guardar',
       cancel: 'Cancelar',
       saveError: 'Error al guardar el formulario, intente nuevamente',
+    },
+    fieldCreator: {
+      title: 'Administración de campos',
+      alert:
+        'Para crear o modificar campos de un formulario escoja un formulario y llene los demás datos. El código del campo debe ser único. Si elimina un campo, los datos del campo no podrán ser recuperados.',
+      placeholder1: 'Selecciona un formulario',
+      placeholder2: 'Selecciona un tipo',
+      code: 'Código',
+      name: 'Nombre',
+      minLen: 'Min',
+      maxLen: 'Max',
+      required: 'Requerido',
+      uppercase: 'Mayúsculas',
+      save: 'Guardar',
+      cancel: 'Cancelar',
+      saveError: 'Error al guardar los campos, intente nuevamente',
     },
   },
 }

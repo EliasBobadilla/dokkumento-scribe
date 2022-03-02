@@ -40,10 +40,17 @@ const Header = ({
 
   const [forms, setForms] = useState<FormDto[]>([])
 
-  const projectList: SelectMenuItem[] = projectContext.map((p) => ({
-    label: p.name,
-    value: p.id!,
-  }))
+  const projectList: SelectMenuItem[] = [
+    {
+      label: language.projectButtonPlaceholder,
+      value: 0,
+    },
+  ].concat(
+    projectContext.map((p) => ({
+      label: p.name,
+      value: p.id!,
+    })),
+  )
 
   const formList: SelectMenuItem[] = forms.map((p) => ({
     label: p.name,

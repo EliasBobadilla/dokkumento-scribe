@@ -51,6 +51,11 @@ export const getFormFields = async () =>
     where: {
       deleted: false,
     },
+    order: [
+      ['projectId', 'DESC'],
+      ['formId', 'DESC'],
+      ['order', 'DESC'],
+    ],
   })
 
 export const saveForm = async (model: any) => {

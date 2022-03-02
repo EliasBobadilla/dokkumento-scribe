@@ -18,6 +18,8 @@ export default class FormField extends Model<
 
   declare fieldTypeId: number
 
+  declare order: number
+
   declare code: string
 
   declare name: string
@@ -57,6 +59,11 @@ FormField.init(
       type: DataTypes.INTEGER,
       allowNull: false,
       field: 'FieldTypeId',
+    },
+    order: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      field: 'Order',
     },
     code: {
       type: DataTypes.STRING,

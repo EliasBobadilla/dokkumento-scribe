@@ -23,7 +23,7 @@ export const validateFormData = (
 
   if (field.required && !rule.code.includes('DATE')) {
     const len = value.length
-    isValidRequiredAndLen = len > field.minLength && len < field.maxLength
+    isValidRequiredAndLen = len >= field.minLength && len <= field.maxLength
   }
 
   return isValidRegex && isValidRequiredAndLen

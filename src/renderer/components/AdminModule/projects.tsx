@@ -28,7 +28,7 @@ export default () => {
 
   const onSave = async () => {
     if (!selectedProject?.code || !selectedProject?.name) {
-      toaster.danger(language.projectManager.saveError)
+      toaster.danger(language.projectCreator.saveError)
       return
     }
 
@@ -63,8 +63,8 @@ export default () => {
       <Dialog
         isShown={isShown}
         width='95%'
-        title={language.projectManager.title}
-        confirmLabel={language.projectManager.save}
+        title={language.projectCreator.title}
+        confirmLabel={language.projectCreator.save}
         hasCancel
         onCancel={() => setIsShown(!isShown)}
         onConfirm={() => onSave()}
@@ -73,7 +73,7 @@ export default () => {
           <Pane>
             <Alert
               intent='none'
-              title={language.projectManager.alert}
+              title={language.projectCreator.alert}
               marginTop={20}
               marginBottom={20}
             />
@@ -90,7 +90,7 @@ export default () => {
                 }
               >
                 <option key='0' value={0}>
-                  {language.projectManager.placeholder}
+                  {language.projectCreator.placeholder1}
                 </option>
                 {projectContext.map((x) => (
                   <option
@@ -102,7 +102,7 @@ export default () => {
               <TextInput
                 height={40}
                 value={selectedProject?.code}
-                placeholder={language.projectManager.code}
+                placeholder={language.projectCreator.code}
                 onChange={(e) =>
                   setSelectedProject({
                     ...selectedProject,
@@ -113,7 +113,7 @@ export default () => {
               <TextInput
                 height={40}
                 value={selectedProject?.name}
-                placeholder={language.projectManager.name}
+                placeholder={language.projectCreator.name}
                 onChange={(e) =>
                   setSelectedProject({
                     ...selectedProject,
@@ -138,7 +138,7 @@ export default () => {
         intent='success'
         iconBefore={ProjectsIcon}
       >
-        {language.projectManager.title}
+        {language.projectCreator.title}
       </Button>
     </Pane>
   )

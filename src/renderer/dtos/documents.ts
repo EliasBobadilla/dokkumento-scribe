@@ -19,6 +19,7 @@ export interface FormFieldDto {
   projectId: number
   formId: number
   fieldTypeId: number
+  order: number
   code: string
   name: string
   minLength: number

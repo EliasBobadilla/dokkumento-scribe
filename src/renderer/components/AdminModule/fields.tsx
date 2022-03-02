@@ -50,25 +50,25 @@ export default () => {
 
   const onSave = async () => {
     if (!selectedForm?.id) {
-      toaster.danger(language.formManager.saveError)
+      toaster.danger(language.fieldCreator.saveError)
       return
     }
 
     if (!selectedForm?.code || !selectedForm?.name) {
-      toaster.danger(language.formManager.saveError)
+      toaster.danger(language.fieldCreator.saveError)
       return
     }
 
-    const model = selectedFields.map((m) => ({
+    const model: FormFieldDto[] = selectedFields.map((m, i) => ({
       ...m,
-      formId: selectedForm.id,
-      projectId: selectedForm.projectId,
+      order: i + 1,
+      formId: selectedForm.id!,
+      projectId: selectedForm.projectId!,
     }))
 
     console.log('model =>', model)
     const response = await upsertFormFields(model)
 
-    debugger
     const newContext = [...formFieldContext]
     response.forEach((element) => {
       const index = newContext.findIndex((x) => x.id === element.id)
@@ -123,8 +123,8 @@ export default () => {
       <Dialog
         isShown={isShown}
         width='95%'
-        title={language.formManager.title}
-        confirmLabel={language.formManager.save}
+        title={language.fieldCreator.title}
+        confirmLabel={language.fieldCreator.save}
         hasCancel
         onCancel={() => setIsShown(!isShown)}
         onConfirm={() => onSave()}
@@ -138,7 +138,7 @@ export default () => {
                 onChange={(e) => onFormChange(+e.target.value)}
               >
                 <option key='0' value={0}>
-                  {language.formManager.placeholder}
+                  {language.fieldCreator.placeholder1}
                 </option>
                 {buildFormLabel.map((x) => (
                   <option key={x.value} value={x.value}>
@@ -155,7 +155,7 @@ export default () => {
             </FormDataSection>
             <Alert
               intent='none'
-              title={language.formManager.alert}
+              title={language.fieldCreator.alert}
               marginTop={20}
               marginBottom={20}
             />
@@ -170,7 +170,7 @@ export default () => {
                       }
                     >
                       <option key='0' value={0}>
-                        {language.formManager.placeholder}
+                        {language.fieldCreator.placeholder2}
                       </option>
                       {fieldTypeContext.map((x) => (
                         <option
@@ -184,14 +184,14 @@ export default () => {
                     width={100}
                     disabled={field?.id > 0}
                     value={field.code}
-                    placeholder={language.formCreator.code}
+                    placeholder={language.fieldCreator.code}
                     onChange={(e) =>
                       onFormFieldChange(index, 'code', e.target.value)
                     }
                   />
                   <TextInput
                     value={field.name}
-                    placeholder={language.formCreator.name}
+                    placeholder={language.fieldCreator.name}
                     onChange={(e) =>
                       onFormFieldChange(index, 'name', e.target.value)
                     }
@@ -200,7 +200,7 @@ export default () => {
                     width={75}
                     type='number'
                     value={field.minLength}
-                    placeholder={language.formCreator.minLen}
+                    placeholder={language.fieldCreator.minLen}
                     onChange={(e) =>
                       onFormFieldChange(index, 'minLength', +e.target.value)
                     }
@@ -209,7 +209,7 @@ export default () => {
                     width={75}
                     type='number'
                     value={field.maxLength}
-                    placeholder={language.formCreator.maxLen}
+                    placeholder={language.fieldCreator.maxLen}
                     onChange={(e) =>
                       onFormFieldChange(index, 'maxLength', +e.target.value)
                     }
@@ -218,7 +218,7 @@ export default () => {
                   <Switch
                     height={20}
                     checked={field.required}
-                    placeholder={language.formCreator.required}
+                    placeholder={language.fieldCreator.required}
                     onChange={(e) =>
                       onFormFieldChange(index, 'required', e.target.checked)
                     }
@@ -227,7 +227,7 @@ export default () => {
                   <Switch
                     height={20}
                     checked={field.uppercase}
-                    placeholder={language.formCreator.uppercase}
+                    placeholder={language.fieldCreator.uppercase}
                     onChange={(e) =>
                       onFormFieldChange(index, 'uppercase', e.target.checked)
                     }
@@ -251,7 +251,7 @@ export default () => {
         intent='success'
         iconBefore={ProjectsIcon}
       >
-        {language.formManager.title}
+        {language.fieldCreator.title}
       </Button>
     </Pane>
   )

@@ -58,6 +58,7 @@ CREATE TABLE FormFields(
 	[ProjectId] INTEGER,
 	[FormId] INTEGER,
 	[FieldTypeId] INTEGER,
+	[Order] INTEGER not null,
 	[Code] VARCHAR(15) not null,
 	[Name] VARCHAR(50) not null,
 	[Description] VARCHAR(500) null,
@@ -99,5 +100,5 @@ create table DIG_DEMO_TEST1 (
 	FOREIGN KEY (CreatedBy) REFERENCES [Users](Id),
 )
 
-
+ALTER TABLE DIG_GRM_FAMI ADD [Tags] VARCHAR(500) NULL
 
