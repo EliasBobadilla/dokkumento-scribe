@@ -139,32 +139,34 @@ const TypistModule = ({ projectId, formId, tags }: Props) => {
   return (
     <Container>
       <FormSection>
-        {formFields.map((field, index) => {
-          const fieldType = fieldTypeContext.find(
-            (t) => t.id === field.fieldTypeId,
-          )
-          return (
-            <TextInputField
-              ref={(el: HTMLInputElement) => (inputRef.current[index] = el)}
-              style={{ fontSize: '18px', width: '100%' }}
-              inputHeight={48}
-              key={field.code}
-              name={field.code}
-              label={field.name}
-              required={field.required}
-              hint={field?.description}
-              value={data[field.code]}
-              onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                handleData(field.code, e.target.value, field, fieldType)
-              }
-              validationMessage={
-                isInvalidValid[field.code]
-                  ? fieldType?.validationMessage
-                  : undefined
-              }
-            />
-          )
-        })}
+        {formFields
+          .sort((a, b) => a.order - b.order)
+          .map((field, index) => {
+            const fieldType = fieldTypeContext.find(
+              (t) => t.id === field.fieldTypeId,
+            )
+            return (
+              <TextInputField
+                ref={(el: HTMLInputElement) => (inputRef.current[index] = el)}
+                style={{ fontSize: '18px', width: '100%' }}
+                inputHeight={48}
+                key={field.code}
+                name={field.code}
+                label={field.name}
+                required={field.required}
+                hint={field?.description}
+                value={data[field.code]}
+                onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                  handleData(field.code, e.target.value, field, fieldType)
+                }
+                validationMessage={
+                  isInvalidValid[field.code]
+                    ? fieldType?.validationMessage
+                    : undefined
+                }
+              />
+            )
+          })}
       </FormSection>
       <ButtonSection>
         <Button
