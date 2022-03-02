@@ -64,6 +64,7 @@ CREATE TABLE FormFields(
 	[MinLength] INTEGER DEFAULT 0,
 	[MaxLength] INTEGER DEFAULT 0,
 	[Required] BIT DEFAULT 0,
+	[Default] VARCHAR(250) null,
 	[CreatedOn] DATETIME DEFAULT GETDATE(),
 	[UpdatedOn] DATETIME DEFAULT GETDATE(),
 	[Deleted] BIT DEFAULT 0,
@@ -78,6 +79,8 @@ CREATE TABLE Logs(
 	[Stack] VARCHAR(100) not null,
 	[CreatedOn] DATETIME DEFAULT GETDATE()
 )
+
+
 
 /** -- FORM TABLE DEMO -- **/
 create table DIG_DEMO_TEST1 (

@@ -11,79 +11,46 @@ import {
   TextInput,
   Switch,
   Select,
-  PlusIcon,
-  Text,
 } from 'evergreen-ui'
-import { FormDto, FormFieldDto } from 'renderer/dtos/documents'
+import { FormDto, FormFieldDto, ProjectDto } from 'renderer/dtos/documents'
 import { useAppContext } from '../../context'
-import { upsertFormFields } from '../../helpers/db'
-import { FieldContainer, FormDataSection } from './styles'
+import {
+  upsertForm,
+  getForms,
+  getFormFields,
+  upsertFormFields,
+} from '../../helpers/db'
+import { FormDataSection, FieldContainer } from './styles'
 
-const formInitialState = { projectId: 0, code: '', name: '' }
-const formFieldInitialState = {
-  projectId: 0,
-  formId: 0,
-  fieldTypeId: 0,
-  code: '',
-  name: '',
-  description: '',
-  minLength: 0,
-  maxLength: 0,
-  uppercase: true,
-  required: true,
-}
 export default () => {
+  const [isShown, setIsShown] = useState(false)
+  const [selectedProject, setSelectedProject] = useState<ProjectDto>()
+  const [selectedForm, setSelectedForm] = useState<FormDto>()
+  const [selectedFields, setSelectedFields] = useState<FormFieldDto[]>([])
+
   const {
     language,
     projectContext,
     formContext,
+    setFormContext,
     formFieldContext,
-    fieldTypeContext,
     setFormFieldContext,
+    fieldTypeContext,
   } = useAppContext()
 
-  const [isShown, setIsShown] = useState(false)
-  const [selectedForm, setSelectedForm] = useState<FormDto>({
-    ...formInitialState,
-  })
-  const [selectedFields, setSelectedFields] = useState<FormFieldDto[]>([])
-
-  const onSave = async () => {
-    if (!selectedForm?.id) {
-      toaster.danger(language.formManager.saveError)
-      return
-    }
-
-    if (!selectedForm?.code || !selectedForm?.name) {
-      toaster.danger(language.formManager.saveError)
-      return
-    }
-
-    const model = selectedFields.map((m) => ({
-      ...m,
-      formId: selectedForm.id,
-      projectId: selectedForm.projectId,
-    }))
-    const response = await upsertFormFields(model)
-
-    debugger
-    const newContext = [...formFieldContext]
-    response.forEach((element) => {
-      const index = newContext.findIndex((x) => x.id === element.id)
-      if (index >= 0) newContext[index] = element
-      else newContext.push(element)
-    })
-    setFormFieldContext(newContext)
-    setSelectedForm({ ...formInitialState })
-    setSelectedFields([])
-    setIsShown(!isShown)
+  const onProjectChange = async (id: number) => {
+    setSelectedProject(projectContext.find((x) => x.id === id))
+    const [forms, formFields] = await Promise.all([
+      getForms(id),
+      getFormFields(id),
+    ])
+    setFormContext(forms)
+    setFormFieldContext(formFields)
   }
 
-  const onFormChange = async (id: number) => {
-    setSelectedForm(
-      formContext.find((x) => x.id === id) || { ...formInitialState },
-    )
+  const onFormChange = (id: number) => {
     setSelectedFields(formFieldContext.filter((x) => x.formId === id))
+    setSelectedForm(formContext.find((x) => x.id === id))
   }
 
   const onFormFieldChange = (
@@ -96,33 +63,46 @@ export default () => {
     setSelectedFields(list)
   }
 
-  const removeField = (i: number) => {
+  const onSave = async () => {
+    if (!selectedProject || !selectedForm) {
+      toaster.danger(language.projectOnSaveError)
+      return
+    }
+
+    const response = await upsertForm({
+      project: selectedProject,
+      form: selectedForm,
+      fields: selectedFields,
+    })
+
+    debugger
+
+    console.log(response)
+    /*
+    const newContext = [...formContext]
+    const index = newContext.findIndex((x) => x.id === response.id)
+    if (index >= 0) newContext[index] = response
+    else newContext.push(response)
+
+    setFormContext(newContext)
+    setSelectedForm(initialState)
+    setIsShown(!isShown)
+    */
+  }
+
+  const newFields = (i: number) => {
     const list = [...selectedFields]
     list.splice(i, 1)
     setSelectedFields(list)
   }
-
-  const addField = () => {
-    const list = [...selectedFields]
-    list.push({ ...formFieldInitialState })
-    setSelectedFields(list)
-  }
-
-  const buildFormLabel = formContext.map((x) => {
-    const p = projectContext.find((y) => y.id === x.projectId)
-    return {
-      label: `${p.code} - ${p?.name} / ${x.code} - ${x.name}`,
-      value: x.id,
-    }
-  })
 
   return (
     <Pane>
       <Dialog
         isShown={isShown}
         width='95%'
-        title={language.formManager.title}
-        confirmLabel={language.formManager.save}
+        title={language.formMainTitle}
+        confirmLabel={language.save}
         hasCancel
         onCancel={() => setIsShown(!isShown)}
         onConfirm={() => onSave()}
@@ -131,35 +111,57 @@ export default () => {
           <Pane>
             <FormDataSection>
               <Select
-                height={40}
-                width='98%'
-                onChange={(e) => onFormChange(+e.target.value)}
+                value={selectedForm?.projectId}
+                placeholder='Selecciona un proyecto'
+                onChange={(e) => onProjectChange(+e.target.value)}
               >
-                <option key='0' value={0}>
-                  {language.formManager.placeholder}
-                </option>
-                {buildFormLabel.map((x) => (
-                  <option key={x.value} value={x.value}>
-                    {x.label}
-                  </option>
+                {projectContext.map((x) => (
+                  <option value={x.id}>{`${x.code} - ${x.name}`}</option>
                 ))}
               </Select>
-              <IconButton
-                icon={PlusIcon}
-                intent='success'
-                height={40}
-                onClick={() => addField()}
+
+              <Select
+                value={selectedForm?.id}
+                placeholder='Selecciona un formulario'
+                onChange={(e) => onFormChange(+e.target.value)}
+              >
+                {formContext.map((x) => (
+                  <option value={x.id}>{`${x.code} - ${x.name}`}</option>
+                ))}
+              </Select>
+              <input type='text' name='format' value='' />
+              <TextInput
+                required
+                value={selectedForm?.code}
+                placeholder={language.formCreator.code}
+                onChange={(e) =>
+                  setSelectedForm({
+                    ...selectedForm,
+                    code: e.target.value,
+                  } as FormDto)
+                }
+              />
+              <TextInput
+                required
+                value={selectedForm?.name}
+                placeholder={language.formCreator.code}
+                onChange={(e) =>
+                  setSelectedForm({
+                    ...selectedForm,
+                    name: e.target.value,
+                  } as FormDto)
+                }
               />
             </FormDataSection>
             <Alert
               intent='none'
-              title={language.formManager.alert}
+              title={language.projectAlert}
               marginTop={20}
               marginBottom={20}
             />
             {selectedFields.map((field, index) => {
               return (
-                <FieldContainer key={index}>
+                <FieldContainer>
                   <div style={{ width: '200px' }}>
                     <Select
                       value={field.fieldTypeId}
@@ -168,16 +170,12 @@ export default () => {
                       }
                     >
                       {fieldTypeContext.map((x) => (
-                        <option
-                          key={x.id}
-                          value={x.id}
-                        >{`${x.code} - ${x.name}`}</option>
+                        <option value={x.id}>{`${x.code} - ${x.name}`}</option>
                       ))}
                     </Select>
                   </div>
                   <TextInput
                     width={100}
-                    disabled={field?.id > 0}
                     value={field.code}
                     placeholder={language.formCreator.code}
                     onChange={(e) =>
@@ -192,7 +190,7 @@ export default () => {
                     }
                   />
                   <TextInput
-                    width={75}
+                    width={50}
                     type='number'
                     value={field.minLength}
                     placeholder={language.formCreator.minLen}
@@ -201,7 +199,7 @@ export default () => {
                     }
                   />
                   <TextInput
-                    width={75}
+                    width={50}
                     type='number'
                     value={field.maxLength}
                     placeholder={language.formCreator.maxLen}
@@ -209,7 +207,6 @@ export default () => {
                       onFormFieldChange('maxLength', +e.target.value, index)
                     }
                   />
-                  <Text>Requerido</Text>
                   <Switch
                     height={20}
                     checked={field.required}
@@ -218,7 +215,6 @@ export default () => {
                       onFormFieldChange('required', e.target.checked, index)
                     }
                   />
-                  <Text>Mayusculas</Text>
                   <Switch
                     height={20}
                     checked={field.uppercase}
@@ -227,12 +223,14 @@ export default () => {
                       onFormFieldChange('uppercase', e.target.checked, index)
                     }
                   />
-                  <IconButton
-                    icon={TrashIcon}
-                    intent='danger'
-                    height={40}
-                    onClick={() => removeField(index)}
-                  />
+                  {!field.id && (
+                    <IconButton
+                      icon={TrashIcon}
+                      intent='danger'
+                      height={40}
+                      onClick={() => newFields(index)}
+                    />
+                  )}
                 </FieldContainer>
               )
             })}
@@ -246,7 +244,7 @@ export default () => {
         intent='success'
         iconBefore={ProjectsIcon}
       >
-        {language.formManager.title}
+        {language.formTitle}
       </Button>
     </Pane>
   )

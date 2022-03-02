@@ -12,9 +12,10 @@ const AdminModule = () => {
       <ProjectModule />
       <FormModule />
       <FieldModule />
+      {/*      
       <UserModule />
       <StatisticsModule />
-      <DataModule />
+      <DataModule /> */}
     </Container>
   )
 }

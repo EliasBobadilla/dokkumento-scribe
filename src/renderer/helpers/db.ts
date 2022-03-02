@@ -5,6 +5,7 @@ import {
   FormFieldDto,
   ProjectDto,
   SubmitFormDto,
+  SubmitFormBuilderDto,
 } from '../dtos/documents'
 
 export const getAuth = (model: UserRequestDto) =>
@@ -19,29 +20,26 @@ export const getFieldTypes = () =>
 export const getProjects = () =>
   window.electron.ipc.invoke<ProjectDto[]>('getProjects', null)
 
-export const getFormFields = (projectId: number) =>
-  window.electron.ipc.invoke<FormFieldDto[]>('getFormFields', projectId)
+export const getFormFields = () =>
+  window.electron.ipc.invoke<FormFieldDto[]>('getFormFields', null)
 
-export const getForms = (projectId: number) =>
-  window.electron.ipc.invoke<FormDto[]>('getForms', projectId)
+export const getForms = () =>
+  window.electron.ipc.invoke<FormDto[]>('getForms', null)
 
-export const submitForm = async (model: SubmitFormDto) =>
+export const submitForm = (model: SubmitFormDto) =>
   window.electron.ipc.invoke<FieldTypeDto[]>('saveForm', model)
 
-export const upsertProject = async (model: ProjectDto) =>
+export const upsertProject = (model: ProjectDto) =>
   window.electron.ipc.invoke<ProjectDto>('upsertProject', model)
 
-export const upsertForm = async (model: FormDto) =>
+export const upsertForm = (model: FormDto) =>
   window.electron.ipc.invoke<FormDto>('upsertForm', model)
 
-export const upsertFormFields = async (model: FormDto) =>
-  window.electron.ipc.invoke<FormFieldDto[]>('upsertFormFields', model)
-
-export const upsertField = async (model: SubmitFormDto) =>
-  window.electron.ipc.invoke<FieldTypeDto[]>('upsertField', model)
-
-export const deleteProject = async (id: number) =>
+export const deleteProject = (id: number) =>
   window.electron.ipc.invoke<ProjectDto>('deleteProject', id)
 
-export const deleteForm = async (id: number) =>
+export const deleteForm = (id: number) =>
   window.electron.ipc.invoke<ProjectDto>('deleteForm', id)
+
+export const upsertFormFields = (model: FormFieldDto[]) =>
+  window.electron.ipc.invoke<FormFieldDto[]>('upsertFormFields', model)

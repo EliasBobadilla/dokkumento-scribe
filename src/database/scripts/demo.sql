@@ -19,11 +19,11 @@ INSERT INTO Projects ([Code], [Name]) VALUES ('DEMO23', 'mela33')
 INSERT INTO Forms ([ProjectId], [Code], [Name], [Description]) VALUES (1, 'TEST1', 'Area Emision', 'Proyecto de prueba para digitacion');
 INSERT INTO Forms ([ProjectId], [Code], [Name], [Description]) VALUES (1, 'TEST2', 'Area Emision #2', 'Proyecto de prueba para digitacion #2');
 
-INSERT INTO FormFields ([ProjectId], [FormId], [FieldTypeId], [Code], [Name], [Description], [MinLength], [MaxLength], [Required]) VALUES (1, 1, 1, 'DESC', 'Descripcion principal', 'Descripcion bla, bla, bla', 5, 100, 1)
-INSERT INTO FormFields ([ProjectId], [FormId], [FieldTypeId], [Code], [Name], [Description], [MinLength], [MaxLength], [Required]) VALUES (1, 1, 3, 'FECHA', 'Fecha','Fecha bla, bla, bla', 8, 12, 1)
-INSERT INTO FormFields ([ProjectId], [FormId], [FieldTypeId], [Code], [Name], [Description], [MinLength], [MaxLength], [Required]) VALUES (1, 1, 2, 'UDF1', 'UDF #1','UDF1 bla, bla, bla', 5, 25, 1)
-INSERT INTO FormFields ([ProjectId], [FormId], [FieldTypeId], [Code], [Name], [Description], [MinLength], [MaxLength], [Required]) VALUES (1, 1, 2, 'UDF2', 'UDF #2','UDF2 bla, bla, bla', 5, 25, 1)
-INSERT INTO FormFields ([ProjectId], [FormId], [FieldTypeId], [Code], [Name], [Description], [MinLength], [MaxLength], [Required]) VALUES (1, 1, 2, 'UDF3', 'UDF #3','UDF3 bla, bla, bla', 5, 25, 1)
+INSERT INTO FormFields ([ProjectId], [FormId], [FieldTypeId], [Code], [Name], [Description], [MinLength], [MaxLength], [Required]) VALUES (37, 7, 1, 'DESC', 'Descripcion principal', 'Descripcion bla, bla, bla', 5, 100, 1)
+INSERT INTO FormFields ([ProjectId], [FormId], [FieldTypeId], [Code], [Name], [Description], [MinLength], [MaxLength], [Required]) VALUES (37, 7, 3, 'FECHA', 'Fecha','Fecha bla, bla, bla', 8, 12, 1)
+INSERT INTO FormFields ([ProjectId], [FormId], [FieldTypeId], [Code], [Name], [Description], [MinLength], [MaxLength], [Required]) VALUES (37, 7, 2, 'UDF1', 'UDF #1','UDF1 bla, bla, bla', 5, 25, 1)
+INSERT INTO FormFields ([ProjectId], [FormId], [FieldTypeId], [Code], [Name], [Description], [MinLength], [MaxLength], [Required]) VALUES (37, 7, 2, 'UDF2', 'UDF #2','UDF2 bla, bla, bla', 5, 25, 1)
+INSERT INTO FormFields ([ProjectId], [FormId], [FieldTypeId], [Code], [Name], [Description], [MinLength], [MaxLength], [Required]) VALUES (37, 7, 2, 'UDF3', 'UDF #3','UDF3 bla, bla, bla', 5, 25, 1)
 INSERT INTO FormFields ([ProjectId], [FormId], [FieldTypeId], [Code], [Name], [Description]) VALUES (1, 1, 4, 'DESC_INT', 'Descripcion Interna','Descripcion Interna bla, bla, bla')
 
 select * from Roles
@@ -34,9 +34,22 @@ select * from Projects
 select * from Forms
 select * from FormFields
 
+
+truncate table FormFields
+delete from Projects
+delete from Forms
+truncate table FormFieldsdokkumento.dbo.
+
+
 select * from DIG_DEMO_TEST1
 
 INSERT INTO [DIG_DEMO_TEST1] ([CreatedBy],[DESC],[FECHA],[UDF1],[UDF2],[UDF3],[Tags]) VALUES ('1','DFSDFSDFSD','24-05-1985','34343434','5464654','465465465','mela hola',' joder',' uno')
 
 
 INSERT INTO [Projects] ([Code],[Name]) OUTPUT INSERTED.[Id],INSERTED.[Code],INSERTED.[Name],INSERTED.[Deleted] VALUES (@0,@1);
+
+
+select * from DIG_UNO_DEMO
+
+SELECT [Id] AS [id], [ProjectId] AS [projectId], [FormId] AS [formId], [FieldTypeId] AS [fieldTypeId], [Code] AS [code], [Name] AS [name], [Description] AS [description], [MinLength] AS [minLength], [MaxLength] AS [maxLength], [Required] AS [required], [Uppercase] AS [uppercase], [Deleted] AS [deleted] FROM [FormFields] AS [FormField] WHERE [FormField].[ProjectId] = 41 AND [FormField].[FormId] = 12;
+

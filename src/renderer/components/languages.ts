@@ -1,3 +1,25 @@
+interface ManagementScreen {
+  title: string
+  alert: string
+  placeholder: string
+  code: string
+  name: string
+  save: string
+  cancel: string
+  saveError: string
+}
+
+interface FormCreator {
+  fieldType: string
+  code: string
+  name: string
+  description: string
+  minLen: string
+  maxLen: string
+  required: string
+  uppercase: string
+}
+
 export interface Language {
   unauthorized: string
   loginProcessError: string
@@ -23,6 +45,11 @@ export interface Language {
   projectMainTitle: string
   save: string
   projectOnSaveError: string
+  formMainTitle: string
+  formTitle: string
+  formCreator: FormCreator
+  projectManager: ManagementScreen
+  formManager: ManagementScreen
 }
 
 type AvailableLanguages = {
@@ -31,30 +58,62 @@ type AvailableLanguages = {
 
 export const languages: AvailableLanguages = {
   english: {
-    unauthorized: 'Please enter a correct username and password',
-    loginProcessError: 'Error while login process, please try again',
-    loginUserLabel: 'Username',
-    loginPwdLabel: 'Password',
-    loginUserErrorMessage: 'The username field is required',
-    loginPwdErrorMessage: 'The password field is required',
-    loginButtonLabel: 'LOGIN',
-    PoweredBy: 'Powered by ',
-    invalidFormMessage: 'The form has invalid inputs!',
-    emptyFormMessage: 'You can not send a empty form',
-    saveFormErrorMessage: 'Error on save form data, please try again',
-    projectButtonPlaceholder: 'Choice a project',
-    formButtonPlaceholder: 'Choice a form',
-    batchLabelPlaceHolder: 'Batch',
-    emptyTagsMessage: 'Batch can not be empty',
-    nameIsRequired: 'The name is required',
-    codeIsRequired: 'The name is required',
+    unauthorized: 'string',
+    loginProcessError: 'string',
+    loginUserLabel: 'string',
+    loginPwdLabel: 'string',
+    loginUserErrorMessage: 'string',
+    loginPwdErrorMessage: 'string',
+    loginButtonLabel: 'string',
+    PoweredBy: 'string',
+    invalidFormMessage: 'string',
+    emptyFormMessage: 'string',
+    saveFormErrorMessage: 'string',
+    projectButtonPlaceholder: 'string',
+    formButtonPlaceholder: 'string',
+    batchLabelPlaceHolder: 'string',
+    emptyTagsMessage: 'string',
+    nameIsRequired: 'string',
+    codeIsRequired: 'string',
     projectNameLabel: 'string',
     projectCodeLabel: 'string',
     projectAlert: 'string',
-    projectTitle: 'Administrar Proyectos',
+    projectTitle: 'string',
     projectMainTitle: 'string',
     projectOnSaveError: 'string',
     save: 'save',
+    formMainTitle: 'string',
+    formTitle: 'string',
+    formCreator: {
+      fieldType: 'string',
+      code: 'string',
+      name: 'string',
+      description: 'string',
+      minLen: 'string',
+      maxLen: 'string',
+      required: 'string',
+      uppercase: 'string',
+    },
+    projectManager: {
+      title: 'string',
+      alert: 'string',
+      placeholder: 'string',
+      code: 'string',
+      name: 'string',
+      save: 'string',
+      cancel: 'string',
+      saveError: 'string',
+    },
+    formManager: {
+      title: 'string',
+      alert: 'string',
+      placeholder: 'string',
+      code: 'string',
+      name: 'string',
+      save: 'string',
+      cancel: 'string',
+      saveError: 'string',
+    },
   },
   spanish: {
     unauthorized: 'Por favor, ingresa un usuario y contraseña correctos',
@@ -81,7 +140,41 @@ export const languages: AvailableLanguages = {
       'El codigo del formulario debe ser unico xq sera utilizado en el nombre de la tabla en la base de datos',
     projectTitle: 'Administrar Proyectos',
     projectMainTitle: 'Administrador de proyectos',
+    formTitle: 'Administrador de Formularios',
+    formMainTitle: 'Administrador de Formuarios',
     save: 'Guardar',
     projectOnSaveError: 'Error al guardar el proyecto',
+    formCreator: {
+      fieldType: 'Tipo',
+      code: 'Codigo',
+      name: 'Nombre',
+      description: 'Descripcion',
+      minLen: 'Min.',
+      maxLen: 'Max.',
+      required: 'Requerido?',
+      uppercase: 'Mayusculas?',
+    },
+    projectManager: {
+      title: 'Administracion de Proyectos',
+      alert:
+        'El codigo de proyecto debe ser unico. Para crear un nuevo proyecto escoga "Nuevo proyecto" y llene los demas datos. Si elimina un proyecto, los datos no pueden ser recuperados',
+      placeholder: 'Nuevo proyecto',
+      code: 'Codigo del proyecto',
+      name: 'Nombre del proyecto',
+      save: 'Guardar',
+      cancel: 'Cancelar',
+      saveError: 'Error al guardar el proyecto, intente nuevamente',
+    },
+    formManager: {
+      title: 'Administracion de Formularios',
+      alert:
+        'El codigo de formulario debe ser unico. Para crear un nuevo formulario escoga "Nuevo formulario" y llene los demas datos. Si elimina un formulario, los datos no pueden ser recuperados',
+      placeholder: 'Nuevo formulario',
+      code: 'Codigo del formulario',
+      name: 'Nombre del formulario',
+      save: 'Guardar',
+      cancel: 'Cancelar',
+      saveError: 'Error al guardar el formulario, intente nuevamente',
+    },
   },
 }

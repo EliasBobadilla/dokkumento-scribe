@@ -4,71 +4,56 @@ import {
   Dialog,
   Pane,
   ProjectsIcon,
-  Combobox,
-  TextInputField,
   Alert,
+  toaster,
+  TextInput,
+  Select,
   IconButton,
   TrashIcon,
-  toaster,
 } from 'evergreen-ui'
 import { ProjectDto } from 'renderer/dtos/documents'
 import { useAppContext } from '../../context'
 import { upsertProject, deleteProject } from '../../helpers/db'
-import { AdminComboBox } from './styles'
+import { FormDataSection } from './styles'
 
-const initialState: ProjectDto = {
-  code: '',
-  name: '',
-}
+const projectInitialState = { code: '', name: '' }
 
 export default () => {
   const [isShown, setIsShown] = useState(false)
-  const [current, setCurrent] = useState<ProjectDto>(initialState)
+  const [selectedProject, setSelectedProject] = useState<ProjectDto>({
+    ...projectInitialState,
+  })
 
   const { language, projectContext, setProjectContext } = useAppContext()
 
-  const onProjectChange = (selectedProject: string) => {
-    const code = selectedProject.split('-')[0].trim()
-    const p = projectContext.find((x) => x.code === code)
-    setCurrent(p!)
-  }
-
   const onSave = async () => {
-    if (!current.name || !current.code) {
-      toaster.danger(language.projectOnSaveError)
-      return
-    }
-    const upperedCode = current.code.toUpperCase()
-    const response = await upsertProject({ ...current, code: upperedCode })
-
-    if (!response) {
-      toaster.danger(language.projectOnSaveError)
+    if (!selectedProject?.code || !selectedProject?.name) {
+      toaster.danger(language.projectManager.saveError)
       return
     }
 
+    const response = await upsertProject(selectedProject)
     const newContext = [...projectContext]
     const index = newContext.findIndex((x) => x.id === response.id)
     if (index >= 0) newContext[index] = response
     else newContext.push(response)
 
     setProjectContext(newContext)
-    setCurrent(initialState)
+    setSelectedProject({ ...projectInitialState })
     setIsShown(!isShown)
   }
 
   const onDelete = async () => {
-    if (!current.id) {
-      toaster.danger(language.projectOnSaveError)
-      return
-    }
-    const result = await deleteProject(current.id)
+    if (!selectedProject?.id) return
+
+    const result = await deleteProject(selectedProject.id)
     if (result) {
       const newContext = [...projectContext]
-      const index = newContext.findIndex((x) => x.id === current.id)
+      const index = newContext.findIndex((x) => x.id === selectedProject.id)
       newContext.splice(index, 1)
 
       setProjectContext(newContext)
-      setCurrent(initialState)
+      setSelectedProject({ ...projectInitialState })
       setIsShown(!isShown)
     }
   }
@@ -77,23 +62,64 @@ export default () => {
     <Pane>
       <Dialog
         isShown={isShown}
-        width='90%'
-        title={language.projectMainTitle}
-        confirmLabel={language.save}
+        width='95%'
+        title={language.projectManager.title}
+        confirmLabel={language.projectManager.save}
         hasCancel
         onCancel={() => setIsShown(!isShown)}
         onConfirm={() => onSave()}
       >
         {({ close }) => (
           <Pane>
-            <AdminComboBox>
-              <Combobox
-                openOnFocus
-                width='98%'
+            <Alert
+              intent='none'
+              title={language.projectManager.alert}
+              marginTop={20}
+              marginBottom={20}
+            />
+            <FormDataSection>
+              <Select
                 height={40}
-                items={projectContext.map((p) => `${p.code} - ${p.name}`)}
-                onChange={(selected) => onProjectChange(selected)}
-                placeholder={language.projectButtonPlaceholder}
+                value={selectedProject?.id}
+                onChange={(e) =>
+                  setSelectedProject(
+                    projectContext.find((x) => x.id === +e.target.value) || {
+                      ...projectInitialState,
+                    },
+                  )
+                }
+              >
+                <option key='0' value={0}>
+                  {language.projectManager.placeholder}
+                </option>
+                {projectContext.map((x) => (
+                  <option
+                    key={x.id}
+                    value={x.id}
+                  >{`${x.code} - ${x.name}`}</option>
+                ))}
+              </Select>
+              <TextInput
+                height={40}
+                value={selectedProject?.code}
+                placeholder={language.projectManager.code}
+                onChange={(e) =>
+                  setSelectedProject({
+                    ...selectedProject,
+                    code: e.target.value,
+                  } as ProjectDto)
+                }
+              />
+              <TextInput
+                height={40}
+                value={selectedProject?.name}
+                placeholder={language.projectManager.name}
+                onChange={(e) =>
+                  setSelectedProject({
+                    ...selectedProject,
+                    name: e.target.value,
+                  } as ProjectDto)
+                }
               />
               <IconButton
                 icon={TrashIcon}
@@ -101,32 +127,7 @@ export default () => {
                 height={40}
                 onClick={() => onDelete()}
               />
-            </AdminComboBox>
-            <Alert
-              intent='none'
-              title={language.projectAlert}
-              marginTop={20}
-              marginBottom={20}
-            />
-
-            <TextInputField
-              label={language.projectCodeLabel}
-              required
-              value={current?.code}
-              onChange={(e: any) =>
-                setCurrent({ ...current, code: e.target.value })
-              }
-              validationMessage={language.codeIsRequired}
-            />
-            <TextInputField
-              label={language.projectNameLabel}
-              required
-              value={current?.name}
-              onChange={(e: any) =>
-                setCurrent({ ...current, name: e.target.value })
-              }
-              validationMessage={language.nameIsRequired}
-            />
+            </FormDataSection>
           </Pane>
         )}
       </Dialog>
@@ -137,7 +138,7 @@ export default () => {
         intent='success'
         iconBefore={ProjectsIcon}
       >
-        {language.projectTitle}
+        {language.projectManager.title}
       </Button>
     </Pane>
   )

@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import {
   Button,
   SelectMenu,
@@ -7,16 +7,12 @@ import {
   EditIcon,
   ManualIcon,
   Avatar,
+  SelectMenuItem,
 } from 'evergreen-ui'
+import { FormDto } from 'renderer/dtos/documents'
 import { useAppContext } from '../../context'
 import { UserSection, Container, Section } from './styles'
 import { RoleDto } from '../../dtos/management'
-import {
-  getFieldTypes,
-  getFormFields,
-  getForms,
-  getProjects,
-} from '../../helpers/db'
 
 export interface Props {
   selectedProjectId: number
@@ -37,54 +33,28 @@ const Header = ({
   tags,
   setTags,
 }: Props) => {
-  const {
-    language,
-    userContext,
-    projectContext,
-    formContext,
-    setFieldTypeContext,
-    setFormContext,
-    setFormFieldContext,
-    setProjectContext,
-  } = useAppContext()
+  const { language, userContext, projectContext, formContext } = useAppContext()
 
-  const projectList = projectContext.map((p) => ({
+  const [forms, setForms] = useState<FormDto[]>([])
+
+  const projectList: SelectMenuItem[] = projectContext.map((p) => ({
     label: p.name,
-    value: p.id,
+    value: p.id!,
   }))
 
-  const formList = formContext.map((p) => ({
+  const formList: SelectMenuItem[] = forms.map((p) => ({
     label: p.name,
-    value: p.id,
+    value: p.id!,
   }))
 
   useEffect(() => {
-    ;(async () => {
-      const [fieldTypes, projects] = await Promise.all([
-        getFieldTypes(),
-        getProjects(),
-      ])
-      setFieldTypeContext(fieldTypes)
-      setProjectContext(projects)
-    })()
-  }, [])
-
-  useEffect(() => {
-    if (!selectedProjectId) return
-    ;(async () => {
-      const [forms, formFields] = await Promise.all([
-        getForms(selectedProjectId),
-        getFormFields(selectedProjectId),
-      ])
-      setFormContext(forms)
-      setFormFieldContext(formFields)
-    })()
+    setForms(formContext.filter((x) => x.projectId === selectedProjectId))
   }, [selectedProjectId])
 
   const handleBatchChange = (values: string[]) => {
     if (!values || !values.length) return
     const lastItem = values.pop()
-    setTags([lastItem.toUpperCase()])
+    if (lastItem) setTags([lastItem.toUpperCase()])
   }
 
   return (

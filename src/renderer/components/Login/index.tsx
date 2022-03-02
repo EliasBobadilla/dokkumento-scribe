@@ -35,14 +35,14 @@ const Index = () => {
           required
           autoFocus
           value={user}
-          onChange={(e: any) => setUser(e.target.value)}
+          onChange={(e) => setUser(e.target.value)}
           validationMessage={language.loginUserErrorMessage}
         />
         <TextInputField
           label={language.loginPwdLabel}
           required
           value={pwd}
-          onChange={(e: any) => setPwd(e.target.value)}
+          onChange={(e) => setPwd(e.target.value)}
           validationMessage={language.loginPwdErrorMessage}
         />
         <LoginButton>

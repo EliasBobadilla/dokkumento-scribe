@@ -7,15 +7,15 @@ export interface FieldTypeDto {
 }
 
 export interface FormDto {
-  id: number
+  id?: number
   projectId: number
   code: string
   name: string
-  description: string
+  description?: string
 }
 
 export interface FormFieldDto {
-  id: number
+  id?: number
   projectId: number
   formId: number
   fieldTypeId: number
@@ -42,4 +42,10 @@ export interface SubmitFormDto {
 
 export interface FormData {
   [key: string]: string
+}
+
+export interface SubmitFormBuilderDto {
+  project: ProjectDto
+  form: FormDto
+  fields: FormFieldDto[]
 }

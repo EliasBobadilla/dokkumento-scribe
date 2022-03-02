@@ -1,5 +1,5 @@
 import Index from './components/Login'
-import Principal from './components/Principal'
+import Main from './containers/main'
 import { useAppContext } from './context'
 import './App.css'
 
@@ -15,7 +15,7 @@ declare global {
 
 const App = () => {
   const { userContext } = useAppContext()
-  return <>{userContext.id === 0 ? <Index /> : <Principal />}</>
+  return <>{userContext.id === 0 ? <Index /> : <Main />}</>
 }
 
 export default App

@@ -8,7 +8,24 @@ export const Container = styled.div`
   gap: 2em;
 `
 
-export const AdminComboBox = styled.div`
+export const FormDataSection = styled.div`
   display: flex;
   flex-direction: row;
+  align-items: center;
+  justify-content: left;
+  align-items: left;
+  gap: 10px;
+`
+
+export const FieldContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: left;
+  align-items: left;
+  gap: 10px;
+  border: #000 1px solid;
+  border-radius: 10px;
+  padding: 10px;
+  margin: 10px 0;
 `

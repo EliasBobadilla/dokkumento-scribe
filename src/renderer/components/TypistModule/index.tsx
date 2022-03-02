@@ -43,23 +43,13 @@ const TypistModule = ({ projectId, formId, tags }: Props) => {
   const [isInvalidValid, setIsInvalidValid] = useState<KeyValidation>({})
 
   useEffect(() => {
-    const selectedProject = projectContext.find((x) => x.id === projectId)
-    setProject(selectedProject)
+    setProject(projectContext.find((x) => x.id === projectId))
   }, [projectId])
 
   useEffect(() => {
-    const selectedForm = formContext.find((x) => x.projectId === formId)
-    const baseData = formFieldContext.reduce(
-      (a, v) => ({ ...a, [v.code]: '' }),
-      {},
-    )
-    const selectedFormFields = formFieldContext.filter(
-      (f) => f.formId === formId,
-    )
-
-    setForm(selectedForm)
-    setFormFields(selectedFormFields)
-    setData(baseData)
+    setForm(formContext.find((x) => x.id === formId))
+    setFormFields(formFieldContext.filter((f) => f.formId === formId))
+    setData(formFieldContext.reduce((a, v) => ({ ...a, [v.code]: '' }), {}))
   }, [formId])
 
   const submit = async (model: SubmitFormDto) => {
