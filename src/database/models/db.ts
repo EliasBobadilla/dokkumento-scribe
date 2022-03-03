@@ -1,23 +1,29 @@
 import { Sequelize, QueryTypes } from 'sequelize'
-import sqlConfig from '../config/sql'
 
 export const db = () =>
-  new Sequelize(sqlConfig.database, sqlConfig.user, sqlConfig.password, {
-    dialect: 'mssql',
-    port: sqlConfig.port,
-    dialectOptions: {
-      connectionTimeout: 3000,
-      requestTimeout: 3000,
-      pool: {
-        idleTimeoutMillis: 3000,
-      },
-      options: {
-        encrypt: true,
-        integratedSecurity: true,
-        trustServerCertificate: true,
+  new Sequelize(
+    process.env.DB_DBNAME || '',
+    process.env.DB_USERNAME || '',
+    process.env.DB_PASSWORD || '',
+    {
+      dialect: 'mssql',
+      host: process.env.DB_SERVER,
+      port: +(process.env.DB_PORT || 0),
+      dialectOptions: {
+        instanceName: process.env.DB_INSTANCE,
+        connectionTimeout: 3000,
+        requestTimeout: 3000,
+        pool: {
+          idleTimeoutMillis: 3000,
+        },
+        options: {
+          encrypt: true,
+          integratedSecurity: true,
+          trustServerCertificate: true,
+        },
       },
     },
-  })
+  )
 
 export const rawInsert = async (query: string) => {
   const inserted = await db().query(query, { type: QueryTypes.INSERT })

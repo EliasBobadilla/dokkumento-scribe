@@ -4,13 +4,11 @@ import 'dotenv/config'
 import path from 'path'
 import { app, BrowserWindow, ipcMain, shell } from 'electron'
 import { resolveHtmlPath } from './util'
-import sqlConfig from '../database/config/sql'
-
 
 let mainWindow: BrowserWindow | null = null
 
 ipcMain.on('ipc-example', async (event, _) => {
-  event.reply('ipc-example', sqlConfig)
+  event.reply('ipc-example', process.env.DB_SERVER)
 })
 
 if (process.env.NODE_ENV === 'production') {
@@ -22,7 +20,7 @@ const isDevelopment =
   process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true'
 
 if (isDevelopment) {
-  require('electron-debug')({ showDevTools: false });
+  require('electron-debug')({ showDevTools: false })
 }
 
 const installExtensions = async () => {

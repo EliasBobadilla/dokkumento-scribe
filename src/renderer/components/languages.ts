@@ -142,7 +142,7 @@ export const languages: AvailableLanguages = {
     saveFormErrorMessage: 'Error al guardar los datos, intente nuevamente',
     projectButtonPlaceholder: 'Selecciona un proyecto',
     formButtonPlaceholder: 'Selecciona un formulario',
-    batchLabelPlaceHolder: 'Lote',
+    batchLabelPlaceHolder: 'Lote / Caja',
     emptyTagsMessage: 'Debe ingresar un lote como minimo',
     nameIsRequired: 'El nombre es obligatorio',
     codeIsRequired: 'El codigo es obligatorio',
