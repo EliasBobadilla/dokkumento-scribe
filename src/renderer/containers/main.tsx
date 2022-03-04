@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useEffect } from 'react'
 import { Roles } from '../dtos/management'
-import TypistModule from '../components/TypistModule'
+import TypistModule from '../components/TypistModule2'
 import AdminModule from '../components/AdminModule'
 import CoordinatoModule from '../components/CoordinatoModule'
 import { useAppContext } from '../context'

@@ -1,6 +1,8 @@
 import Index from './components/Login'
 import Main from './containers/main'
 import { useAppContext } from './context'
+
+import 'antd/dist/antd.css'
 import './App.css'
 
 declare global {

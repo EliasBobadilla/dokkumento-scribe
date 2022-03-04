@@ -7,6 +7,43 @@ import {
   FormData,
 } from '../dtos/documents'
 
+const regexValidator = (value: string, type: FieldTypeDto): string | null => {
+  if (!type.pattern) return null
+  try {
+    const regex = new RegExp(type.pattern)
+    return regex.test(value) ? null : type.validationMessage
+  } catch {
+    return type.validationMessage
+  }
+}
+
+const lenValidator = (
+  value: string,
+  field: FormFieldDto,
+  type: FieldTypeDto,
+): null | string => {
+  if (type.code.includes('DATE')) return null
+  if (field.maxLength === 0 && field.minLength === 0) return null
+  if (value.length > field.maxLength) return `Max length is ${field.maxLength}`
+  if (!field.required) return null
+  if (value.length < field.minLength) return `Min length is ${field.minLength}`
+  return null
+}
+
+export const customValidator = (
+  value: string,
+  field: FormFieldDto,
+  type: FieldTypeDto,
+) => {
+  const regexHasError = regexValidator(value, type)
+  if (regexHasError) return Promise.reject(new Error(regexHasError))
+
+  const lenHasError = lenValidator(value, field, type)
+  if (lenHasError) return Promise.reject(new Error(lenHasError))
+
+  return Promise.resolve()
+}
+
 export const validateFormData = (
   value: string,
   field: FormFieldDto,
