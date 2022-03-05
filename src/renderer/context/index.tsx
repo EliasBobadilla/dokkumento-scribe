@@ -5,7 +5,9 @@ import { fieldTypeReducer, fieldTypesDefaultState } from './fieldTypesReducer'
 import { formsDefaultState, formsReducer } from './formsReducer'
 import { projectsDefaultState, projectsReducer } from './projectsReducer'
 import { formFieldsDefaultState, formFieldsReducer } from './FormFieldsReducer'
+import { datasourceDefaultState, datasourceReducer } from './datasourceReducer'
 import {
+  DataSourceDto,
   FieldTypeDto,
   FormDto,
   FormFieldDto,
@@ -22,12 +24,14 @@ type ContextType = {
   projectContext: ProjectDto[]
   formContext: FormDto[]
   formFieldContext: FormFieldDto[]
+  datasourceContext: DataSourceDto
   setUserContext: (model: UserDto) => void
   setRoleContext: (model: RoleDto[]) => void
   setFieldTypeContext: (model: FieldTypeDto[]) => void
   setFormContext: (model: FormDto[]) => void
   setFormFieldContext: (model: FormFieldDto[]) => void
   setProjectContext: (model: ProjectDto[]) => void
+  setDatasourceContext: (model: DataSourceDto) => void
 }
 
 const AppContext = createContext<ContextType>({} as ContextType)
@@ -47,6 +51,11 @@ export function AppContextProvider({ children }: { children: ReactNode }) {
   const [project, setProject] = useReducer(
     projectsReducer,
     projectsDefaultState,
+  )
+
+  const [datasource, setDatasource] = useReducer(
+    datasourceReducer,
+    datasourceDefaultState,
   )
 
   const setUserContext = (model: UserDto) => {
@@ -73,6 +82,10 @@ export function AppContextProvider({ children }: { children: ReactNode }) {
     setProject({ type: 'set-projects', payload: model })
   }
 
+  const setDatasourceContext = (model: DataSourceDto) => {
+    setDatasource({ type: 'set-datasource', payload: model })
+  }
+
   return (
     <AppContext.Provider
       value={{
@@ -83,12 +96,14 @@ export function AppContextProvider({ children }: { children: ReactNode }) {
         formContext: form,
         formFieldContext: formField,
         projectContext: project,
+        datasourceContext: datasource,
         setUserContext,
         setRoleContext,
         setFieldTypeContext,
         setFormContext,
         setFormFieldContext,
         setProjectContext,
+        setDatasourceContext,
       }}
     >
       {children}

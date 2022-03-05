@@ -22,6 +22,7 @@ export interface FormFieldDto {
   order: number
   code: string
   name: string
+  datasource: string
   minLength: number
   maxLength: number
   uppercase: boolean
@@ -48,4 +49,8 @@ export interface SubmitFormBuilderDto {
   project: ProjectDto
   form: FormDto
   fields: FormFieldDto[]
+}
+
+export interface DataSourceDto {
+  [key: string]: { value: string }[]
 }

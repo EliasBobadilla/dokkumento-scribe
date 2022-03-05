@@ -61,12 +61,11 @@ CREATE TABLE FormFields(
 	[Order] INTEGER not null,
 	[Code] VARCHAR(15) not null,
 	[Name] VARCHAR(50) not null,
-	[Description] VARCHAR(500) null,
 	[MinLength] INTEGER DEFAULT 0,
 	[MaxLength] INTEGER DEFAULT 0,
 	[Required] BIT DEFAULT 0,
-	[Default] VARCHAR(250) null,
 	[Uppercase] BIT DEFAULT 0,
+	[Datasource] VARCHAR(50) null,
 	[CreatedOn] DATETIME DEFAULT GETDATE(),
 	[UpdatedOn] DATETIME DEFAULT GETDATE(),
 	[Deleted] BIT DEFAULT 0,	
@@ -75,10 +74,9 @@ CREATE TABLE FormFields(
 	FOREIGN KEY (ProjectId) REFERENCES [Projects](Id)
 )
 
-CREATE TABLE Logs(
+CREATE TABLE DataSources (
 	[Id] INTEGER IDENTITY(1,1) PRIMARY KEY,
-	[Query] VARCHAR(500) not null,
-	[Stack] VARCHAR(100) not null,
+	[name] VARCHAR(500) not null,
 	[CreatedOn] DATETIME DEFAULT GETDATE()
 )
 

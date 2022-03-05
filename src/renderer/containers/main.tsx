@@ -1,7 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useEffect } from 'react'
-import { Roles } from '../dtos/management'
-import TypistModule from '../components/TypistModule2'
+import TypistModule from '../components/TypistModule'
 import AdminModule from '../components/AdminModule'
 import CoordinatoModule from '../components/CoordinatoModule'
 import { useAppContext } from '../context'
@@ -11,12 +10,13 @@ import {
   getFormFields,
   getForms,
   getProjects,
+  getDataSource,
 } from '../helpers/db'
 
 const Main = () => {
   const [selectedProjectId, setSelectedProjectId] = useState(0)
   const [selectedFormId, setSelectedFormId] = useState(0)
-  const [module, setModule] = useState('TYPIST')
+  const [module, setModule] = useState<string>('TYPIST')
 
   const {
     userContext,
@@ -25,22 +25,26 @@ const Main = () => {
     setFormContext,
     setFormFieldContext,
     setProjectContext,
+    setDatasourceContext,
   } = useAppContext()
   const role = roleContext.find((r) => r.id === userContext.roleId)
-  const [tags, setTags] = useState<string[]>([])
+  const [tag, setTag] = useState<string>('')
 
   useEffect(() => {
     ;(async () => {
-      const [fieldTypes, projects, forms, formFields] = await Promise.all([
-        getFieldTypes(),
-        getProjects(),
-        getForms(),
-        getFormFields(),
-      ])
+      const [fieldTypes, projects, forms, formFields, datasource] =
+        await Promise.all([
+          getFieldTypes(),
+          getProjects(),
+          getForms(),
+          getFormFields(),
+          getDataSource(),
+        ])
       setFieldTypeContext(fieldTypes)
       setProjectContext(projects)
       setFormContext(forms)
       setFormFieldContext(formFields)
+      setDatasourceContext(datasource)
     })()
   }, [])
 
@@ -52,21 +56,20 @@ const Main = () => {
         selectedFormId={selectedFormId}
         setSelectedFormId={setSelectedFormId}
         currentRole={role}
-        tags={tags}
-        setTags={setTags}
+        tag={tag}
+        setTag={setTag}
         setModule={setModule}
+        module={module}
       />
-      {Roles[module] === Roles.TYPIST &&
-        selectedProjectId > 0 &&
-        selectedFormId > 0 && (
-          <TypistModule
-            projectId={selectedProjectId}
-            formId={selectedFormId}
-            tags={tags}
-          />
-        )}
-      {Roles[module] === Roles.ADMIN && <CoordinatoModule />}
-      {Roles[module] === Roles.SYS_ADMIN && <AdminModule />}
+      {module === 'TYPIST' && selectedProjectId > 0 && selectedFormId > 0 && (
+        <TypistModule
+          projectId={selectedProjectId}
+          formId={selectedFormId}
+          tag={tag}
+        />
+      )}
+      {module === 'ADMIN' && <CoordinatoModule />}
+      {module === 'SYS_ADMIN' && <AdminModule />}
     </>
   )
 }

@@ -11,6 +11,7 @@ import {
   upsertForm,
   deleteForm,
   upsertFormFields,
+  getDataSource,
 } from './services/documents'
 
 ipcMain.handle('getAuth', (_, props) => getAuth(props))
@@ -19,6 +20,7 @@ ipcMain.handle('getFieldTypes', () => getFieldTypes())
 ipcMain.handle('getProjects', () => getProjects())
 ipcMain.handle('getForms', () => getForms())
 ipcMain.handle('getFormFields', () => getFormFields())
+ipcMain.handle('getDataSource', () => getDataSource())
 ipcMain.handle('saveForm', (_, props) => saveForm(props))
 ipcMain.handle('upsertProject', (_, props) => upsertProject(props))
 ipcMain.handle('deleteProject', (_, props) => deleteProject(props))

@@ -1,6 +1,6 @@
 import type { ProjectDto } from '../dtos/documents'
 
-export type ProjectAction = { type: 'set-projects'; payload: ProjectDto[] }
+type ProjectAction = { type: 'set-projects'; payload: ProjectDto[] }
 
 export const projectsDefaultState: ProjectDto[] = []
 

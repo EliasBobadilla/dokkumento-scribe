@@ -30,6 +30,9 @@ export const rawInsert = async (query: string) => {
   return Array.isArray(inserted) && inserted.length > 0
 }
 
+export const rawSelect = async (query: string) =>
+  db().query(query, { type: QueryTypes.SELECT })
+
 export const sqlSQLExceptionLogger = (error: any, isBusiness?: boolean) => {
   error.businessError = isBusiness
 

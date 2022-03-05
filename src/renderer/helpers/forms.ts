@@ -1,3 +1,4 @@
+import { Language } from 'renderer/components/languages'
 import {
   FieldTypeDto,
   FormFieldDto,
@@ -21,12 +22,15 @@ const lenValidator = (
   value: string,
   field: FormFieldDto,
   type: FieldTypeDto,
+  language: Language,
 ): null | string => {
   if (type.code.includes('DATE')) return null
   if (field.maxLength === 0 && field.minLength === 0) return null
-  if (value.length > field.maxLength) return `Max length is ${field.maxLength}`
+  if (value.length > field.maxLength)
+    return `${language.typist.maxLenError} ${field.maxLength}`
   if (!field.required) return null
-  if (value.length < field.minLength) return `Min length is ${field.minLength}`
+  if (value.length < field.minLength)
+    return `${language.typist.minLenError} ${field.minLength}`
   return null
 }
 
@@ -34,11 +38,12 @@ export const customValidator = (
   value: string,
   field: FormFieldDto,
   type: FieldTypeDto,
+  language: Language,
 ) => {
   const regexHasError = regexValidator(value, type)
   if (regexHasError) return Promise.reject(new Error(regexHasError))
 
-  const lenHasError = lenValidator(value, field, type)
+  const lenHasError = lenValidator(value, field, type, language)
   if (lenHasError) return Promise.reject(new Error(lenHasError))
 
   return Promise.resolve()
@@ -71,7 +76,7 @@ export const buildSubmitData = (
   form: FormDto,
   formFields: FormFieldDto[],
   data: FormData,
-  tags: string[],
+  tags: string,
   userId: number,
   forced?: boolean,
 ): SubmitFormDto => {

@@ -1,8 +1,9 @@
 import Project from '../models/project'
 import FieldType from '../models/fieldType'
-import { rawInsert } from '../models/db'
+import { rawInsert, rawSelect } from '../models/db'
 import Form from '../models/form'
 import FormField from '../models/formField'
+import Datasource from '../models/datasource'
 
 const buildCode = (code: string) => {
   const value = code
@@ -20,6 +21,26 @@ const buildCode = (code: string) => {
 }
 
 const buildTable = (project: string, form: string) => `DIG_${project}_${form}`
+
+export const getDataSource = async () => {
+  const datasource = await Datasource.findAll({
+    raw: true,
+  })
+
+  const tasks: any[] = []
+  datasource.forEach((dt) => {
+    tasks.push(rawSelect(`SELECT [name] from ${dt.name}`))
+  })
+
+  const result = await Promise.all(tasks)
+  const dto: { [key: string]: { value: string }[] } = {}
+
+  datasource.forEach((dt, index) => {
+    dto[dt.name] = result[index].map((x) => ({ value: x.name }))
+  })
+
+  return dto
+}
 
 export const getProjects = async () =>
   Project.findAll({
@@ -188,7 +209,8 @@ export const upsertFormFields = async (model: any[]) => {
 
   const tasks: any[] = []
 
-  model.forEach(async (element) => {
+  // eslint-disable-next-line no-restricted-syntax
+  for (const element of model) {
     const code = buildCode(element.code)
     try {
       if (!element.id) {
@@ -213,7 +235,7 @@ export const upsertFormFields = async (model: any[]) => {
     } catch (error) {
       console.log(`+++ Field Error: ${code} ==>`, error)
     }
-  })
+  }
 
   await Promise.all(tasks)
   return FormField.findAll({

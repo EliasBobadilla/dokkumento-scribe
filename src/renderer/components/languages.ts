@@ -26,6 +26,22 @@ interface FieldManagementScreen {
   saveError: string
 }
 
+interface HeaderScreen {
+  projectPlaceholder: string
+  formPlaceholder: string
+  batchPlaceholder: string
+}
+
+interface TypistScreen {
+  save: string
+  forcedSave: string
+  emptyTagMessage: string
+  invalidFormMessage: string
+  emptyFormMessage: string
+  maxLenError: string
+  minLenError: string
+}
+
 export interface Language {
   unauthorized: string
   loginProcessError: string
@@ -53,9 +69,11 @@ export interface Language {
   projectOnSaveError: string
   formMainTitle: string
   formTitle: string
-  projectCreator: ManagementScreen
-  formCreator: ManagementScreen
-  fieldCreator: FieldManagementScreen
+  projectCreator: ManagementScreen // todo: rename
+  formCreator: ManagementScreen // todo: rename
+  fieldCreator: FieldManagementScreen // todo: rename
+  header: HeaderScreen
+  typist: TypistScreen
 }
 
 type AvailableLanguages = {
@@ -126,6 +144,20 @@ export const languages: AvailableLanguages = {
       cancel: 'string',
       saveError: 'string',
     },
+    header: {
+      projectPlaceholder: 'string',
+      formPlaceholder: 'string',
+      batchPlaceholder: 'string',
+    },
+    typist: {
+      save: 'string',
+      forcedSave: 'string',
+      emptyTagMessage: 'string',
+      invalidFormMessage: 'string',
+      emptyFormMessage: 'string',
+      maxLenError: 'string',
+      minLenError: 'string',
+    },
   },
   spanish: {
     unauthorized: 'Por favor, ingresa un usuario y contraseña correctos',
@@ -194,6 +226,20 @@ export const languages: AvailableLanguages = {
       save: 'Guardar',
       cancel: 'Cancelar',
       saveError: 'Error al guardar los campos, intente nuevamente',
+    },
+    header: {
+      projectPlaceholder: 'Proyectos',
+      formPlaceholder: 'Formularios',
+      batchPlaceholder: 'Lote / Caja',
+    },
+    typist: {
+      save: 'Guardar datos correctos',
+      forcedSave: 'Guardar datos con errores',
+      emptyTagMessage: 'Se necesita un lote / caja para guardar el formulario',
+      invalidFormMessage: 'El formulario contiene campos invalidos',
+      emptyFormMessage: 'No se puede guardar un formulariom vacio',
+      maxLenError: 'La longitud maxima permita es ',
+      minLenError: 'La longitud minima requerida es ',
     },
   },
 }

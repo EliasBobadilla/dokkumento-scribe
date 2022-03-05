@@ -1,6 +1,6 @@
 import { FormDto } from '../dtos/documents'
 
-export type FormAction = { type: 'set-forms'; payload: FormDto[] }
+type FormAction = { type: 'set-forms'; payload: FormDto[] }
 
 export const formsDefaultState: FormDto[] = []
 

@@ -1,16 +1,11 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useEffect, useState } from 'react'
 import {
-  Button,
-  SelectMenu,
-  TagInput,
-  EditIcon,
-  ManualIcon,
-  Avatar,
-  SelectMenuItem,
-  SelectMenu,
-} from 'evergreen-ui'
-import { FormDto } from 'renderer/dtos/documents'
+  EditOutlined,
+  FormOutlined,
+  InboxOutlined,
+  FolderOpenOutlined,
+} from '@ant-design/icons'
+import { Menu, Dropdown, Button, Input, Avatar } from 'antd'
 import { useAppContext } from '../../context'
 import { UserSection, Container, Section } from './styles'
 import { RoleDto, Roles } from '../../dtos/management'
@@ -21,118 +16,103 @@ export interface Props {
   selectedFormId: number
   setSelectedFormId: (value: number) => void
   currentRole?: RoleDto
-  tags: string[]
-  setTags: (value: string[]) => void
+  tag: string
+  module: string
+  setTag: (value: string) => void
   setModule: (value: string) => void
 }
 
-const Header = ({
+export default ({
   selectedProjectId,
   setSelectedProjectId,
-  selectedFormId,
   setSelectedFormId,
   currentRole,
-  tags,
-  setTags,
+  module,
+  setTag,
   setModule,
 }: Props) => {
   const { language, userContext, projectContext, formContext } = useAppContext()
 
-  const [forms, setForms] = useState<FormDto[]>([])
-
-  const projectList: SelectMenuItem[] = [
-    {
-      label: language.projectButtonPlaceholder,
-      value: 0,
-    },
-  ].concat(
-    projectContext.map((p) => ({
-      label: p.name,
-      value: p.id!,
-    })),
+  const projectMenu = (
+    <Menu onClick={(e) => setSelectedProjectId(+e.key)}>
+      {projectContext.map((p) => (
+        <Menu.Item key={p.id} icon={<FolderOpenOutlined />}>
+          {p.name}
+        </Menu.Item>
+      ))}
+    </Menu>
   )
 
-  const formList: SelectMenuItem[] = forms.map((p) => ({
-    label: p.name,
-    value: p.id!,
-  }))
+  const formMenu = (
+    <Menu onClick={(e) => setSelectedFormId(+e.key)}>
+      {formContext
+        .filter((x) => x.projectId === selectedProjectId)
+        .map((p) => (
+          <Menu.Item key={p.id} icon={<EditOutlined />}>
+            {p.name}
+          </Menu.Item>
+        ))}
+    </Menu>
+  )
 
-  useEffect(() => {
-    setForms(formContext.filter((x) => x.projectId === selectedProjectId))
-  }, [selectedProjectId])
-
-  const handleBatchChange = (values: string[]) => {
-    if (!values || !values.length) return
-    const lastItem = values.pop()
-    if (lastItem) setTags([lastItem.toUpperCase()])
-  }
+  const moduleMenu = (
+    <Menu onClick={(e) => setModule(e.key)}>
+      {Object.entries(Roles).map(([key, value]) => (
+        <Menu.Item key={key}>{value}</Menu.Item>
+      ))}
+    </Menu>
+  )
 
   return (
     <Container>
-      <Section>
-        <SelectMenu
-          title={language.projectButtonPlaceholder}
-          options={projectList}
-          selected={selectedProjectId.toString()}
-          hasFilter={false}
-          hasTitle={false}
-          onSelect={(item) => setSelectedProjectId(+item.value)}
-        >
-          <Button width='100%' iconBefore={ManualIcon}>
-            {projectList.find((x) => x.value === selectedProjectId)?.label ||
-              language.projectButtonPlaceholder}
-          </Button>
-        </SelectMenu>
-      </Section>
-      <Section>
-        <SelectMenu
-          title={language.formButtonPlaceholder}
-          options={formList}
-          selected={selectedFormId.toString()}
-          hasFilter={false}
-          hasTitle={false}
-          onSelect={(item) => setSelectedFormId(+item.value)}
-        >
-          <Button width='100%' iconBefore={EditIcon}>
-            {formList.find((x) => x.value === selectedFormId)?.label ||
-              language.formButtonPlaceholder}
-          </Button>
-        </SelectMenu>
-      </Section>
-      <Section>
-        <TagInput
-          inputProps={{ placeholder: language.batchLabelPlaceHolder }}
-          values={tags}
-          width='100%'
-          disabled={selectedFormId <= 0 || selectedProjectId <= 0}
-          onChange={(values) => {
-            handleBatchChange(values)
-          }}
-        />
-      </Section>
-
+      {module === 'TYPIST' && (
+        <>
+          <Section>
+            <Dropdown overlay={projectMenu}>
+              <Button type='primary' block size='large'>
+                {language.header.projectPlaceholder} <FolderOpenOutlined />
+              </Button>
+            </Dropdown>
+          </Section>
+          <Section>
+            <Dropdown overlay={formMenu}>
+              <Button type='primary' block size='large'>
+                {language.header.formPlaceholder} <FormOutlined />
+              </Button>
+            </Dropdown>
+          </Section>
+          <Section>
+            <Input
+              allowClear
+              size='large'
+              style={{ width: '100%' }}
+              prefix={<InboxOutlined />}
+              placeholder={language.batchLabelPlaceHolder}
+              onChange={(e) => setTag(e.target.value.toUpperCase())}
+            />
+          </Section>
+        </>
+      )}
       <UserSection>
         <strong>{`${userContext.firstname} ${userContext.lastname}`}</strong>
         {currentRole?.name}
       </UserSection>
-      <SelectMenu
-        height={100}
-        options={Object.entries(Roles).map((r) => ({
-          label: r[1],
-          value: r[0],
-        }))}
-        hasFilter={false}
-        hasTitle={false}
-        onSelect={(item) => setModule(item.value.toString())}
-      >
+      <Dropdown overlay={moduleMenu}>
         <Avatar
-          style={{ position: 'absolute', right: '1em', cursor: 'pointer' }}
-          name={`${userContext.firstname} ${userContext.lastname}`}
-          size={40}
-        />
-      </SelectMenu>
+          style={{
+            backgroundColor: '#FF4821',
+            verticalAlign: 'middle',
+            position: 'absolute',
+            right: '1.5em',
+            cursor: 'pointer',
+          }}
+          size='large'
+        >
+          {`${userContext.firstname.charAt(0)}${userContext.lastname.charAt(
+            0,
+          )}`}
+        </Avatar>
+      </Dropdown>
     </Container>
   )
 }
-
-export default Header

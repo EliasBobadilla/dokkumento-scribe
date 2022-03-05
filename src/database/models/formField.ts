@@ -24,13 +24,13 @@ export default class FormField extends Model<
 
   declare name: string
 
-  declare description: string
-
   declare minLength: number
 
   declare maxLength: number
 
   declare uppercase: boolean
+
+  declare datasource: string
 
   declare required: boolean
 
@@ -75,10 +75,6 @@ FormField.init(
       allowNull: false,
       field: 'Name',
     },
-    description: {
-      type: DataTypes.STRING,
-      field: 'Description',
-    },
     minLength: {
       type: DataTypes.INTEGER,
       field: 'MinLength',
@@ -94,6 +90,10 @@ FormField.init(
     uppercase: {
       type: DataTypes.BOOLEAN,
       field: 'Uppercase',
+    },
+    datasource: {
+      type: DataTypes.STRING,
+      field: 'Datasource',
     },
     deleted: {
       type: DataTypes.BOOLEAN,

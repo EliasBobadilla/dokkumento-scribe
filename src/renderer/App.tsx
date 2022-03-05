@@ -9,7 +9,7 @@ declare global {
   interface Window {
     electron: {
       ipc: {
-        invoke: <T>(channel: string, arg: any) => Promise<T>
+        invoke: <T>(channel: string, arg?: any) => Promise<T>
       }
     }
   }

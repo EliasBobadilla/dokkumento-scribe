@@ -1,6 +1,6 @@
 import { UserDto } from '../dtos/management'
 
-export type UserAction = { type: 'set-user'; payload: UserDto }
+type UserAction = { type: 'set-user'; payload: UserDto }
 
 export const userDefaultState: UserDto = {
   id: 0,

@@ -55,4 +55,17 @@ INSERT INTO [DIG_DEMO_TEST1] ([CreatedBy],[DESC],[FECHA],[UDF1],[UDF2],[UDF3],[T
 INSERT INTO [Projects] ([Code],[Name]) OUTPUT INSERTED.[Id],INSERTED.[Code],INSERTED.[Name],INSERTED.[Deleted] VALUES (@0,@1);
 
 
-select * from dokkumento.dbo.DIG_GRM_DEMO
+INSERT INTO TD_NAMES (name) values ('TD_NAMES')
+insert into DataSources (name) values ('TD_SEDES')
+
+CREATE TABLE TD_NAMES (
+	[Id] INTEGER IDENTITY(1,1) PRIMARY KEY,
+	[name] VARCHAR(500) not null
+)
+
+CREATE TABLE TD_SEDES  (
+	[Id] INTEGER IDENTITY(1,1) PRIMARY KEY,
+	[name] VARCHAR(500) not null
+	)
+
+select * from DIG_GRM_DEMO dgd 
