@@ -1,145 +1,164 @@
 import { useState } from 'react'
 import {
+  Table,
+  Space,
+  Form,
+  Input,
+  Modal,
   Button,
-  Dialog,
-  Pane,
-  ProjectsIcon,
-  Alert,
-  toaster,
-  TextInput,
-  Select,
-  IconButton,
-  TrashIcon,
-} from 'evergreen-ui'
-import { ProjectDto } from 'renderer/dtos/documents'
+  Card,
+  Popconfirm,
+  message,
+} from 'antd'
+import {
+  EditOutlined,
+  FolderOpenOutlined,
+  DeleteOutlined,
+} from '@ant-design/icons'
 import { useAppContext } from '../../context'
 import { upsertProject, deleteProject } from '../../helpers/db'
-import { FormDataSection } from './styles'
-
-const projectInitialState = { code: '', name: '' }
+import { DefaultLayout } from './styles'
 
 export default () => {
-  const [isShown, setIsShown] = useState(false)
-  const [selectedProject, setSelectedProject] = useState<ProjectDto>({
-    ...projectInitialState,
-  })
+  const [form] = Form.useForm()
+  const [visible, setVisible] = useState(false)
+  const [isEdit, setIsEdit] = useState(false)
 
   const { language, projectContext, setProjectContext } = useAppContext()
 
+  const onDelete = async (id: number) => {
+    const result = await deleteProject(id)
+    if (result) {
+      const newContext = [...projectContext]
+      const index = newContext.findIndex((x) => x.id === id)
+      newContext.splice(index, 1)
+      setProjectContext(newContext)
+    }
+  }
+
   const onSave = async () => {
-    if (!selectedProject?.code || !selectedProject?.name) {
-      toaster.danger(language.projectCreator.saveError)
+    const model = form.getFieldsValue(true)
+    if (!model?.code || !model?.name) {
+      message.error(language.projectCreator.saveError)
       return
     }
 
-    const response = await upsertProject(selectedProject)
+    const response = await upsertProject(model)
     const newContext = [...projectContext]
     const index = newContext.findIndex((x) => x.id === response.id)
     if (index >= 0) newContext[index] = response
-    else newContext.push(response)
+    else newContext.unshift(response)
 
     setProjectContext(newContext)
-    setSelectedProject({ ...projectInitialState })
-    setIsShown(!isShown)
+    form.resetFields()
+    setIsEdit(false)
   }
 
-  const onDelete = async () => {
-    if (!selectedProject?.id) return
+  const columns = [
+    {
+      title: language.projectCreator.name,
+      dataIndex: 'name',
+      key: 'name',
+    },
+    {
+      title: language.projectCreator.code,
+      dataIndex: 'code',
+      key: 'code',
+    },
+    {
+      title: '',
+      key: 'action',
+      render: (record: any) => (
+        <Space size='large'>
+          <EditOutlined
+            onClick={() => {
+              form.setFieldsValue(record)
+              setIsEdit(true)
+            }}
+          />
+          <Popconfirm
+            title={language.projectCreator.deleteMessage}
+            onConfirm={() => onDelete(record.key)}
+            okText={language.projectCreator.okText}
+            cancelText={language.projectCreator.cancelText}
+          >
+            <DeleteOutlined style={{ color: 'red' }} />
+          </Popconfirm>
+        </Space>
+      ),
+    },
+  ]
 
-    const result = await deleteProject(selectedProject.id)
-    if (result) {
-      const newContext = [...projectContext]
-      const index = newContext.findIndex((x) => x.id === selectedProject.id)
-      newContext.splice(index, 1)
-
-      setProjectContext(newContext)
-      setSelectedProject({ ...projectInitialState })
-      setIsShown(!isShown)
-    }
-  }
+  const data = projectContext.map((p) => ({
+    key: p.id,
+    ...p,
+  }))
 
   return (
-    <Pane>
-      <Dialog
-        isShown={isShown}
-        width='95%'
-        title={language.projectCreator.title}
-        confirmLabel={language.projectCreator.save}
-        hasCancel
-        onCancel={() => setIsShown(!isShown)}
-        onConfirm={() => onSave()}
-      >
-        {({ close }) => (
-          <Pane>
-            <Alert
-              intent='none'
-              title={language.projectCreator.alert}
-              marginTop={20}
-              marginBottom={20}
-            />
-            <FormDataSection>
-              <Select
-                height={40}
-                value={selectedProject?.id}
-                onChange={(e) =>
-                  setSelectedProject(
-                    projectContext.find((x) => x.id === +e.target.value) || {
-                      ...projectInitialState,
-                    },
-                  )
-                }
-              >
-                <option key='0' value={0}>
-                  {language.projectCreator.placeholder1}
-                </option>
-                {projectContext.map((x) => (
-                  <option
-                    key={x.id}
-                    value={x.id}
-                  >{`${x.code} - ${x.name}`}</option>
-                ))}
-              </Select>
-              <TextInput
-                height={40}
-                value={selectedProject?.code}
-                placeholder={language.projectCreator.code}
-                onChange={(e) =>
-                  setSelectedProject({
-                    ...selectedProject,
-                    code: e.target.value,
-                  } as ProjectDto)
-                }
-              />
-              <TextInput
-                height={40}
-                value={selectedProject?.name}
-                placeholder={language.projectCreator.name}
-                onChange={(e) =>
-                  setSelectedProject({
-                    ...selectedProject,
-                    name: e.target.value,
-                  } as ProjectDto)
-                }
-              />
-              <IconButton
-                icon={TrashIcon}
-                intent='danger'
-                height={40}
-                onClick={() => onDelete()}
-              />
-            </FormDataSection>
-          </Pane>
-        )}
-      </Dialog>
+    <>
       <Button
-        width={300}
-        onClick={() => setIsShown(!isShown)}
-        height={60}
-        intent='success'
-        iconBefore={ProjectsIcon}
+        type='dashed'
+        size='large'
+        icon={<FolderOpenOutlined />}
+        onClick={() => {
+          setVisible(true)
+          form.resetFields()
+        }}
       >
         {language.projectCreator.title}
       </Button>
-    </Pane>
+
+      <Modal
+        title={language.projectCreator.title}
+        destroyOnClose
+        centered
+        visible={visible}
+        onCancel={() => {
+          form.resetFields()
+          setVisible(false)
+        }}
+        footer={null}
+        width='90%'
+      >
+        <DefaultLayout>
+          <Card size='small'>
+            <Form form={form} name='TypistForm' layout='vertical'>
+              <Form.Item
+                label={language.projectCreator.code}
+                name='code'
+                rules={[
+                  { required: true, message: 'Please input your username!' },
+                ]}
+              >
+                <Input disabled={isEdit} />
+              </Form.Item>
+
+              <Form.Item
+                label={language.projectCreator.name}
+                name='name'
+                rules={[
+                  { required: true, message: 'Please input your password!' },
+                ]}
+              >
+                <Input />
+              </Form.Item>
+            </Form>
+            <Button type='primary' size='large' block onClick={onSave}>
+              {isEdit
+                ? language.projectCreator.edit
+                : language.projectCreator.save}
+            </Button>
+          </Card>
+          <Card size='small'>
+            <Table
+              scroll={{ y: 350 }}
+              columns={columns}
+              dataSource={data}
+              pagination={false}
+            />
+          </Card>
+        </DefaultLayout>
+      </Modal>
+    </>
   )
 }

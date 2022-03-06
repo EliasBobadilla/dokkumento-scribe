@@ -6,8 +6,12 @@ interface ManagementScreen {
   code: string
   name: string
   save: string
+  edit: string
   cancel: string
   saveError: string
+  okText: string
+  cancelText: string
+  deleteMessage: string
 }
 
 interface FieldManagementScreen {
@@ -115,8 +119,12 @@ export const languages: AvailableLanguages = {
       code: 'string',
       name: 'string',
       save: 'string',
+      edit: 'string',
       cancel: 'string',
       saveError: 'string',
+      okText: 'string',
+      cancelText: 'string',
+      deleteMessage: 'string',
     },
     formCreator: {
       title: 'string',
@@ -126,8 +134,12 @@ export const languages: AvailableLanguages = {
       code: 'string',
       name: 'string',
       save: 'string',
+      edit: 'string',
       cancel: 'string',
       saveError: 'string',
+      okText: 'string',
+      cancelText: 'string',
+      deleteMessage: 'string',
     },
     fieldCreator: {
       title: 'string',
@@ -196,8 +208,12 @@ export const languages: AvailableLanguages = {
       code: 'Codigo del proyecto',
       name: 'Nombre del proyecto',
       save: 'Guardar',
+      edit: 'Editar',
       cancel: 'Cancelar',
       saveError: 'Error al guardar el proyecto, intente nuevamente',
+      okText: 'Si',
+      cancelText: 'No',
+      deleteMessage: 'Seguro de eliminar el proyecto?',
     },
     formCreator: {
       title: 'Administración de Formularios',
@@ -208,8 +224,12 @@ export const languages: AvailableLanguages = {
       code: 'Codigo del formulario',
       name: 'Nombre del formulario',
       save: 'Guardar',
+      edit: 'Editar',
       cancel: 'Cancelar',
       saveError: 'Error al guardar el formulario, intente nuevamente',
+      okText: 'Si',
+      cancelText: 'No',
+      deleteMessage: 'Seguro de eliminar el formulario?',
     },
     fieldCreator: {
       title: 'Administración de campos',

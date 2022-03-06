@@ -29,3 +29,8 @@ export const FieldContainer = styled.div`
   padding: 15px;
   margin: 15px 0;
 `
+export const DefaultLayout = styled.div`
+  display: grid;
+  grid-template-columns: 2fr 4fr;
+  grid-gap: 20px;
+`
