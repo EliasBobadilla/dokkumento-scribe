@@ -1,21 +1,17 @@
-import React from 'react'
-import { Button, TextInputField, toaster } from 'evergreen-ui'
+import { Form, Input, Button, message } from 'antd'
 import { useAppContext } from '../../context'
-import { UserRequestDto } from '../../dtos/management'
+import { UserRequestDto } from '../../../dtos/general'
 import { getAuth, getRoles } from '../../helpers/db'
-import { Container, LoginForm, LoginButton, LoginFooter } from './styles'
+import { Container, LoginFooter, LoginForm } from './styles'
 
-const Index = () => {
+export default () => {
   const { language, setUserContext, setRoleContext } = useAppContext()
-  const [user, setUser] = React.useState('')
-  const [pwd, setPwd] = React.useState('')
 
-  const submit = async () => {
+  const onSubmit = async (values: UserRequestDto) => {
     try {
-      const request: UserRequestDto = { username: user, password: pwd }
-      const currentUser = await getAuth(request)
+      const currentUser = await getAuth(values)
       if (!currentUser) {
-        toaster.danger(language.unauthorized)
+        message.error(language.login.unauthorized)
         return
       }
       setUserContext(currentUser)
@@ -23,40 +19,53 @@ const Index = () => {
       const currentRoles = await getRoles()
       setRoleContext(currentRoles)
     } catch (error) {
-      toaster.danger(language.loginProcessError)
+      message.error(language.login.processError)
     }
+  }
+
+  const onFinishFailed = () => {
+    message.error(language.login.unauthorized)
   }
 
   return (
     <Container>
       <LoginForm>
-        <TextInputField
-          label={language.loginUserLabel}
-          required
-          autoFocus
-          value={user}
-          onChange={(e) => setUser(e.target.value)}
-          validationMessage={language.loginUserErrorMessage}
-        />
-        <TextInputField
-          label={language.loginPwdLabel}
-          required
-          value={pwd}
-          onChange={(e) => setPwd(e.target.value)}
-          validationMessage={language.loginPwdErrorMessage}
-        />
-        <LoginButton>
-          <Button onClick={submit} size='large'>
-            {language.loginButtonLabel}
-          </Button>
-        </LoginButton>
-        <LoginFooter>
-          {language.PoweredBy}
-          <strong>@NeoSaile</strong>
-        </LoginFooter>
+        <Form
+          onFinish={onSubmit}
+          onFinishFailed={onFinishFailed}
+          name='loginForm'
+          autoComplete='off'
+          layout='vertical'
+        >
+          <Form.Item
+            label={language.login.userLabel}
+            name='username'
+            rules={[
+              { required: true, message: language.login.userErrorMessage },
+            ]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item
+            label={language.login.pwdLabel}
+            name='password'
+            rules={[
+              { required: true, message: language.login.pwdErrorMessage },
+            ]}
+          >
+            <Input.Password />
+          </Form.Item>
+          <Form.Item>
+            <Button type='primary' htmlType='submit' block size='large'>
+              {language.login.buttonLabel}
+            </Button>
+          </Form.Item>
+        </Form>
       </LoginForm>
+      <LoginFooter>
+        {language.login.poweredBy}
+        <strong>@NeoSaile</strong>
+      </LoginFooter>
     </Container>
   )
 }
-
-export default Index

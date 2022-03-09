@@ -1,18 +1,9 @@
 import { ipcMain } from 'electron'
-import { getAuth, getRoles } from './services/management'
-import {
-  getFieldTypes,
-  getProjects,
-  getForms,
-  getFormFields,
-  saveForm,
-  upsertProject,
-  deleteProject,
-  upsertForm,
-  deleteForm,
-  upsertFormFields,
-  getDataSource,
-} from './services/documents'
+import { getAuth, getRoles } from './auth'
+import { deleteProject, getProjects, upsertProject } from './projects'
+import { deleteForm, getForms, saveFormValues, upsertForm } from './forms'
+import { getFieldTypes, getFormFields, upsertFormFields } from './fields'
+import getDataSource from './data'
 
 ipcMain.handle('getAuth', (_, props) => getAuth(props))
 ipcMain.handle('getRoles', () => getRoles())
@@ -21,7 +12,7 @@ ipcMain.handle('getProjects', () => getProjects())
 ipcMain.handle('getForms', () => getForms())
 ipcMain.handle('getFormFields', () => getFormFields())
 ipcMain.handle('getDataSource', () => getDataSource())
-ipcMain.handle('saveForm', (_, props) => saveForm(props))
+ipcMain.handle('saveForm', (_, props) => saveFormValues(props))
 ipcMain.handle('upsertProject', (_, props) => upsertProject(props))
 ipcMain.handle('deleteProject', (_, props) => deleteProject(props))
 ipcMain.handle('upsertForm', (_, props) => upsertForm(props))

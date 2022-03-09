@@ -6,15 +6,14 @@ import { formsDefaultState, formsReducer } from './formsReducer'
 import { projectsDefaultState, projectsReducer } from './projectsReducer'
 import { formFieldsDefaultState, formFieldsReducer } from './FormFieldsReducer'
 import { datasourceDefaultState, datasourceReducer } from './datasourceReducer'
-import {
-  DataSourceDto,
-  FieldTypeDto,
-  FormDto,
-  FormFieldDto,
-  ProjectDto,
-} from '../dtos/documents'
-import { Language, languages } from '../components/languages'
-import { RoleDto, UserDto } from '../dtos/management'
+import { DataSourceDto } from '../../dtos/datasource'
+import { FieldTypeDto } from '../../dtos/fieldType'
+import { FormDto } from '../../dtos/form'
+import { FormFieldDto } from '../../dtos/formField'
+import { ProjectDto } from '../../dtos/project'
+import { RoleDto } from '../../dtos/role'
+import { UserDto } from '../../dtos/user'
+import { Language, languages } from '../helpers/languages'
 
 type ContextType = {
   language: Language

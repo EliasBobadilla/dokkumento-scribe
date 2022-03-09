@@ -1,181 +1,221 @@
 import { useState } from 'react'
 import {
   Button,
-  Dialog,
-  Pane,
-  ProjectsIcon,
-  Alert,
-  toaster,
-  TextInput,
+  Card,
+  Form,
+  Input,
+  message,
+  Modal,
+  Popconfirm,
   Select,
-  IconButton,
-  TrashIcon,
-} from 'evergreen-ui'
-import { FormDto, ProjectDto } from 'renderer/dtos/documents'
+  Space,
+  Table,
+  Tag,
+} from 'antd'
+import {
+  DeleteOutlined,
+  EditOutlined,
+  FormOutlined,
+  InfoCircleOutlined,
+} from '@ant-design/icons'
+import { FormDto } from '../../../dtos/form'
 import { useAppContext } from '../../context'
-import { upsertForm, deleteForm } from '../../helpers/db'
-import { FormDataSection } from './styles'
+import { deleteForm, upsertForm } from '../../helpers/db'
+import { DefaultLayout } from './styles'
 
-const projectInitialState = { code: '', name: '' }
-const formInitialState = { projectId: 0, code: '', name: '' }
+const { Option } = Select
 
 export default () => {
-  const { language, projectContext, setFormContext, formContext } =
+  const [form] = Form.useForm()
+  const [visible, setVisible] = useState(false)
+  const [isEdit, setIsEdit] = useState(false)
+
+  const { language, formContext, setFormContext, projectContext } =
     useAppContext()
 
-  const [isShown, setIsShown] = useState(false)
-  const [selectedProject, setSelectedProject] = useState<ProjectDto>(
-    projectContext[0],
-  )
-  const [selectedForm, setSelectedForm] = useState<FormDto>({
-    ...formInitialState,
-  })
-
-  const onSave = async () => {
-    if (!selectedProject?.id) {
-      toaster.danger(language.formCreator.saveError)
-      return
-    }
-
-    if (!selectedForm?.code || !selectedForm?.name) {
-      toaster.danger(language.formCreator.saveError)
-      return
-    }
-
-    const response = await upsertForm({
-      ...selectedForm,
-      projectId: selectedProject.id,
-    })
-
-    const newContext = [...formContext]
-    const index = newContext.findIndex((x) => x.id === response.id)
-    if (index >= 0) newContext[index] = response
-    else newContext.push(response)
-
-    setFormContext(newContext)
-    setSelectedForm({ ...formInitialState })
-    setIsShown(!isShown)
-  }
-
-  const onDelete = async () => {
-    if (!selectedForm?.id) return
-
-    const result = await deleteForm(selectedForm.id)
+  const onDelete = async (id: number) => {
+    const result = await deleteForm(id)
     if (result) {
       const newContext = [...formContext]
-      const index = newContext.findIndex((x) => x.id === selectedForm.id)
+      const index = newContext.findIndex((x) => x.id === id)
       newContext.splice(index, 1)
-
       setFormContext(newContext)
-      setSelectedForm({ ...formInitialState })
-      setIsShown(!isShown)
     }
   }
 
-  const onProjectChange = async (id: number) => {
-    setSelectedProject(
-      projectContext.find((x) => x.id === id) || { ...projectInitialState },
-    )
-    setSelectedForm({ ...formInitialState })
+  const onSave = async () => {
+    try {
+      await form.validateFields()
+      const model = form.getFieldsValue(true)
+      if (!model?.code || !model?.name) {
+        message.error(language.commons.saveError)
+        return
+      }
+
+      const response = await upsertForm(model)
+      const newContext = [...formContext]
+      const index = newContext.findIndex((x) => x.id === response.id)
+      if (index >= 0) newContext[index] = response
+      else newContext.unshift(response)
+
+      setFormContext(newContext)
+      form.resetFields()
+      setIsEdit(false)
+    } catch {
+      message.error(language.commons.saveError)
+    }
   }
 
+  const columns = [
+    {
+      title: language.project.title,
+      dataIndex: 'projectId',
+      key: 'projectId',
+      width: '30%',
+      render: (projectId: number) => (
+        <span>{projectContext.find((p) => p.id === projectId)?.name}</span>
+      ),
+    },
+    {
+      title: language.project.name,
+      dataIndex: 'name',
+      key: 'name',
+      width: '40%',
+    },
+    {
+      title: language.project.code,
+      dataIndex: 'code',
+      key: 'code',
+      width: '20%',
+      render: (code: string) => (
+        <Tag color='geekblue' key={code}>
+          {code}
+        </Tag>
+      ),
+    },
+    {
+      title: '',
+      key: 'action',
+      width: '10%',
+      render: (record: FormDto) => (
+        <Space size='large'>
+          <EditOutlined
+            onClick={() => {
+              form.setFieldsValue(record)
+              setIsEdit(true)
+            }}
+          />
+          <Popconfirm
+            title={language.commons.deleteMessage}
+            onConfirm={() => onDelete(record.id!)}
+            okText={language.commons.okText}
+            cancelText={language.commons.cancelText}
+          >
+            <DeleteOutlined style={{ color: 'red' }} />
+          </Popconfirm>
+        </Space>
+      ),
+    },
+  ]
+
   return (
-    <Pane>
-      <Dialog
-        isShown={isShown}
-        width='95%'
-        title={language.formCreator.title}
-        confirmLabel={language.formCreator.save}
-        hasCancel
-        onCancel={() => setIsShown(!isShown)}
-        onConfirm={() => onSave()}
-      >
-        {({ close }) => (
-          <Pane>
-            <Select
-              height={40}
-              width='100%'
-              onChange={(e) => onProjectChange(+e.target.value)}
-            >
-              <option key='0' value={0}>
-                {language.formCreator.placeholder1}
-              </option>
-              {projectContext.map((x) => (
-                <option
-                  key={x.id}
-                  value={x.id}
-                >{`${x.code} - ${x.name}`}</option>
-              ))}
-            </Select>
-            <Alert
-              intent='none'
-              title={language.formCreator.alert}
-              marginTop={20}
-              marginBottom={20}
-            />
-            <FormDataSection>
-              <Select
-                height={40}
-                value={selectedForm?.id}
-                onChange={(e) =>
-                  setSelectedForm(
-                    formContext.find((x) => x.id === +e.target.value) || {
-                      ...formInitialState,
-                    },
-                  )
-                }
-              >
-                <option key='0' value={0}>
-                  {language.formCreator.placeholder2}
-                </option>
-                {formContext.map((x) => (
-                  <option
-                    key={x.id}
-                    value={x.id}
-                  >{`${x.code} - ${x.name}`}</option>
-                ))}
-              </Select>
-              <TextInput
-                height={40}
-                value={selectedForm?.code}
-                placeholder={language.formCreator.code}
-                onChange={(e) =>
-                  setSelectedForm({
-                    ...selectedForm,
-                    code: e.target.value,
-                  } as FormDto)
-                }
-              />
-              <TextInput
-                height={40}
-                value={selectedForm?.name}
-                placeholder={language.formCreator.name}
-                onChange={(e) =>
-                  setSelectedForm({
-                    ...selectedForm,
-                    name: e.target.value,
-                  } as FormDto)
-                }
-              />
-              <IconButton
-                icon={TrashIcon}
-                intent='danger'
-                height={40}
-                onClick={() => onDelete()}
-              />
-            </FormDataSection>
-          </Pane>
-        )}
-      </Dialog>
+    <>
       <Button
-        width={300}
-        onClick={() => setIsShown(!isShown)}
-        height={60}
-        intent='success'
-        iconBefore={ProjectsIcon}
+        type='dashed'
+        size='large'
+        icon={<FormOutlined />}
+        onClick={() => {
+          setVisible(true)
+          form.resetFields()
+        }}
       >
-        {language.formCreator.title}
+        {language.form.title}
       </Button>
-    </Pane>
+
+      <Modal
+        title={language.form.title}
+        destroyOnClose
+        centered
+        visible={visible}
+        onCancel={() => {
+          form.resetFields()
+          setVisible(false)
+        }}
+        footer={null}
+        width='90%'
+      >
+        <DefaultLayout>
+          <Card size='small'>
+            <Form form={form} name='TypistForm' layout='vertical'>
+              <Form.Item
+                name='projectId'
+                label={language.form.placeholder1}
+                rules={[
+                  {
+                    required: true,
+                    message: language.commons.requiredFieldErrorMessage,
+                  },
+                ]}
+              >
+                <Select
+                  allowClear
+                  disabled={isEdit}
+                  placeholder={language.form.placeholder2}
+                >
+                  {projectContext.map((p) => (
+                    <Option key={p.code} value={p.id}>
+                      {p.name}
+                    </Option>
+                  ))}
+                </Select>
+              </Form.Item>
+              <Form.Item
+                label={language.form.code}
+                name='code'
+                rules={[
+                  {
+                    required: true,
+                    message: language.commons.requiredFieldErrorMessage,
+                  },
+                  {
+                    pattern: new RegExp(/^[A-Z_]{1,10}/),
+                    message: language.commons.requiredFieldErrorMessage,
+                  },
+                ]}
+              >
+                <Input disabled={isEdit} />
+              </Form.Item>
+
+              <Form.Item
+                label={language.form.name}
+                name='name'
+                rules={[
+                  {
+                    required: true,
+                    message: language.commons.requiredFieldErrorMessage,
+                  },
+                ]}
+              >
+                <Input />
+              </Form.Item>
+            </Form>
+            <Button type='primary' size='large' block onClick={onSave}>
+              {isEdit ? language.commons.edit : language.commons.save}
+            </Button>
+          </Card>
+          <Card size='small'>
+            <Table
+              scroll={{ y: 350 }}
+              columns={columns}
+              dataSource={formContext.map((p) => ({
+                key: p.id,
+                ...p,
+              }))}
+              pagination={false}
+            />
+          </Card>
+        </DefaultLayout>
+      </Modal>
+    </>
   )
 }

@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Button, Dialog, Pane, Paragraph, ExportIcon } from 'evergreen-ui'
+import { Button, Dialog, ExportIcon, Pane, Paragraph } from 'evergreen-ui'
 
 export default () => {
   const [isShown, setIsShown] = useState(false)

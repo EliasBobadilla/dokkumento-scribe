@@ -1,4 +1,4 @@
-import { UserDto } from '../dtos/management'
+import { UserDto } from '../../dtos/user'
 
 type UserAction = { type: 'set-user'; payload: UserDto }
 

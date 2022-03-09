@@ -1,4 +1,4 @@
-import { DataSourceDto } from '../dtos/documents'
+import { DataSourceDto } from '../../dtos/datasource'
 
 type DatasourceAction = {
   type: 'set-datasource'

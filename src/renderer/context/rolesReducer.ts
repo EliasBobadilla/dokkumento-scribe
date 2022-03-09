@@ -1,4 +1,4 @@
-import { RoleDto } from '../dtos/management'
+import { RoleDto } from '../../dtos/role'
 
 type RoleAction = { type: 'set-roles'; payload: RoleDto[] }
 

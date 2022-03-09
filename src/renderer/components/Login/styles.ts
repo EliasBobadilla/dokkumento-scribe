@@ -4,7 +4,7 @@ import { background } from '../../helpers/image'
 export const Container = styled.div`
   width: 100%;
   height: 100vh;
-  background: url(${background}) no-repeat fixed center;
+  background: url(${background}) no-repeat center center fixed;
   -webkit-background-size: cover;
   -moz-background-size: cover;
   -o-background-size: cover;
@@ -24,17 +24,11 @@ export const LoginForm = styled.div`
   position: relative;
 `
 
-export const LoginButton = styled.div`
-  margin-top: 30px;
-  position: absolute;
-  right: 50px;
-`
-
 export const LoginFooter = styled.div`
   height: 20px;
   width: calc(100% - 100px);
-  font-size: 0.9em;
-  color: #757575;
+  font-size: 1em;
+  color: #fff;
   position: absolute;
   bottom: 10px;
   text-align: center;

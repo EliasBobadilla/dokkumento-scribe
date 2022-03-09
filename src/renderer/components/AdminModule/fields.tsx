@@ -1,20 +1,21 @@
 import { useState } from 'react'
 import {
+  Alert,
   Button,
   Dialog,
-  Pane,
-  ProjectsIcon,
-  Alert,
   IconButton,
-  TrashIcon,
-  toaster,
-  TextInput,
-  Switch,
-  Select,
+  Pane,
   PlusIcon,
+  ProjectsIcon,
+  Select,
+  Switch,
   Text,
+  TextInput,
+  toaster,
+  TrashIcon,
 } from 'evergreen-ui'
-import { FormDto, FormFieldDto } from 'renderer/dtos/documents'
+import { FormDto } from '../../../dtos/form'
+import { FormFieldDto } from '../../../dtos/formField'
 import { useAppContext } from '../../context'
 import { upsertFormFields } from '../../helpers/db'
 import { FieldContainer, FormDataSection } from './styles'
@@ -50,12 +51,12 @@ export default () => {
 
   const onSave = async () => {
     if (!selectedForm?.id) {
-      toaster.danger(language.fieldCreator.saveError)
+      toaster.danger(language.commons.saveError)
       return
     }
 
     if (!selectedForm?.code || !selectedForm?.name) {
-      toaster.danger(language.fieldCreator.saveError)
+      toaster.danger(language.commons.saveError)
       return
     }
 
@@ -123,8 +124,8 @@ export default () => {
       <Dialog
         isShown={isShown}
         width='95%'
-        title={language.fieldCreator.title}
-        confirmLabel={language.fieldCreator.save}
+        title={language.field.title}
+        confirmLabel={language.commons.save}
         hasCancel
         onCancel={() => setIsShown(!isShown)}
         onConfirm={() => onSave()}
@@ -138,7 +139,7 @@ export default () => {
                 onChange={(e) => onFormChange(+e.target.value)}
               >
                 <option key='0' value={0}>
-                  {language.fieldCreator.placeholder1}
+                  {language.field.placeholder1}
                 </option>
                 {buildFormLabel.map((x) => (
                   <option key={x.value} value={x.value}>
@@ -155,7 +156,7 @@ export default () => {
             </FormDataSection>
             <Alert
               intent='none'
-              title={language.fieldCreator.alert}
+              title={language.field.alert}
               marginTop={20}
               marginBottom={20}
             />
@@ -170,7 +171,7 @@ export default () => {
                       }
                     >
                       <option key='0' value={0}>
-                        {language.fieldCreator.placeholder2}
+                        {language.field.placeholder2}
                       </option>
                       {fieldTypeContext.map((x) => (
                         <option
@@ -184,14 +185,14 @@ export default () => {
                     width={100}
                     disabled={field?.id > 0}
                     value={field.code}
-                    placeholder={language.fieldCreator.code}
+                    placeholder={language.field.code}
                     onChange={(e) =>
                       onFormFieldChange(index, 'code', e.target.value)
                     }
                   />
                   <TextInput
                     value={field.name}
-                    placeholder={language.fieldCreator.name}
+                    placeholder={language.field.name}
                     onChange={(e) =>
                       onFormFieldChange(index, 'name', e.target.value)
                     }
@@ -200,7 +201,7 @@ export default () => {
                     width={75}
                     type='number'
                     value={field.minLength}
-                    placeholder={language.fieldCreator.minLen}
+                    placeholder={language.field.minLen}
                     onChange={(e) =>
                       onFormFieldChange(index, 'minLength', +e.target.value)
                     }
@@ -209,7 +210,7 @@ export default () => {
                     width={75}
                     type='number'
                     value={field.maxLength}
-                    placeholder={language.fieldCreator.maxLen}
+                    placeholder={language.field.maxLen}
                     onChange={(e) =>
                       onFormFieldChange(index, 'maxLength', +e.target.value)
                     }
@@ -218,7 +219,7 @@ export default () => {
                   <Switch
                     height={20}
                     checked={field.required}
-                    placeholder={language.fieldCreator.required}
+                    placeholder={language.field.required}
                     onChange={(e) =>
                       onFormFieldChange(index, 'required', e.target.checked)
                     }
@@ -227,7 +228,7 @@ export default () => {
                   <Switch
                     height={20}
                     checked={field.uppercase}
-                    placeholder={language.fieldCreator.uppercase}
+                    placeholder={language.field.uppercase}
                     onChange={(e) =>
                       onFormFieldChange(index, 'uppercase', e.target.checked)
                     }
@@ -251,7 +252,7 @@ export default () => {
         intent='success'
         iconBefore={ProjectsIcon}
       >
-        {language.fieldCreator.title}
+        {language.field.title}
       </Button>
     </Pane>
   )

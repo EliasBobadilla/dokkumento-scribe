@@ -1,16 +1,16 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useState, useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import TypistModule from '../components/TypistModule'
 import AdminModule from '../components/AdminModule'
-import CoordinatoModule from '../components/CoordinatoModule'
+import CoordinatorModule from '../components/CoordinatoModule'
 import { useAppContext } from '../context'
 import Header from '../components/Header'
 import {
+  getDataSource,
   getFieldTypes,
   getFormFields,
   getForms,
   getProjects,
-  getDataSource,
 } from '../helpers/db'
 
 const Main = () => {
@@ -68,7 +68,7 @@ const Main = () => {
           tag={tag}
         />
       )}
-      {module === 'ADMIN' && <CoordinatoModule />}
+      {module === 'ADMIN' && <CoordinatorModule />}
       {module === 'SYS_ADMIN' && <AdminModule />}
     </>
   )

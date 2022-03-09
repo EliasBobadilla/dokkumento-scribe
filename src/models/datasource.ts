@@ -1,10 +1,10 @@
 import {
   DataTypes,
-  Model,
   InferAttributes,
   InferCreationAttributes,
+  Model,
 } from 'sequelize'
-import { db } from './db'
+import { db } from '../database/db'
 
 export default class Datasource extends Model<
   InferAttributes<Datasource>,
@@ -12,7 +12,7 @@ export default class Datasource extends Model<
 > {
   declare id: number
 
-  declare name: string
+  declare source: string
 }
 
 Datasource.init(
@@ -23,10 +23,10 @@ Datasource.init(
       autoIncrement: true,
       field: 'Id',
     },
-    name: {
+    source: {
       type: DataTypes.STRING,
       allowNull: false,
-      field: 'Name',
+      field: 'Source',
     },
   },
   {

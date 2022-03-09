@@ -1,4 +1,4 @@
-import { Sequelize, QueryTypes } from 'sequelize'
+import { QueryTypes, Sequelize } from 'sequelize'
 
 export const db = () =>
   new Sequelize(
@@ -30,19 +30,7 @@ export const rawInsert = async (query: string) => {
   return Array.isArray(inserted) && inserted.length > 0
 }
 
-export const rawSelect = async (query: string) =>
-  db().query(query, { type: QueryTypes.SELECT })
-
-export const sqlSQLExceptionLogger = (error: any, isBusiness?: boolean) => {
-  error.businessError = isBusiness
-
-  const query = `INSERT INTO [Logs] ([Stack],[Business]) VALUES ('${
-    error.stack
-  }','${isBusiness ? 1 : 0}')`
-
-  rawInsert(query)
-    .then(() => console.log('Log saved'))
-    .catch((er) => console.log(er))
-
-  return undefined
+export const rawSelect = async <T>(query: string) => {
+  const rows = await db().query(query, { type: QueryTypes.SELECT })
+  return rows as unknown as T
 }

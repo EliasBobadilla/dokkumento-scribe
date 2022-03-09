@@ -1,14 +1,14 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import {
   EditOutlined,
+  FolderOpenOutlined,
   FormOutlined,
   InboxOutlined,
-  FolderOpenOutlined,
 } from '@ant-design/icons'
-import { Menu, Dropdown, Button, Input, Avatar } from 'antd'
+import { Avatar, Button, Dropdown, Input, Menu } from 'antd'
 import { useAppContext } from '../../context'
-import { UserSection, Container, Section } from './styles'
-import { RoleDto, Roles } from '../../dtos/management'
+import { Container, Section, UserSection } from './styles'
+import { RoleDto, RoleEnums } from '../../../dtos/role'
 
 export interface Props {
   selectedProjectId: number
@@ -57,7 +57,7 @@ export default ({
 
   const moduleMenu = (
     <Menu onClick={(e) => setModule(e.key)}>
-      {Object.entries(Roles).map(([key, value]) => (
+      {Object.entries(RoleEnums).map(([key, value]) => (
         <Menu.Item key={key}>{value}</Menu.Item>
       ))}
     </Menu>
@@ -87,7 +87,7 @@ export default ({
               size='large'
               style={{ width: '100%' }}
               prefix={<InboxOutlined />}
-              placeholder={language.batchLabelPlaceHolder}
+              placeholder={language.commons.tag}
               onChange={(e) => setTag(e.target.value.toUpperCase())}
             />
           </Section>

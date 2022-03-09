@@ -1,12 +1,9 @@
-import { Language } from 'renderer/components/languages'
-import {
-  FieldTypeDto,
-  FormFieldDto,
-  FormDto,
-  SubmitFormDto,
-  ProjectDto,
-  FormData,
-} from '../dtos/documents'
+import { Language } from 'renderer/helpers/languages'
+import { FieldTypeDto } from '../../dtos/fieldType'
+import { ProjectDto } from '../../dtos/project'
+import { FormDto } from '../../dtos/form'
+import { FormFieldDto } from '../../dtos/formField'
+import { FormData, SubmitFormDto } from '../../dtos/general'
 
 const regexValidator = (value: string, type: FieldTypeDto): string | null => {
   if (!type.pattern) return null
@@ -25,12 +22,17 @@ const lenValidator = (
   language: Language,
 ): null | string => {
   if (type.code.includes('DATE')) return null
+
   if (field.maxLength === 0 && field.minLength === 0) return null
-  if (value.length > field.maxLength)
+
+  if (value && value.length > field.maxLength)
     return `${language.typist.maxLenError} ${field.maxLength}`
+
   if (!field.required) return null
+
   if (value.length < field.minLength)
     return `${language.typist.minLenError} ${field.minLength}`
+
   return null
 }
 

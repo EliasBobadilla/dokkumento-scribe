@@ -1,16 +1,14 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useRef, useState } from 'react'
 import useEventListener from '@use-it/event-listener'
-import { Form, Button, message, AutoComplete, Input } from 'antd'
-import {
-  FormData,
-  FormDto,
-  FormFieldDto,
-  ProjectDto,
-  DataSourceDto,
-} from '../../dtos/documents'
+import { AutoComplete, Button, Form, Input, message } from 'antd'
+import { DataSourceDto } from '../../../dtos/datasource'
+import { FormDto } from '../../../dtos/form'
+import { FormData } from '../../../dtos/general'
+import { FormFieldDto } from '../../../dtos/formField'
+import { ProjectDto } from '../../../dtos/project'
 import { useAppContext } from '../../context'
-import { Container, FormSection, ButtonSection } from './styles'
+import { ButtonSection, Container, FormSection } from './styles'
 import { buildSubmitData, customValidator } from '../../helpers/forms'
 import { submitForm } from '../../helpers/db'
 
@@ -51,12 +49,9 @@ export default ({ projectId, formId, tag }: Props) => {
     const newData = { ...data }
     const searchedValue = value.toUpperCase()
 
-    const contains = (item: { value: string }) => {
-      const option = item.value.toUpperCase()
-      return option.includes(searchedValue)
-    }
-
-    newData[code] = datasourceContext[td].filter((x) => contains(x))
+    newData[code] = datasourceContext[td].filter((item) =>
+      item.value.includes(searchedValue),
+    )
     setData(newData)
   }
 
@@ -72,7 +67,7 @@ export default ({ projectId, formId, tag }: Props) => {
     const response = await submitForm(submitModel)
 
     if (!response) {
-      message.error(language.saveFormErrorMessage)
+      message.error(language.commons.saveError)
       return
     }
 
@@ -87,7 +82,7 @@ export default ({ projectId, formId, tag }: Props) => {
       const model = form.getFieldsValue()
 
       if (!tag) {
-        message.error(language.typist.emptyTagMessage)
+        message.error(language.typist.emptyTagMessage, 1)
         return
       }
 
@@ -104,7 +99,7 @@ export default ({ projectId, formId, tag }: Props) => {
 
   const handleForceSubmit = async () => {
     if (!tag) {
-      message.error(language.typist.emptyTagMessage)
+      message.error(language.typist.emptyTagMessage, 1)
       return
     }
     const model = form.getFieldsValue()

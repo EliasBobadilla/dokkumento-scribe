@@ -1,4 +1,4 @@
-import type { ProjectDto } from '../dtos/documents'
+import type { ProjectDto } from '../../dtos/project'
 
 type ProjectAction = { type: 'set-projects'; payload: ProjectDto[] }
 

@@ -1,12 +1,11 @@
-import { UserDto, RoleDto, UserRequestDto } from '../dtos/management'
-import {
-  DataSource,
-  FieldTypeDto,
-  FormDto,
-  FormFieldDto,
-  ProjectDto,
-  SubmitFormDto,
-} from '../dtos/documents'
+import { RoleDto } from '../../dtos/role'
+import { UserDto } from '../../dtos/user'
+import { SubmitFormDto, UserRequestDto } from '../../dtos/general'
+import { DataSourceDto } from '../../dtos/datasource'
+import { FieldTypeDto } from '../../dtos/fieldType'
+import { FormFieldDto } from '../../dtos/formField'
+import { FormDto } from '../../dtos/form'
+import { ProjectDto } from '../../dtos/project'
 
 export const getAuth = (model: UserRequestDto) =>
   window.electron.ipc.invoke<UserDto | undefined>('getAuth', model)
@@ -43,4 +42,4 @@ export const upsertFormFields = (model: FormFieldDto[]) =>
   window.electron.ipc.invoke<FormFieldDto[]>('upsertFormFields', model)
 
 export const getDataSource = () =>
-  window.electron.ipc.invoke<DataSource>('getDataSource')
+  window.electron.ipc.invoke<DataSourceDto>('getDataSource')

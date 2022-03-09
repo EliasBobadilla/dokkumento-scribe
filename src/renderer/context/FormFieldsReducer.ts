@@ -1,4 +1,4 @@
-import { FormFieldDto } from '../dtos/documents'
+import { FormFieldDto } from '../../dtos/formField'
 
 type FormAction = { type: 'set-formFields'; payload: FormFieldDto[] }
 

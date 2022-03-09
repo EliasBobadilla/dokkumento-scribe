@@ -1,40 +1,35 @@
 import {
   DataTypes,
-  Model,
   InferAttributes,
   InferCreationAttributes,
+  Model,
 } from 'sequelize'
-import { db } from './db'
+import { db } from '../database/db'
 
-export default class Form extends Model<
-  InferAttributes<Form>,
-  InferCreationAttributes<Form>
+export default class FieldType extends Model<
+  InferAttributes<FieldType>,
+  InferCreationAttributes<FieldType>
 > {
   declare id: number
-
-  declare projectId: number
 
   declare code: string
 
   declare name: string
 
-  declare description: string
+  declare validationMessage: string
+
+  declare pattern: string
 
   declare deleted: boolean
 }
 
-Form.init(
+FieldType.init(
   {
     id: {
       type: DataTypes.INTEGER,
       primaryKey: true,
       autoIncrement: true,
       field: 'Id',
-    },
-    projectId: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      field: 'ProjectId',
     },
     code: {
       type: DataTypes.STRING,
@@ -46,9 +41,13 @@ Form.init(
       allowNull: false,
       field: 'Name',
     },
-    description: {
+    validationMessage: {
       type: DataTypes.STRING,
-      field: 'Description',
+      field: 'ValidationMessage',
+    },
+    pattern: {
+      type: DataTypes.STRING,
+      field: 'Pattern',
     },
     deleted: {
       type: DataTypes.BOOLEAN,
@@ -56,7 +55,7 @@ Form.init(
     },
   },
   {
-    tableName: 'Forms',
+    tableName: 'FieldTypes',
     timestamps: false,
     sequelize: db(),
   },

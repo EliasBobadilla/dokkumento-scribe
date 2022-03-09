@@ -1,4 +1,4 @@
-import type { FieldTypeDto } from '../dtos/documents'
+import type { FieldTypeDto } from '../../dtos/fieldType'
 
 type FieldTypeAction = {
   type: 'set-fieldTypes'
