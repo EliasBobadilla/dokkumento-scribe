@@ -70,12 +70,21 @@ export default () => {
   const projectFormOptions = formContext.map((f, i) => {
     const p = projectContext.find((x) => x.id === f.projectId)
     const label = `${i + 1}. ${f.code} - ${f.name} - (${p?.code} - ${p?.name})`
+    const id = `${p?.id}-${f.id}`
     return (
-      <Option key={`${p?.id}-${f.id}`} value={`${p?.id}-${f.id}`}>
-        {label.toUpperCase()}
+      <Option key={id} value={id}>
+        {label}
       </Option>
     )
   })
+
+  const onFormChange = (value: string) => {
+    const ids = value.split('-')
+    const fields = formFieldContext.filter((f) => +f.formId === +ids[1])
+    form.setFieldsValue({
+      fields,
+    })
+  }
 
   return (
     <>
@@ -115,30 +124,171 @@ export default () => {
                 },
               ]}
             >
-              <Select allowClear placeholder={language.field.placeholder1}>
+              <Select
+                allowClear
+                placeholder={language.field.placeholder1}
+                onChange={onFormChange}
+              >
                 {projectFormOptions}
               </Select>
             </Form.Item>
             <FormListContainer>
               <Form.List name='fields'>
-                {(fields, { add, remove }) => (
-                  <>
-                    <Form.Item>
-                      <Button
-                        type='dashed'
-                        block
-                        onClick={() => add()}
-                        icon={<PlusOutlined />}
-                      >
-                        {language.commons.addField}
-                      </Button>
-                    </Form.Item>
-                    {fields.map(({ key, name, ...rest }) => {
-                      const mela = ''
-                      return <div>TODO: volver a colocar los campos</div>
-                    })}
-                  </>
-                )}
+                {(fields, { add, remove }) => {
+                  const dbFields = form.getFieldValue(['fields'])
+                  return (
+                    <>
+                      <Form.Item>
+                        <Button
+                          type='dashed'
+                          block
+                          onClick={() => add({ order: dbFields.length + 1 }, 0)}
+                          icon={<PlusOutlined />}
+                        >
+                          {language.commons.addField}
+                        </Button>
+                      </Form.Item>
+                      {fields.map(({ key, name, ...rest }, index) => (
+                        <Space
+                          key={key}
+                          style={{
+                            display: 'flex',
+                            marginBottom: 10,
+                            border: '1px #d1d7d9 dashed',
+                            padding: '10px',
+                            height: '90px',
+                          }}
+                          align='baseline'
+                        >
+                          <Form.Item
+                            {...rest}
+                            label={language.field.order}
+                            name={[name, 'order']}
+                            key={`${key}-order`}
+                            rules={[
+                              {
+                                required: true,
+                                message:
+                                  language.commons.requiredFieldErrorMessage,
+                              },
+                            ]}
+                          >
+                            <InputNumber style={{ width: '55px' }} />
+                          </Form.Item>
+                          <Form.Item
+                            {...rest}
+                            label={language.field.fieldType}
+                            name={[name, 'fieldTypeId']}
+                            key={`${key}-fieldTypeId`}
+                            rules={[
+                              {
+                                required: true,
+                                message:
+                                  language.commons.requiredFieldErrorMessage,
+                              },
+                            ]}
+                          >
+                            <Select
+                              allowClear
+                              placeholder={language.field.placeholder2}
+                            >
+                              {fieldTypeContext.map((x) => (
+                                <Option
+                                  key={x.id}
+                                  value={x.id}
+                                >{`${x.code} - ${x.name}`}</Option>
+                              ))}
+                            </Select>
+                          </Form.Item>
+                          <Form.Item
+                            {...rest}
+                            label={language.field.code}
+                            name={[name, 'code']}
+                            key={`${key}-code`}
+                            rules={[
+                              {
+                                required: true,
+                                message:
+                                  language.commons.requiredFieldErrorMessage,
+                              },
+                            ]}
+                          >
+                            <Input disabled={dbFields[index]?.id} />
+                          </Form.Item>
+                          <Form.Item
+                            {...rest}
+                            label={language.field.name}
+                            name={[name, 'name']}
+                            key={`${key}-name`}
+                            rules={[
+                              {
+                                required: true,
+                                message:
+                                  language.commons.requiredFieldErrorMessage,
+                              },
+                            ]}
+                          >
+                            <Input />
+                          </Form.Item>
+                          <Form.Item
+                            {...rest}
+                            label={language.field.minLen}
+                            name={[name, 'minLength']}
+                            key={`${key}-minLength`}
+                          >
+                            <InputNumber style={{ width: '65px' }} />
+                          </Form.Item>
+                          <Form.Item
+                            {...rest}
+                            label={language.field.maxLen}
+                            name={[name, 'maxLength']}
+                            key={`${key}-maxLength`}
+                          >
+                            <InputNumber style={{ width: '65px' }} />
+                          </Form.Item>
+                          <Form.Item
+                            {...rest}
+                            label={language.field.datasource}
+                            name={[name, 'datasource']}
+                            key={`${key}-datasource`}
+                          >
+                            <Select
+                              allowClear
+                              placeholder={language.field.placeholder3}
+                            >
+                              {Object.keys(datasourceContext).map((k) => (
+                                <Option key={k} value={k}>
+                                  {k}
+                                </Option>
+                              ))}
+                            </Select>
+                          </Form.Item>
+                          <Form.Item
+                            {...rest}
+                            label={language.field.required}
+                            name={[name, 'required']}
+                            key={`${key}-required`}
+                            valuePropName='checked'
+                          >
+                            <Switch />
+                          </Form.Item>
+                          <Form.Item
+                            {...rest}
+                            label={language.field.uppercase}
+                            name={[name, 'uppercase']}
+                            key={`${key}-uppercase`}
+                            valuePropName='checked'
+                          >
+                            <Switch />
+                          </Form.Item>
+                          {!dbFields[index]?.id && (
+                            <MinusCircleOutlined onClick={() => remove(name)} />
+                          )}
+                        </Space>
+                      ))}
+                    </>
+                  )
+                }}
               </Form.List>
             </FormListContainer>
           </Form>
