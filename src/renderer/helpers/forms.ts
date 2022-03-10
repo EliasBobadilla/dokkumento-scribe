@@ -78,7 +78,7 @@ export const buildSubmitData = (
   form: FormDto,
   formFields: FormFieldDto[],
   data: FormData,
-  tags: string,
+  tag: string,
   userId: number,
   forced?: boolean,
 ): SubmitFormDto => {
@@ -95,9 +95,9 @@ export const buildSubmitData = (
     }
   })
 
-  if (tags.length) {
+  if (tag.length) {
     model.properties.push('Tags')
-    model.values.push(tags[0])
+    model.values.push(tag)
   }
 
   if (forced) {

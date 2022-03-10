@@ -20,6 +20,9 @@ interface ManagementScreen {
   alert?: string
   placeholder1?: string
   placeholder2?: string
+  placeholder3?: string
+  order?: string
+  fieldType?: string
   code?: string
   name?: string
   minLen?: string
@@ -50,6 +53,7 @@ interface Commons {
   deleteMessage: string
   requiredFieldErrorMessage: string
   codeFieldErrorMessage: string
+  addField: string
 }
 
 export interface Language {
@@ -101,12 +105,16 @@ export const languages: AvailableLanguages = {
         'Para crear o modificar campos de un formulario escoja un formulario y llene los demás datos. El código del campo debe ser único. Si elimina un campo, los datos del campo no podrán ser recuperados.',
       placeholder1: 'Selecciona un formulario',
       placeholder2: 'Selecciona un tipo',
+      placeholder3: 'Selecciona una tabla',
+      order: 'Orden',
+      fieldType: 'Tipo de campo',
       code: 'Código',
       name: 'Nombre',
       minLen: 'Min',
       maxLen: 'Max',
       required: 'Requerido',
       uppercase: 'Mayúsculas',
+      datasource: 'Autocompletado',
     },
     header: {
       projectPlaceholder: 'Proyectos',
@@ -133,6 +141,7 @@ export const languages: AvailableLanguages = {
       deleteMessage: 'Estas seguro de eliminar el registro?',
       requiredFieldErrorMessage: 'Este campo es requerido!',
       codeFieldErrorMessage: 'el codigo es requerido!',
+      addField: 'Agregar campo',
     },
   },
 }

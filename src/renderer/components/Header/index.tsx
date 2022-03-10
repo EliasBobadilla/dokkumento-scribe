@@ -68,14 +68,14 @@ export default ({
       {module === 'TYPIST' && (
         <>
           <Section>
-            <Dropdown overlay={projectMenu}>
+            <Dropdown overlay={projectMenu} arrow>
               <Button type='primary' block size='large'>
                 {language.header.projectPlaceholder} <FolderOpenOutlined />
               </Button>
             </Dropdown>
           </Section>
           <Section>
-            <Dropdown overlay={formMenu}>
+            <Dropdown overlay={formMenu} arrow>
               <Button type='primary' block size='large'>
                 {language.header.formPlaceholder} <FormOutlined />
               </Button>
@@ -97,7 +97,7 @@ export default ({
         <strong>{`${userContext.firstname} ${userContext.lastname}`}</strong>
         {currentRole?.name}
       </UserSection>
-      <Dropdown overlay={moduleMenu}>
+      <Dropdown overlay={moduleMenu} placement='bottomRight' arrow>
         <Avatar
           style={{
             backgroundColor: '#FF4821',

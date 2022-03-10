@@ -107,7 +107,7 @@ export default ({ projectId, formId, tag }: Props) => {
   }
 
   const keyDownHandler = ({ key }: any) => {
-    // TODO: lokk for correct type
+    // TODO: look for correct type
     switch (String(key)) {
       case 'F2':
         handleSubmit()

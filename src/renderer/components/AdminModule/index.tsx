@@ -1,12 +1,9 @@
-import { useState } from 'react'
 import { Container } from './styles'
 import ProjectModule from './projects'
 import FormModule from './forms'
 import FieldModule from './fields'
 
-const AdminModule = () => {
-  const [projectIsVisible, setProjectIsVisible] = useState(false)
-
+export default () => {
   return (
     <Container>
       <ProjectModule />
@@ -19,5 +16,3 @@ const AdminModule = () => {
     </Container>
   )
 }
-
-export default AdminModule

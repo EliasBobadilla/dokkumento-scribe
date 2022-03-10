@@ -1,259 +1,158 @@
+/* eslint-disable react/jsx-props-no-spreading */
 import { useState } from 'react'
 import {
-  Alert,
   Button,
-  Dialog,
-  IconButton,
-  Pane,
-  PlusIcon,
-  ProjectsIcon,
+  Card,
+  Form,
+  Input,
+  message,
+  Modal,
   Select,
+  Space,
   Switch,
-  Text,
-  TextInput,
-  toaster,
-  TrashIcon,
-} from 'evergreen-ui'
-import { FormDto } from '../../../dtos/form'
+  InputNumber,
+} from 'antd'
+import {
+  FormOutlined,
+  MinusCircleOutlined,
+  PlusOutlined,
+} from '@ant-design/icons'
+import { upsertFormFields } from '../../helpers/db'
 import { FormFieldDto } from '../../../dtos/formField'
 import { useAppContext } from '../../context'
-import { upsertFormFields } from '../../helpers/db'
-import { FieldContainer, FormDataSection } from './styles'
+import { FormListContainer } from './styles'
 
-const formInitialState = { projectId: 0, code: '', name: '' }
-const formFieldInitialState = {
-  projectId: 0,
-  formId: 0,
-  fieldTypeId: 0,
-  code: '',
-  name: '',
-  description: '',
-  minLength: 0,
-  maxLength: 0,
-  uppercase: true,
-  required: true,
-}
+const { Option } = Select
+
 export default () => {
+  const [form] = Form.useForm()
+  const [visible, setVisible] = useState(false)
+
   const {
     language,
-    projectContext,
     formContext,
-    formFieldContext,
+    projectContext,
     fieldTypeContext,
+    datasourceContext,
+    formFieldContext,
     setFormFieldContext,
   } = useAppContext()
 
-  const [isShown, setIsShown] = useState(false)
-  const [selectedForm, setSelectedForm] = useState<FormDto>({
-    ...formInitialState,
-  })
-  const [selectedFields, setSelectedFields] = useState<FormFieldDto[]>([])
-
   const onSave = async () => {
-    if (!selectedForm?.id) {
-      toaster.danger(language.commons.saveError)
-      return
+    try {
+      await form.validateFields()
+      const model = form.getFieldsValue(true)
+
+      const ids = model.projectId.split('-')
+
+      const dto: FormFieldDto[] = model.fields.map((f: FormFieldDto) => ({
+        ...f,
+        projectId: ids[0],
+        formId: ids[1],
+      }))
+
+      const response = await upsertFormFields(dto)
+
+      const newContext = [...formFieldContext]
+      response.forEach((element) => {
+        const index = newContext.findIndex((x) => x.id === element.id)
+        if (index >= 0) newContext[index] = element
+        else newContext.push(element)
+      })
+      setFormFieldContext(newContext)
+      form.resetFields()
+      setVisible(false)
+    } catch {
+      message.error(language.commons.saveError)
     }
-
-    if (!selectedForm?.code || !selectedForm?.name) {
-      toaster.danger(language.commons.saveError)
-      return
-    }
-
-    const model: FormFieldDto[] = selectedFields.map((m, i) => ({
-      ...m,
-      order: i + 1,
-      formId: selectedForm.id!,
-      projectId: selectedForm.projectId!,
-    }))
-
-    console.log('model =>', model)
-    const response = await upsertFormFields(model)
-
-    const newContext = [...formFieldContext]
-    response.forEach((element) => {
-      const index = newContext.findIndex((x) => x.id === element.id)
-      if (index >= 0) newContext[index] = element
-      else newContext.push(element)
-    })
-    setFormFieldContext(newContext)
-    setSelectedForm({ ...formInitialState })
-    setSelectedFields([])
-    setIsShown(!isShown)
   }
 
-  const onFormChange = async (id: number) => {
-    setSelectedForm(
-      formContext.find((x) => x.id === id) || { ...formInitialState },
+  const projectFormOptions = formContext.map((f, i) => {
+    const p = projectContext.find((x) => x.id === f.projectId)
+    const label = `${i + 1}. ${f.code} - ${f.name} - (${p?.code} - ${p?.name})`
+    return (
+      <Option key={`${p?.id}-${f.id}`} value={`${p?.id}-${f.id}`}>
+        {label.toUpperCase()}
+      </Option>
     )
-    setSelectedFields(formFieldContext.filter((x) => x.formId === id))
-  }
-
-  const onFormFieldChange = (
-    index: number,
-    field: string,
-    value: string | boolean | number,
-  ) => {
-    const list = [...selectedFields]
-    list[index][field] = value
-    setSelectedFields(list)
-  }
-
-  const removeField = (i: number) => {
-    const list = [...selectedFields]
-    list.splice(i, 1)
-    setSelectedFields(list)
-  }
-
-  const addField = () => {
-    const list = [...selectedFields]
-    list.push({ ...formFieldInitialState })
-    setSelectedFields(list)
-  }
-
-  const buildFormLabel = formContext.map((x) => {
-    const p = projectContext.find((y) => y.id === x.projectId)
-    return {
-      label: `${p.code} - ${p?.name} / ${x.code} - ${x.name}`,
-      value: x.id,
-    }
   })
 
   return (
-    <Pane>
-      <Dialog
-        isShown={isShown}
-        width='95%'
-        title={language.field.title}
-        confirmLabel={language.commons.save}
-        hasCancel
-        onCancel={() => setIsShown(!isShown)}
-        onConfirm={() => onSave()}
-      >
-        {({ close }) => (
-          <Pane>
-            <FormDataSection>
-              <Select
-                height={40}
-                width='98%'
-                onChange={(e) => onFormChange(+e.target.value)}
-              >
-                <option key='0' value={0}>
-                  {language.field.placeholder1}
-                </option>
-                {buildFormLabel.map((x) => (
-                  <option key={x.value} value={x.value}>
-                    {x.label}
-                  </option>
-                ))}
-              </Select>
-              <IconButton
-                icon={PlusIcon}
-                intent='success'
-                height={40}
-                onClick={() => addField()}
-              />
-            </FormDataSection>
-            <Alert
-              intent='none'
-              title={language.field.alert}
-              marginTop={20}
-              marginBottom={20}
-            />
-            {selectedFields.map((field, index) => {
-              return (
-                <FieldContainer key={`${field.id}_${index}`}>
-                  <div style={{ width: '200px' }}>
-                    <Select
-                      value={field.fieldTypeId}
-                      onChange={(e) =>
-                        onFormFieldChange(index, 'fieldTypeId', +e.target.value)
-                      }
-                    >
-                      <option key='0' value={0}>
-                        {language.field.placeholder2}
-                      </option>
-                      {fieldTypeContext.map((x) => (
-                        <option
-                          key={x.id}
-                          value={x.id}
-                        >{`${x.code} - ${x.name}`}</option>
-                      ))}
-                    </Select>
-                  </div>
-                  <TextInput
-                    width={100}
-                    disabled={field?.id > 0}
-                    value={field.code}
-                    placeholder={language.field.code}
-                    onChange={(e) =>
-                      onFormFieldChange(index, 'code', e.target.value)
-                    }
-                  />
-                  <TextInput
-                    value={field.name}
-                    placeholder={language.field.name}
-                    onChange={(e) =>
-                      onFormFieldChange(index, 'name', e.target.value)
-                    }
-                  />
-                  <TextInput
-                    width={75}
-                    type='number'
-                    value={field.minLength}
-                    placeholder={language.field.minLen}
-                    onChange={(e) =>
-                      onFormFieldChange(index, 'minLength', +e.target.value)
-                    }
-                  />
-                  <TextInput
-                    width={75}
-                    type='number'
-                    value={field.maxLength}
-                    placeholder={language.field.maxLen}
-                    onChange={(e) =>
-                      onFormFieldChange(index, 'maxLength', +e.target.value)
-                    }
-                  />
-                  <Text>Requerido</Text>
-                  <Switch
-                    height={20}
-                    checked={field.required}
-                    placeholder={language.field.required}
-                    onChange={(e) =>
-                      onFormFieldChange(index, 'required', e.target.checked)
-                    }
-                  />
-                  <Text>Mayusculas</Text>
-                  <Switch
-                    height={20}
-                    checked={field.uppercase}
-                    placeholder={language.field.uppercase}
-                    onChange={(e) =>
-                      onFormFieldChange(index, 'uppercase', e.target.checked)
-                    }
-                  />
-                  <IconButton
-                    icon={TrashIcon}
-                    intent='danger'
-                    height={40}
-                    onClick={() => removeField(index)}
-                  />
-                </FieldContainer>
-              )
-            })}
-          </Pane>
-        )}
-      </Dialog>
+    <>
       <Button
-        width={300}
-        onClick={() => setIsShown(!isShown)}
-        height={60}
-        intent='success'
-        iconBefore={ProjectsIcon}
+        type='dashed'
+        size='large'
+        icon={<FormOutlined />}
+        onClick={() => {
+          setVisible(true)
+          form.resetFields()
+        }}
       >
-        {language.field.title}
+        {language.form.title}
       </Button>
-    </Pane>
+
+      <Modal
+        title={language.form.title}
+        destroyOnClose
+        centered
+        visible={visible}
+        onCancel={() => {
+          form.resetFields()
+          setVisible(false)
+        }}
+        footer={null}
+        width='90%'
+      >
+        <Card size='small'>
+          <Form form={form} name='TypistForm' layout='vertical'>
+            <Form.Item
+              name='projectId'
+              label={language.field.placeholder1}
+              rules={[
+                {
+                  required: true,
+                  message: language.commons.requiredFieldErrorMessage,
+                },
+              ]}
+            >
+              <Select allowClear placeholder={language.field.placeholder1}>
+                {projectFormOptions}
+              </Select>
+            </Form.Item>
+            <FormListContainer>
+              <Form.List name='fields'>
+                {(fields, { add, remove }) => (
+                  <>
+                    <Form.Item>
+                      <Button
+                        type='dashed'
+                        block
+                        onClick={() => add()}
+                        icon={<PlusOutlined />}
+                      >
+                        {language.commons.addField}
+                      </Button>
+                    </Form.Item>
+                    {fields.map(({ key, name, ...rest }) => {
+                      const mela = ''
+                      return <div>TODO: volver a colocar los campos</div>
+                    })}
+                  </>
+                )}
+              </Form.List>
+            </FormListContainer>
+          </Form>
+          <Button
+            type='primary'
+            size='large'
+            block
+            onClick={onSave}
+            style={{ marginTop: '20px' }}
+          >
+            {language.commons.save}
+          </Button>
+        </Card>
+      </Modal>
+    </>
   )
 }

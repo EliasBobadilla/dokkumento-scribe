@@ -34,3 +34,7 @@ export const DefaultLayout = styled.div`
   grid-template-columns: 2fr 4fr;
   grid-gap: 20px;
 `
+export const FormListContainer = styled.div`
+  height: 400px;
+  overflow-y: auto;
+`
