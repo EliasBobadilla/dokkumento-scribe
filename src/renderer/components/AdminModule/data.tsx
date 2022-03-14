@@ -1,6 +1,16 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import { useState } from 'react'
-import { Button, Card, Form, Input, Modal, Select, Checkbox, Table } from 'antd'
+import {
+  Button,
+  Card,
+  Form,
+  Input,
+  Modal,
+  Select,
+  Checkbox,
+  Table,
+  Space,
+} from 'antd'
 import {
   FormOutlined,
   SearchOutlined,
@@ -49,6 +59,16 @@ export default () => {
   })
 
   const onFormChange = (value: string) => {
+    if (!value) {
+      dataForm.resetFields()
+      setOptions([])
+      setFields([])
+      setData([])
+      setCols([])
+      setForm(undefined)
+      return
+    }
+
     const ids = value.split('-')
     const currentForm = formContext.find((f) => f.id === +ids[1])
     const currentFields = formFieldContext.filter((f) => f.formId === +ids[1])
@@ -134,8 +154,8 @@ export default () => {
         <Card size='small'>
           <Form form={dataForm} name='dataForm' layout='vertical'>
             <Form.Item
-              name='projectId'
-              label={language.data.placeholder1}
+              name='projectForm'
+              label={language.data.formLabel}
               rules={[
                 {
                   required: true,
@@ -143,17 +163,14 @@ export default () => {
                 },
               ]}
             >
-              <Select
-                allowClear
-                placeholder={language.data.placeholder1}
-                onChange={onFormChange}
-              >
+              <Select allowClear onChange={onFormChange}>
                 {projectFormOptions}
               </Select>
             </Form.Item>
             <FormDataSection>
               <Form.Item
-                label={language.data.placeholder3}
+                label={language.data.filterNameLabel}
+                style={{ minWidth: '200px' }}
                 name='ffName'
                 rules={[
                   {
@@ -162,7 +179,7 @@ export default () => {
                   },
                 ]}
               >
-                <Select allowClear placeholder={language.data.placeholder2}>
+                <Select allowClear>
                   {options.map((x) => (
                     <Option key={x.value} value={x.value}>
                       {x.label}
@@ -171,7 +188,8 @@ export default () => {
                 </Select>
               </Form.Item>
               <Form.Item
-                label={language.data.name}
+                label={language.data.filterValueLabel}
+                style={{ minWidth: '200px' }}
                 name='ffValue'
                 rules={[
                   {
@@ -186,38 +204,54 @@ export default () => {
                 type='default'
                 onClick={onSearch}
                 icon={<SearchOutlined />}
+                style={{ marginTop: '6px' }}
               >
-                {language.data.searchData}
+                {language.data.searchButton}
               </Button>
               <Button
                 type='primary'
                 onClick={onExcelDownload}
                 icon={<FileExcelOutlined />}
+                style={{ marginTop: '6px' }}
               >
-                {`${language.data.excelDownload} (${data.length})`}
+                {`${language.data.excelDownloadButton} (${data.length})`}
               </Button>
               <Button
                 type='primary'
                 onClick={onJsonDownload}
                 icon={<FileOutlined />}
+                style={{ marginTop: '6px' }}
               >
-                {`${language.data.jsonDownload} (${data.length})`}
+                {`${language.data.jsonDownloadButton} (${data.length})`}
               </Button>
             </FormDataSection>
           </Form>
-          <div>
+          <Space>
             <Checkbox.Group
               options={options}
               onChange={(values) => onFieldsChange(values as string[])}
-              style={{ display: 'table-caption' }}
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                border: '1px #d1d7d9 dashed',
+                minWidth: '200px',
+                padding: '10px',
+                height: '250px',
+                overflow: 'auto',
+              }}
             />
             <Table
-              scroll={{ y: 350 }}
+              scroll={{ y: 210 }}
               columns={cols}
               dataSource={data}
               pagination={false}
+              size='small'
+              style={{
+                height: '250px',
+                overflow: 'hidden',
+              }}
             />
-          </div>
+          </Space>
         </Card>
       </Modal>
     </>

@@ -1,3 +1,14 @@
+interface DataManagerScreen {
+  title: string
+  formErrorMessage: string
+  formLabel: string
+  filterNameLabel: string
+  filterValueLabel: string
+  searchButton: string
+  excelDownloadButton: string
+  jsonDownloadButton: string
+}
+
 interface LoginScreen {
   unauthorized: string
   processError: string
@@ -65,7 +76,7 @@ export interface Language {
   project: ManagementScreen
   form: ManagementScreen
   field: ManagementScreen
-  data: ManagementScreen
+  data: DataManagerScreen
   typist: TypistScreen
   commons: Commons
 }
@@ -122,12 +133,13 @@ export const languages: AvailableLanguages = {
     },
     data: {
       title: 'Administración de datos',
-      placeholder1: 'Selecciona un formulario',
-      placeholder2: 'Selecciona un tipo',
-      placeholder3: 'Selecciona una tabla',
-      searchData: 'Buscar',
-      excelDownload: 'Descargar Excel',
-      jsonDownload: 'Descargar JSON',
+      formErrorMessage: 'string',
+      formLabel: 'Formulario',
+      filterNameLabel: 'Filtro de busqueda',
+      filterValueLabel: 'Valor del filtro',
+      searchButton: 'Buscar',
+      excelDownloadButton: 'Descargar Excel',
+      jsonDownloadButton: 'Descargar JSON',
     },
     header: {
       projectPlaceholder: 'Proyectos',
