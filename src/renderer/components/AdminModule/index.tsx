@@ -2,17 +2,17 @@ import { Container } from './styles'
 import ProjectModule from './projects'
 import FormModule from './forms'
 import FieldModule from './fields'
+import DataModule from './data'
 
-export default () => {
-  return (
-    <Container>
-      <ProjectModule />
-      <FormModule />
-      <FieldModule />
-      {/*      
-      <UserModule />
-      <StatisticsModule />
-      <DataModule /> */}
-    </Container>
-  )
-}
+export default () => (
+  <Container>
+    <ProjectModule />
+    <FormModule />
+    <FieldModule />
+    <DataModule />
+    {/*      
+    <UserModule />
+    <StatisticsModule />
+     */}
+  </Container>
+)

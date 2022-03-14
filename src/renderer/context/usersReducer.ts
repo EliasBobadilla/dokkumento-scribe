@@ -9,6 +9,7 @@ export const userDefaultState: UserDto = {
   lastname: '',
   username: '',
   password: '',
+  host: '',
 }
 
 export function usersReducer(state: UserDto, action: UserAction) {

@@ -18,6 +18,8 @@ export default class Form extends Model<
 
   declare name: string
 
+  declare digTable: string
+
   declare deleted: boolean
 }
 
@@ -43,6 +45,11 @@ Form.init(
       type: DataTypes.STRING,
       allowNull: false,
       field: 'Name',
+    },
+    digTable: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      field: 'DigTable',
     },
     deleted: {
       type: DataTypes.BOOLEAN,

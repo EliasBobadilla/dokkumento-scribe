@@ -1,13 +1,13 @@
 import { RoleDto } from '../../dtos/role'
 import { UserDto } from '../../dtos/user'
-import { SubmitFormDto, UserRequestDto } from '../../dtos/general'
+import { SubmitFormDto } from '../../dtos/general'
 import { DataSourceDto } from '../../dtos/datasource'
 import { FieldTypeDto } from '../../dtos/fieldType'
 import { FormFieldDto } from '../../dtos/formField'
 import { FormDto } from '../../dtos/form'
 import { ProjectDto } from '../../dtos/project'
 
-export const getAuth = (model: UserRequestDto) =>
+export const getAuth = (model: { username: string; password: string }) =>
   window.electron.ipc.invoke<UserDto | undefined>('getAuth', model)
 
 export const getRoles = () => window.electron.ipc.invoke<RoleDto[]>('getRoles')
@@ -43,3 +43,9 @@ export const upsertFormFields = (model: FormFieldDto[]) =>
 
 export const getDataSource = () =>
   window.electron.ipc.invoke<DataSourceDto>('getDataSource')
+
+export const getDataFromDigTable = (model: {
+  table: string
+  fields: string[]
+  filter: { field: string; value: string }
+}) => window.electron.ipc.invoke<any[]>('getDataFromDigTable', model)

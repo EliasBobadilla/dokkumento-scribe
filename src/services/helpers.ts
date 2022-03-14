@@ -9,6 +9,7 @@ export function buildCode(code: string) {
     .replaceAll('ó', 'o')
     .replaceAll('ú', 'u')
     .replaceAll('*', '')
+    .replace('@', '')
 
   return value.toUpperCase()
 }

@@ -6,6 +6,7 @@ export interface FormFieldDto {
   order: number
   code: string
   name: string
+  dbValidation: string
   datasource: string
   minLength: number
   maxLength: number

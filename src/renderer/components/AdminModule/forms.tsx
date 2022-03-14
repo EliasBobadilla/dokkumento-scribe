@@ -146,7 +146,7 @@ export default () => {
       >
         <DefaultLayout>
           <Card size='small'>
-            <Form form={form} name='TypistForm' layout='vertical'>
+            <Form form={form} name='FormForm' layout='vertical'>
               <Form.Item
                 name='projectId'
                 label={language.form.placeholder1}
@@ -175,10 +175,7 @@ export default () => {
                 rules={[
                   {
                     required: true,
-                    message: language.commons.requiredFieldErrorMessage,
-                  },
-                  {
-                    pattern: new RegExp(/^[A-Z_]{1,10}/),
+                    pattern: new RegExp(/^[A-Z0-9]+$/i),
                     message: language.commons.requiredFieldErrorMessage,
                   },
                 ]}

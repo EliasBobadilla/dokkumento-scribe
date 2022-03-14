@@ -26,7 +26,7 @@ export const getFormFields = async () =>
     ],
   })
 
-export const upsertFormFields = async (model: any[]) => {
+export const upsertFormFields = async (model: FormField[]) => {
   const project = await Project.findAll({
     limit: 1,
     raw: true,
@@ -45,10 +45,9 @@ export const upsertFormFields = async (model: any[]) => {
 
   const table = buildTable(project[0].code, form[0].code)
 
-  const tasks: any[] = []
+  const tasks: Promise<boolean | FormField | [number, FormField[]]>[] = []
 
-  // eslint-disable-next-line no-restricted-syntax
-  for (const element of model) {
+  model.forEach((element) => {
     const code = buildCode(element.code)
     try {
       if (!element.id) {
@@ -73,9 +72,10 @@ export const upsertFormFields = async (model: any[]) => {
     } catch (error) {
       ErrorHandler(error)
     }
-  }
+  })
 
   await Promise.all(tasks)
+
   return FormField.findAll({
     raw: true,
     where: {

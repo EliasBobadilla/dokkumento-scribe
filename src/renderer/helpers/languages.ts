@@ -30,6 +30,9 @@ interface ManagementScreen {
   required?: string
   uppercase?: string
   datasource?: string
+  searchData?: string
+  excelDownload?: string
+  jsonDownload?: string
 }
 
 interface TypistScreen {
@@ -62,6 +65,7 @@ export interface Language {
   project: ManagementScreen
   form: ManagementScreen
   field: ManagementScreen
+  data: ManagementScreen
   typist: TypistScreen
   commons: Commons
 }
@@ -115,6 +119,15 @@ export const languages: AvailableLanguages = {
       required: 'Requerido',
       uppercase: 'Mayúsculas',
       datasource: 'Autocompletado',
+    },
+    data: {
+      title: 'Administración de datos',
+      placeholder1: 'Selecciona un formulario',
+      placeholder2: 'Selecciona un tipo',
+      placeholder3: 'Selecciona una tabla',
+      searchData: 'Buscar',
+      excelDownload: 'Descargar Excel',
+      jsonDownload: 'Descargar JSON',
     },
     header: {
       projectPlaceholder: 'Proyectos',

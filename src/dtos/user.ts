@@ -5,4 +5,5 @@ export interface UserDto {
   lastname: string
   username: string
   password: string
+  host: string
 }

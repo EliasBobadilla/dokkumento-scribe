@@ -97,11 +97,11 @@ export default () => {
           form.resetFields()
         }}
       >
-        {language.form.title}
+        {language.field.title}
       </Button>
 
       <Modal
-        title={language.form.title}
+        title={language.field.title}
         destroyOnClose
         centered
         visible={visible}
@@ -113,7 +113,7 @@ export default () => {
         width='90%'
       >
         <Card size='small'>
-          <Form form={form} name='TypistForm' layout='vertical'>
+          <Form form={form} name='FieldForm' layout='vertical'>
             <Form.Item
               name='projectId'
               label={language.field.placeholder1}
@@ -135,7 +135,7 @@ export default () => {
             <FormListContainer>
               <Form.List name='fields'>
                 {(fields, { add, remove }) => {
-                  const dbFields = form.getFieldValue(['fields'])
+                  const dbFields = form.getFieldValue(['fields']) || []
                   return (
                     <>
                       <Form.Item>
@@ -156,7 +156,8 @@ export default () => {
                             marginBottom: 10,
                             border: '1px #d1d7d9 dashed',
                             padding: '10px',
-                            height: '90px',
+                            height: 'auto ',
+                            flexWrap: 'wrap',
                           }}
                           align='baseline'
                         >
@@ -208,6 +209,7 @@ export default () => {
                             rules={[
                               {
                                 required: true,
+                                pattern: new RegExp(/^[A-Z0-9]+$/i),
                                 message:
                                   language.commons.requiredFieldErrorMessage,
                               },
@@ -281,9 +283,25 @@ export default () => {
                           >
                             <Switch />
                           </Form.Item>
-                          {!dbFields[index]?.id && (
-                            <MinusCircleOutlined onClick={() => remove(name)} />
-                          )}
+                          <Space>
+                            <Form.Item
+                              {...rest}
+                              label={language.field.code}
+                              name={[name, 'dbValidation']}
+                              key={`${key}-dbValidation`}
+                            >
+                              <Input.TextArea
+                                rows={2}
+                                placeholder='TODO: ejemplo de query'
+                                style={{ width: '95%' }}
+                              />
+                            </Form.Item>
+                            {!dbFields[index]?.id && (
+                              <MinusCircleOutlined
+                                onClick={() => remove(name)}
+                              />
+                            )}
+                          </Space>
                         </Space>
                       ))}
                     </>

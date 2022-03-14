@@ -1,9 +1,12 @@
+import os from 'os'
 import User from '../models/user'
 import Role from '../models/role'
 import { ErrorHandler } from './helpers'
-import { UserRequestDto } from '../dtos/general'
 
-export const getAuth = async (props: UserRequestDto) => {
+export const getAuth = async (props: {
+  username: string
+  password: string
+}) => {
   try {
     const { username, password } = props
 
@@ -24,7 +27,7 @@ export const getAuth = async (props: UserRequestDto) => {
         true,
       )
 
-    return data[0]
+    return { ...data[0], host: os.hostname() }
   } catch (error) {
     return ErrorHandler(error)
   }

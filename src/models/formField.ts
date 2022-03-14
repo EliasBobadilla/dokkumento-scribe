@@ -24,6 +24,8 @@ export default class FormField extends Model<
 
   declare name: string
 
+  declare dbValidation: string
+
   declare minLength: number
 
   declare maxLength: number
@@ -74,6 +76,10 @@ FormField.init(
       type: DataTypes.STRING,
       allowNull: false,
       field: 'Name',
+    },
+    dbValidation: {
+      type: DataTypes.STRING,
+      field: 'DbValidation',
     },
     minLength: {
       type: DataTypes.INTEGER,

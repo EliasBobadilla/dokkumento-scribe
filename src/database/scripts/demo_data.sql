@@ -36,3 +36,17 @@ INSERT INTO DataSources ([Source]) values ('TD_NAMES')
 INSERT INTO DataSources ([Source]) values ('TD_SEDES')
 
 
+ALTER TABLE FormFields ADD DBValidation varchar(500) null
+
+select * from Forms f 
+
+select * from FormFields ff 
+
+
+SELECT name FROM SYSOBJECTS WHERE xtype='U' AND name LIKE 'DIG%' AND name NOT LIKE '%DELETED%'
+
+SELECT * FROM SYSOBJECTS WHERE xtype='U' AND name REGEXP 'DIG_%'
+
+
+SELECT * FROM DIG_DEMO_DEMO1 
+

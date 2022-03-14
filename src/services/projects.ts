@@ -11,7 +11,7 @@ export const getProjects = async () =>
     },
   })
 
-export const upsertProject = async (model: any) => {
+export const upsertProject = async (model: Project) => {
   const code = buildCode(model.code)
   if (!model.id) {
     const inserted = await Project.create({

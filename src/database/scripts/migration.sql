@@ -48,6 +48,7 @@ CREATE TABLE Forms(
 	[ProjectId] INTEGER,
 	[Code] VARCHAR(15) not null,
 	[Name] VARCHAR(50) not null,
+	[DigTable] VARCHAR(250) not null,
 	[CreatedOn] DATETIME DEFAULT GETDATE(),
 	[UpdatedOn] DATETIME DEFAULT GETDATE(),
 	[Deleted] BIT DEFAULT 0,
@@ -62,6 +63,7 @@ CREATE TABLE FormFields(
 	[Order] INTEGER not null,
 	[Code] VARCHAR(15) not null,
 	[Name] VARCHAR(50) not null,
+	[DBValidation] VARCHAR(500) null,
 	[MinLength] INTEGER DEFAULT 0,
 	[MaxLength] INTEGER DEFAULT 0,
 	[Required] BIT DEFAULT 0,
@@ -80,6 +82,7 @@ CREATE TABLE DataSources (
 	[Source] VARCHAR(500) not null,
 	[CreatedOn] DATETIME DEFAULT GETDATE()
 )
+
 
 /*** System data ***/
 INSERT INTO Roles ([Code], [Name]) VALUES ('TYPIST','Digitador de documentos');

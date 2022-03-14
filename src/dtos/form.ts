@@ -3,5 +3,6 @@ export interface FormDto {
   projectId: number
   code: string
   name: string
+  digTable: string
   description?: string
 }

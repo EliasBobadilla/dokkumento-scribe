@@ -12,14 +12,10 @@ export const getForms = async () =>
     },
   })
 
-export const upsertForm = async (model: any) => {
+export const upsertForm = async (model: Form) => {
   const code = buildCode(model.code)
-  if (!model.id) {
-    const inserted = await Form.create({
-      ...model,
-      code,
-    })
 
+  if (!model.id) {
     const project = await Project.findAll({
       limit: 1,
       raw: true,
@@ -29,9 +25,17 @@ export const upsertForm = async (model: any) => {
     })
 
     const table = buildTable(project[0].code, code)
-    const query = `CREATE TABLE ${table} ([Id] INTEGER IDENTITY(1,1) PRIMARY KEY, [CreatedBy] INTEGER, [Tags] VARCHAR(500) null, [CreatedOn] DATETIME DEFAULT GETDATE(), FOREIGN KEY (CreatedBy) REFERENCES [Users](Id))`
+
+    const insertedForm = await Form.create({
+      ...model,
+      code,
+      digTable: table,
+    })
+
+    const query = `CREATE TABLE ${table} ([Id] INTEGER IDENTITY(1,1) PRIMARY KEY, [CreatedBy] INTEGER, [Tags] VARCHAR(500) NULL, [Host] VARCHAR(100) NOT NULL, [CreatedOn] DATETIME DEFAULT GETDATE(), FOREIGN KEY (CreatedBy) REFERENCES [Users](Id))`
     await rawInsert(query)
-    return inserted.get({ plain: true })
+
+    return insertedForm.get({ plain: true })
   }
 
   const result = await Form.update(
@@ -82,8 +86,12 @@ export const deleteForm = async (id: number) => {
   return rawInsert(query)
 }
 
-export const saveFormValues = async (model: any) => {
-  const { table, properties, values } = model
+export const saveFormValues = async (props: {
+  table: string
+  properties: string[]
+  values: string[]
+}) => {
+  const { table, properties, values } = props
   const query = `INSERT INTO [${table}] ([${properties
     .join()
     .replaceAll(',', '],[')}]) VALUES ('${values

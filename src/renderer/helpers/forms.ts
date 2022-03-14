@@ -1,4 +1,5 @@
 import { Language } from 'renderer/helpers/languages'
+import { UserDto } from 'dtos/user'
 import { FieldTypeDto } from '../../dtos/fieldType'
 import { ProjectDto } from '../../dtos/project'
 import { FormDto } from '../../dtos/form'
@@ -79,13 +80,13 @@ export const buildSubmitData = (
   formFields: FormFieldDto[],
   data: FormData,
   tag: string,
-  userId: number,
+  user: UserDto,
   forced?: boolean,
 ): SubmitFormDto => {
   const model: SubmitFormDto = {
     table: `DIG_${project.code}_${form.code}`,
     properties: ['CreatedBy'],
-    values: [userId.toString()],
+    values: [user.id.toString()],
   }
   Object.entries(data).forEach(([key, value]) => {
     if (value) {
@@ -95,8 +96,11 @@ export const buildSubmitData = (
     }
   })
 
+  model.properties.push('host')
+  model.values.push(user.host)
+
   if (tag.length) {
-    model.properties.push('Tags')
+    model.properties.push('tags')
     model.values.push(tag)
   }
 

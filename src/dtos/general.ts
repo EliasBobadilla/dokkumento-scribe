@@ -2,11 +2,6 @@ import { ProjectDto } from './project'
 import { FormDto } from './form'
 import { FormFieldDto } from './formField'
 
-export interface UserRequestDto {
-  username: string
-  password: string
-}
-
 export interface SubmitFormDto {
   table: string
   properties: string[]

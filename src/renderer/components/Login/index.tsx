@@ -14,6 +14,7 @@ export default () => {
         message.error(language.login.unauthorized)
         return
       }
+      console.log(currentUser)
       setUserContext(currentUser)
 
       const currentRoles = await getRoles()

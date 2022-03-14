@@ -62,7 +62,7 @@ export default ({ projectId, formId, tag }: Props) => {
       formFieldContext,
       model,
       tag,
-      userContext.id,
+      userContext,
     )
     const response = await submitForm(submitModel)
 
@@ -86,7 +86,7 @@ export default ({ projectId, formId, tag }: Props) => {
         return
       }
 
-      if (Object.entries(model).every(([_, value]) => !value)) {
+      if (Object.values(model).every((value) => !value)) {
         message.error(language.typist.emptyFormMessage)
         return
       }
