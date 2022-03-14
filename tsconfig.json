@@ -31,4 +31,9 @@
     "release/app/dist",
     ".erb"
   ],
+  "paths": {
+    "@componentes/*": [
+      "../renderer/components"
+    ]
+  }
 }

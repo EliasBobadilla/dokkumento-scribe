@@ -1,6 +1,6 @@
-import { UserDto } from '../dtos/management'
+import { UserDto } from '../../dtos/user'
 
-export type UserAction = { type: 'set-user'; payload: UserDto }
+type UserAction = { type: 'set-user'; payload: UserDto }
 
 export const userDefaultState: UserDto = {
   id: 0,
@@ -9,6 +9,7 @@ export const userDefaultState: UserDto = {
   lastname: '',
   username: '',
   password: '',
+  host: '',
 }
 
 export function usersReducer(state: UserDto, action: UserAction) {

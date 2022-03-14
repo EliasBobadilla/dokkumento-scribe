@@ -1,23 +1,25 @@
 import {
   DataTypes,
-  Model,
   InferAttributes,
   InferCreationAttributes,
+  Model,
 } from 'sequelize'
-import { db } from './db'
+import { db } from '../database/db'
 
-export default class Role extends Model<
-  InferAttributes<Role>,
-  InferCreationAttributes<Role>
+export default class Project extends Model<
+  InferAttributes<Project>,
+  InferCreationAttributes<Project>
 > {
-  declare id: string
+  declare id: number
 
   declare code: string
 
   declare name: string
+
+  declare deleted: boolean
 }
 
-Role.init(
+Project.init(
   {
     id: {
       type: DataTypes.INTEGER,
@@ -35,9 +37,13 @@ Role.init(
       allowNull: false,
       field: 'Name',
     },
+    deleted: {
+      type: DataTypes.BOOLEAN,
+      field: 'Deleted',
+    },
   },
   {
-    tableName: 'Roles',
+    tableName: 'Projects',
     timestamps: false,
     sequelize: db(),
   },

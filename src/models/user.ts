@@ -1,10 +1,10 @@
 import {
   DataTypes,
-  Model,
   InferAttributes,
   InferCreationAttributes,
+  Model,
 } from 'sequelize'
-import { db } from './db'
+import { db } from '../database/db'
 
 export default class User extends Model<
   InferAttributes<User>,
@@ -61,7 +61,6 @@ User.init(
     },
     deleted: {
       type: DataTypes.BOOLEAN,
-      allowNull: false,
       field: 'Deleted',
     },
   },

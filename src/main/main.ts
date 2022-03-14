@@ -7,10 +7,8 @@ import { resolveHtmlPath } from './util'
 
 let mainWindow: BrowserWindow | null = null
 
-ipcMain.on('ipc-example', async (event, arg) => {
-  const msgTemplate = (pingPong: string) => `IPC test: ${pingPong}`
-  console.log(msgTemplate(arg))
-  event.reply('ipc-example', msgTemplate('pong'))
+ipcMain.on('ipc-example', async (event, _) => {
+  event.reply('ipc-example', process.env.DB_SERVER)
 })
 
 if (process.env.NODE_ENV === 'production') {
@@ -22,7 +20,7 @@ const isDevelopment =
   process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true'
 
 if (isDevelopment) {
-  require('electron-debug')({ showDevTools: false });
+  require('electron-debug')({ showDevTools: false })
 }
 
 const installExtensions = async () => {
@@ -103,7 +101,7 @@ app
   .whenReady()
   .then(() => {
     createWindow()
-    require('../database/ipc')
+    require('../services/ipc')
     app.on('activate', () => {
       if (mainWindow === null) createWindow()
     })

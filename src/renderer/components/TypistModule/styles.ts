@@ -1,16 +1,17 @@
 import styled from '@emotion/styled'
 
 export const Container = styled.div`
-  height: 92vh;
+  height: 90vh;
   display: flex;
   flex-direction: column;
-  padding: 0 1em;
   overflow: hidden;
+  padding: 0;
+  margin: 0;
 `
 
 export const FormSection = styled.div`
-  padding-top: 2em;
-  height: 84vh;
+  padding: 1.5em;
+  height: 80vh;
   bottom: 2px;
   overflow-y: auto;
   display: grid;
@@ -20,10 +21,11 @@ export const FormSection = styled.div`
 `
 
 export const ButtonSection = styled.div`
-  border-top: #52bd95 solid 1px;
-  height: 8vh;
+  background-color: #4434ad;
+  height: 10vh;
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
+  padding: 0 1.5em;
 `

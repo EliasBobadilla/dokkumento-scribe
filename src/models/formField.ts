@@ -1,10 +1,10 @@
 import {
   DataTypes,
-  Model,
   InferAttributes,
   InferCreationAttributes,
+  Model,
 } from 'sequelize'
-import { db } from './db'
+import { db } from '../database/db'
 
 export default class FormField extends Model<
   InferAttributes<FormField>,
@@ -18,17 +18,21 @@ export default class FormField extends Model<
 
   declare fieldTypeId: number
 
+  declare order: number
+
   declare code: string
 
   declare name: string
 
-  declare description: string
+  declare dbValidation: string
 
   declare minLength: number
 
   declare maxLength: number
 
   declare uppercase: boolean
+
+  declare datasource: string
 
   declare required: boolean
 
@@ -58,6 +62,11 @@ FormField.init(
       allowNull: false,
       field: 'FieldTypeId',
     },
+    order: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      field: 'Order',
+    },
     code: {
       type: DataTypes.STRING,
       allowNull: false,
@@ -68,34 +77,32 @@ FormField.init(
       allowNull: false,
       field: 'Name',
     },
-    description: {
+    dbValidation: {
       type: DataTypes.STRING,
-      allowNull: false,
-      field: 'Description',
+      field: 'DbValidation',
     },
     minLength: {
       type: DataTypes.INTEGER,
-      allowNull: false,
       field: 'MinLength',
     },
     maxLength: {
       type: DataTypes.INTEGER,
-      allowNull: false,
       field: 'MaxLength',
     },
     required: {
       type: DataTypes.BOOLEAN,
-      allowNull: false,
       field: 'Required',
     },
     uppercase: {
       type: DataTypes.BOOLEAN,
-      allowNull: false,
       field: 'Uppercase',
+    },
+    datasource: {
+      type: DataTypes.STRING,
+      field: 'Datasource',
     },
     deleted: {
       type: DataTypes.BOOLEAN,
-      allowNull: false,
       field: 'Deleted',
     },
   },

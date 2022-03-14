@@ -1,6 +1,6 @@
-import { RoleDto } from '../dtos/management'
+import { RoleDto } from '../../dtos/role'
 
-export type RoleAction = { type: 'set-roles'; payload: RoleDto[] }
+type RoleAction = { type: 'set-roles'; payload: RoleDto[] }
 
 export const rolesDefaultState = []
 

@@ -1,10 +1,10 @@
 import {
   DataTypes,
-  Model,
   InferAttributes,
   InferCreationAttributes,
+  Model,
 } from 'sequelize'
-import { db } from './db'
+import { db } from '../database/db'
 
 export default class Form extends Model<
   InferAttributes<Form>,
@@ -18,7 +18,7 @@ export default class Form extends Model<
 
   declare name: string
 
-  declare description: string
+  declare digTable: string
 
   declare deleted: boolean
 }
@@ -46,14 +46,13 @@ Form.init(
       allowNull: false,
       field: 'Name',
     },
-    description: {
+    digTable: {
       type: DataTypes.STRING,
       allowNull: false,
-      field: 'Description',
+      field: 'DigTable',
     },
     deleted: {
       type: DataTypes.BOOLEAN,
-      allowNull: false,
       field: 'Deleted',
     },
   },

@@ -1,139 +1,118 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useEffect, useState } from 'react'
 import {
-  Button,
-  SelectMenu,
-  TagInput,
-  EditIcon,
-  ManualIcon,
-} from 'evergreen-ui'
+  EditOutlined,
+  FolderOpenOutlined,
+  FormOutlined,
+  InboxOutlined,
+} from '@ant-design/icons'
+import { Avatar, Button, Dropdown, Input, Menu } from 'antd'
 import { useAppContext } from '../../context'
-import { UserSection, Container, Section } from './styles'
-import { RoleDto } from '../../dtos/management'
-import {
-  getFieldTypes,
-  getFormFields,
-  getForms,
-  getProjects,
-} from '../../helpers/db'
+import { Container, Section, UserSection } from './styles'
+import { RoleDto, RoleEnums } from '../../../dtos/role'
 
 export interface Props {
   selectedProjectId: number
   setSelectedProjectId: (value: number) => void
   selectedFormId: number
   setSelectedFormId: (value: number) => void
-  currentRole?: RoleDto,
-  tags: string[],
-  setTags: (value: string[]) => void
+  currentRole?: RoleDto
+  tag: string
+  module: string
+  setTag: (value: string) => void
+  setModule: (value: string) => void
 }
 
-const Header = ({
+export default ({
   selectedProjectId,
   setSelectedProjectId,
-  selectedFormId,
   setSelectedFormId,
   currentRole,
-  tags,
-  setTags,
+  module,
+  setTag,
+  setModule,
 }: Props) => {
-  const {
-    language,
-    userContext,
-    projectContext,
-    formContext,
-    setFieldTypeContext,
-    setFormContext,
-    setFormFieldContext,
-    setProjectContext,
-  } = useAppContext()
+  const { language, userContext, projectContext, formContext } = useAppContext()
 
-  const projectList = projectContext.map((p) => ({
-    label: p.name,
-    value: p.id,
-  }))
+  const projectMenu = (
+    <Menu onClick={(e) => setSelectedProjectId(+e.key)}>
+      {projectContext.map((p) => (
+        <Menu.Item key={p.id} icon={<FolderOpenOutlined />}>
+          {p.name}
+        </Menu.Item>
+      ))}
+    </Menu>
+  )
 
-  const formList = formContext.map((p) => ({
-    label: p.name,
-    value: p.id,
-  }))
+  const formMenu = (
+    <Menu onClick={(e) => setSelectedFormId(+e.key)}>
+      {formContext
+        .filter((x) => x.projectId === selectedProjectId)
+        .map((p) => (
+          <Menu.Item key={p.id} icon={<EditOutlined />}>
+            {p.name}
+          </Menu.Item>
+        ))}
+    </Menu>
+  )
 
-  useEffect(() => {
-    ; (async () => {
-      const [fieldTypes, projects] = await Promise.all([
-        getFieldTypes(),
-        getProjects(),
-      ])
-      setFieldTypeContext(fieldTypes)
-      setProjectContext(projects)
-    })()
-  }, [])
-
-  useEffect(() => {
-    if (!selectedProjectId) return
-      ; (async () => {
-        const [forms, formFields] = await Promise.all([
-          getForms(selectedProjectId),
-          getFormFields(selectedProjectId),
-        ])
-        setFormContext(forms)
-        setFormFieldContext(formFields)
-      })()
-  }, [selectedProjectId])
-
-  const handleBatchChange = (values: string[]) => {
-    const lastItem = values.pop()
-    setTags([lastItem!.toUpperCase()])
-  }
+  const moduleMenu = (
+    <Menu onClick={(e) => setModule(e.key)}>
+      {Object.entries(RoleEnums).map(([key, value]) => (
+        <Menu.Item key={key}>{value}</Menu.Item>
+      ))}
+    </Menu>
+  )
 
   return (
     <Container>
-      <Section>
-        <SelectMenu
-          title={language.projectButtonPlaceholder}
-          options={projectList}
-          selected={selectedProjectId.toString()}
-          hasFilter={false}
-          hasTitle={false}
-          onSelect={(item) => setSelectedProjectId(+item.value)}
-        >
-          <Button width='100%' iconBefore={ManualIcon}>
-            {projectList.find((x) => x.value === selectedProjectId)?.label ||
-              language.projectButtonPlaceholder}
-          </Button>
-        </SelectMenu>
-      </Section>
-      <Section>
-        <SelectMenu
-          title={language.formButtonPlaceholder}
-          options={formList}
-          selected={selectedFormId.toString()}
-          hasFilter={false}
-          hasTitle={false}
-          onSelect={(item) => setSelectedFormId(+item.value)}
-        >
-          <Button width='100%' iconBefore={EditIcon}>
-            {formList.find((x) => x.value === selectedFormId)?.label ||
-              language.formButtonPlaceholder}
-          </Button>
-        </SelectMenu>
-      </Section>
-      <Section>
-        <TagInput
-          inputProps={{ placeholder: language.batchLabelPlaceHolder }}
-          values={tags}
-          width='100%'
-          disabled={selectedFormId <= 0 || selectedProjectId <= 0}
-          onChange={(values) => {
-            handleBatchChange(values)
-          }}
-        />
-      </Section>
+      {module === 'TYPIST' && (
+        <>
+          <Section>
+            <Dropdown overlay={projectMenu} arrow>
+              <Button type='primary' block size='large'>
+                {language.header.projectPlaceholder} <FolderOpenOutlined />
+              </Button>
+            </Dropdown>
+          </Section>
+          <Section>
+            <Dropdown overlay={formMenu} arrow>
+              <Button type='primary' block size='large'>
+                {language.header.formPlaceholder} <FormOutlined />
+              </Button>
+            </Dropdown>
+          </Section>
+          <Section>
+            <Input
+              allowClear
+              size='large'
+              style={{ width: '100%' }}
+              prefix={<InboxOutlined />}
+              placeholder={language.commons.tag}
+              onChange={(e) => setTag(e.target.value.toUpperCase())}
+            />
+          </Section>
+        </>
+      )}
       <UserSection>
         <strong>{`${userContext.firstname} ${userContext.lastname}`}</strong>
         {currentRole?.name}
       </UserSection>
+      <Dropdown overlay={moduleMenu} placement='bottomRight' arrow>
+        <Avatar
+          style={{
+            backgroundColor: '#FF4821',
+            verticalAlign: 'middle',
+            position: 'absolute',
+            right: '1.5em',
+            cursor: 'pointer',
+          }}
+          size='large'
+        >
+          {`${userContext.firstname.charAt(0)}${userContext.lastname.charAt(
+            0,
+          )}`}
+        </Avatar>
+      </Dropdown>
     </Container>
   )
 }
-
-export default Header

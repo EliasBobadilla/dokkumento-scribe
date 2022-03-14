@@ -1,6 +1,6 @@
-import type { FieldTypeDto } from '../dtos/documents'
+import type { FieldTypeDto } from '../../dtos/fieldType'
 
-export type FieldTypeAction = {
+type FieldTypeAction = {
   type: 'set-fieldTypes'
   payload: FieldTypeDto[]
 }

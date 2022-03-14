@@ -1,32 +1,24 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { Button, TextInputField, toaster } from 'evergreen-ui'
-import { useEffect, useState, useRef, ChangeEvent } from 'react'
-import { useAppContext } from '../../context'
-import {
-  FormFieldDto,
-  FormDto,
-  SubmitFormDto,
-  ProjectDto,
-  FieldTypeDto,
-  FormData,
-} from '../../dtos/documents'
-import { buildSubmitData, validateFormData } from '../../helpers/forms'
-import { Container, FormSection, ButtonSection } from './styles'
-import { submitForm } from '../../helpers/db'
+import { useEffect, useRef, useState } from 'react'
 import useEventListener from '@use-it/event-listener'
+import { AutoComplete, Button, Form, Input, message } from 'antd'
+import { DataSourceDto } from '../../../dtos/datasource'
+import { FormDto } from '../../../dtos/form'
+import { FormData } from '../../../dtos/general'
+import { FormFieldDto } from '../../../dtos/formField'
+import { ProjectDto } from '../../../dtos/project'
+import { useAppContext } from '../../context'
+import { ButtonSection, Container, FormSection } from './styles'
+import { buildSubmitData, customValidator } from '../../helpers/forms'
+import { submitForm } from '../../helpers/db'
 
 interface Props {
   projectId: number
   formId: number
-  tags: string[]
+  tag: string
 }
 
-interface KeyValidation {
-  [key: string]: boolean
-}
-
-const TypistModule = ({ projectId, formId, tags }: Props) => {
-  const inputRef = useRef<HTMLInputElement[]>([])
+export default ({ projectId, formId, tag }: Props) => {
   const {
     language,
     userContext,
@@ -34,168 +26,149 @@ const TypistModule = ({ projectId, formId, tags }: Props) => {
     formFieldContext,
     fieldTypeContext,
     projectContext,
+    datasourceContext,
   } = useAppContext()
+
+  const ref = useRef<(any | Input | null)[]>([]) // TODO: look for BaseSelectRef type
+  const [form] = Form.useForm()
+  const [data, setData] = useState<DataSourceDto>({})
   const [project, setProject] = useState<ProjectDto>()
-  const [form, setForm] = useState<FormDto>()
+  const [typistForm, setTypistForm] = useState<FormDto>()
   const [formFields, setFormFields] = useState<FormFieldDto[]>([])
 
-  const [data, setData] = useState<FormData>({})
-  const [isInvalidValid, setIsInvalidValid] = useState<KeyValidation>({})
-
-  const keyDownHandler = ({ key, target }: any) => {
-    if (target.id.includes('TagInput')) return
-
-    if (String(key) == 'Enter') {
-      handleSubmit()
-    }
-    if (String(key) == 'F8') {
-      handleForceSubmit()
-    }
-  }
-
-  useEventListener('keydown', keyDownHandler);
-
   useEffect(() => {
-    const selectedProject = projectContext.find((x) => x.id === projectId)
-    setProject(selectedProject)
+    setProject(projectContext.find((x) => x.id === projectId))
   }, [projectId])
 
   useEffect(() => {
-    const selectedForm = formContext.find((x) => x.projectId === formId)
-    const baseData = formFieldContext.reduce(
-      (a, v) => ({ ...a, [v.code]: '' }),
-      {},
-    )
-    const selectedFormFields = formFieldContext.filter(
-      (f) => f.formId === formId,
-    )
-
-    setForm(selectedForm)
-    setFormFields(selectedFormFields)
-    setData(baseData)
+    setTypistForm(formContext.find((x) => x.id === formId))
+    setFormFields(formFieldContext.filter((f) => f.formId === formId))
   }, [formId])
 
-  const submit = async (model: SubmitFormDto) => {
-    const response = await submitForm(model)
+  const onSearch = (td: string, code: string, value: string) => {
+    const newData = { ...data }
+    const searchedValue = value.toUpperCase()
+
+    newData[code] = datasourceContext[td].filter((item) =>
+      item.value.includes(searchedValue),
+    )
+    setData(newData)
+  }
+
+  const submit = async (model: FormData) => {
+    const submitModel = buildSubmitData(
+      project!,
+      typistForm!,
+      formFieldContext,
+      model,
+      tag,
+      userContext,
+    )
+    const response = await submitForm(submitModel)
 
     if (!response) {
-      toaster.danger(language.saveFormErrorMessage)
+      message.error(language.commons.saveError)
+      return
     }
-    const baseData = formFieldContext.reduce(
-      (a, v) => ({ ...a, [v.code]: '' }),
-      {},
-    )
-    setData(baseData)
-    inputRef.current[0].focus()
+
+    form.resetFields()
+    ref.current[0]?.focus()
   }
 
   const handleSubmit = async () => {
-    if (!tags.length) {
-      toaster.danger(language.emptyTagsMessage)
-      return
-    }
+    try {
+      await form.validateFields()
 
-    if (!Object.values(isInvalidValid).every((value) => !value)) {
-      toaster.danger(language.invalidFormMessage)
-      return
-    }
-    if (Object.values(data).every((value) => !value)) {
-      toaster.danger(language.emptyFormMessage)
-      return
-    }
+      const model = form.getFieldsValue()
 
-    const submitModel = buildSubmitData(
-      project!,
-      form!,
-      formFieldContext,
-      data,
-      tags,
-      userContext.id,
-    )
-    await submit(submitModel)
+      if (!tag) {
+        message.error(language.typist.emptyTagMessage, 1)
+        return
+      }
+
+      if (Object.values(model).every((value) => !value)) {
+        message.error(language.typist.emptyFormMessage)
+        return
+      }
+
+      await submit(model)
+    } catch {
+      message.error(language.typist.invalidFormMessage)
+    }
   }
 
   const handleForceSubmit = async () => {
-    if (!tags.length) {
-      toaster.danger(language.emptyTagsMessage)
+    if (!tag) {
+      message.error(language.typist.emptyTagMessage, 1)
       return
     }
-
-    const submitModel = buildSubmitData(
-      project!,
-      form!,
-      formFieldContext,
-      data,
-      tags,
-      userContext.id,
-      true,
-    )
-    await submit(submitModel)
+    const model = form.getFieldsValue()
+    await submit(model)
   }
 
-  const handleData = (
-    code: string,
-    value: string,
-    field: FormFieldDto,
-    rule?: FieldTypeDto,
-  ) => {
-    setData({ ...data, [code]: value })
-    setIsInvalidValid({
-      ...isInvalidValid,
-      [code]: !validateFormData(value, field, rule),
-    })
+  const keyDownHandler = ({ key }: any) => {
+    // TODO: look for correct type
+    switch (String(key)) {
+      case 'F2':
+        handleSubmit()
+        break
+      case 'F8':
+        handleForceSubmit()
+        break
+      default:
+    }
   }
+
+  useEventListener('keydown', keyDownHandler)
 
   return (
     <Container>
-      <FormSection>
-        {formFields.map((field, index) => {
-          const fieldType = fieldTypeContext.find(
-            (t) => t.id === field.fieldTypeId,
-          )
-          return (
-            <TextInputField
-              ref={(el: HTMLInputElement) => (inputRef.current[index] = el)}
-              style={{ fontSize: '18px', width: '100%' }}
-              inputHeight={48}
-              key={field.code}
-              name={field.code}
-              label={field.name}
-              required={field.required}
-              hint={field?.description}
-              value={data[field.code]}
-              onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                handleData(field.code, e.target.value, field, fieldType)
-              }
-              validationMessage={
-                isInvalidValid[field.code]
-                  ? fieldType?.validationMessage
-                  : undefined
-              }
-            />
-          )
-        })}
-      </FormSection>
+      <Form form={form} name='TypistForm' layout='vertical'>
+        <FormSection>
+          {formFields
+            .sort((a, b) => a.order - b.order)
+            .map((field, index) => {
+              const type = fieldTypeContext.find(
+                (t) => t.id === field.fieldTypeId,
+              )
+              return (
+                <Form.Item
+                  key={field.code}
+                  name={field.code}
+                  label={field.name}
+                  rules={[
+                    {
+                      validator: (_, value) =>
+                        customValidator(value, field, type!, language),
+                    },
+                  ]}
+                >
+                  {Array.isArray(datasourceContext[field.datasource]) ? (
+                    <AutoComplete
+                      key={field.code}
+                      ref={(el) => (ref.current[index] = el)}
+                      onSearch={(value) =>
+                        onSearch(field.datasource, field.code, value)
+                      }
+                      options={data[field.code] || []}
+                    />
+                  ) : (
+                    <Input ref={(el) => (ref.current[index] = el)} />
+                  )}
+                </Form.Item>
+              )
+            })}
+        </FormSection>
+      </Form>
+
       <ButtonSection>
-        <Button
-          onClick={handleSubmit}
-          height={48}
-          appearance='primary'
-          intent='success'
-        >
-          Guardar (Enter)
+        <Button onClick={handleSubmit} type='primary' size='large'>
+          {language.typist.save} (F2)
         </Button>
-        <Button
-          onClick={handleForceSubmit}
-          height={48}
-          appearance='primary'
-          intent='danger'
-        >
-          Forzar (F8)
+        <Button onClick={handleForceSubmit} type='primary' size='large' danger>
+          {language.typist.forcedSave} (F8)
         </Button>
       </ButtonSection>
     </Container>
   )
 }
-
-export default TypistModule
