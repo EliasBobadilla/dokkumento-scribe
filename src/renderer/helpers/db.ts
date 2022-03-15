@@ -6,6 +6,7 @@ import { FieldTypeDto } from '../../dtos/fieldType'
 import { FormFieldDto } from '../../dtos/formField'
 import { FormDto } from '../../dtos/form'
 import { ProjectDto } from '../../dtos/project'
+import { SettingsDto } from 'dtos/settings'
 
 export const getAuth = (model: { username: string; password: string }) =>
   window.electron.ipc.invoke<UserDto | undefined>('getAuth', model)
@@ -49,3 +50,6 @@ export const getDataFromDigTable = (model: {
   fields: string[]
   filter: { field: string; value: string }
 }) => window.electron.ipc.invoke<any[]>('getDataFromDigTable', model)
+
+export const getSettings = () =>
+  window.electron.ipc.invoke<SettingsDto>('getSettings')

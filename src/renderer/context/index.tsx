@@ -13,7 +13,9 @@ import { FormFieldDto } from '../../dtos/formField'
 import { ProjectDto } from '../../dtos/project'
 import { RoleDto } from '../../dtos/role'
 import { UserDto } from '../../dtos/user'
+import { SettingsDto } from '../../dtos/settings'
 import { Language, languages } from '../helpers/languages'
+import { settingsDefaultState, settingsReducer } from './settingsReducer'
 
 type ContextType = {
   language: Language
@@ -24,6 +26,7 @@ type ContextType = {
   formContext: FormDto[]
   formFieldContext: FormFieldDto[]
   datasourceContext: DataSourceDto
+  settingsContext: SettingsDto
   setUserContext: (model: UserDto) => void
   setRoleContext: (model: RoleDto[]) => void
   setFieldTypeContext: (model: FieldTypeDto[]) => void
@@ -31,6 +34,7 @@ type ContextType = {
   setFormFieldContext: (model: FormFieldDto[]) => void
   setProjectContext: (model: ProjectDto[]) => void
   setDatasourceContext: (model: DataSourceDto) => void
+  setSettingsContext: (model: SettingsDto) => void
 }
 
 const AppContext = createContext<ContextType>({} as ContextType)
@@ -55,6 +59,11 @@ export function AppContextProvider({ children }: { children: ReactNode }) {
   const [datasource, setDatasource] = useReducer(
     datasourceReducer,
     datasourceDefaultState,
+  )
+
+  const [settings, setSettings] = useReducer(
+    settingsReducer,
+    settingsDefaultState,
   )
 
   const setUserContext = (model: UserDto) => {
@@ -85,6 +94,10 @@ export function AppContextProvider({ children }: { children: ReactNode }) {
     setDatasource({ type: 'set-datasource', payload: model })
   }
 
+  const setSettingsContext = (model: SettingsDto) => {
+    setSettings({ type: 'set-settings', payload: model })
+  }
+
   return (
     <AppContext.Provider
       value={{
@@ -96,6 +109,7 @@ export function AppContextProvider({ children }: { children: ReactNode }) {
         formFieldContext: formField,
         projectContext: project,
         datasourceContext: datasource,
+        settingsContext: settings,
         setUserContext,
         setRoleContext,
         setFieldTypeContext,
@@ -103,6 +117,7 @@ export function AppContextProvider({ children }: { children: ReactNode }) {
         setFormFieldContext,
         setProjectContext,
         setDatasourceContext,
+        setSettingsContext,
       }}
     >
       {children}

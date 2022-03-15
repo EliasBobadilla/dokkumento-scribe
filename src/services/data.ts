@@ -37,6 +37,12 @@ export const getDataFromDigTable = async (props: {
   return rawSelect<unknown[]>(query)
 }
 
+export const getSettings = () => {
+  return {
+    dateFieldId: +(process.env.DATE_FIELD_ID || 0),
+  }
+}
+
 /*
 export const getDigTableList = async () =>
   rawSelect<string[]>(

@@ -32,7 +32,7 @@ export const upsertForm = async (model: Form) => {
       digTable: table,
     })
 
-    const query = `CREATE TABLE ${table} ([Id] INTEGER IDENTITY(1,1) PRIMARY KEY, [CreatedBy] INTEGER, [Tags] VARCHAR(500) NULL, [Host] VARCHAR(100) NOT NULL, [CreatedOn] DATETIME DEFAULT GETDATE(), FOREIGN KEY (CreatedBy) REFERENCES [Users](Id))`
+    const query = `CREATE TABLE ${table} ([Id] INTEGER IDENTITY(1,1) PRIMARY KEY, [CreatedBy] INTEGER, [Tags] VARCHAR(500) NULL, [Host] VARCHAR(100) NOT NULL, [Forced] BIT DEFAULT 0, [CreatedOn] DATETIME DEFAULT GETDATE(), FOREIGN KEY (CreatedBy) REFERENCES [Users](Id))`
     await rawInsert(query)
 
     return insertedForm.get({ plain: true })

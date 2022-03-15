@@ -1,5 +1,6 @@
 import { Language } from 'renderer/helpers/languages'
 import { UserDto } from 'dtos/user'
+import { SettingsDto } from 'dtos/settings'
 import { FieldTypeDto } from '../../dtos/fieldType'
 import { ProjectDto } from '../../dtos/project'
 import { FormDto } from '../../dtos/form'
@@ -81,23 +82,32 @@ export const buildSubmitData = (
   data: FormData,
   tag: string,
   user: UserDto,
+  settings: SettingsDto,
   forced?: boolean,
 ): SubmitFormDto => {
   const model: SubmitFormDto = {
     table: `DIG_${project.code}_${form.code}`,
-    properties: ['CreatedBy'],
-    values: [user.id.toString()],
+    properties: ['CreatedBy', 'Host'],
+    values: [user.id.toString(), user.host],
   }
   Object.entries(data).forEach(([key, value]) => {
     if (value) {
       const formField = formFields.find((x) => x.code === key)
+
       model.properties.push(key)
-      model.values.push(formField?.uppercase ? value.toUpperCase() : value)
+      if (formField?.fieldTypeId !== settings.dateFieldId)
+        model.values.push(formField?.uppercase ? value.toUpperCase() : value)
+      else if (value.includes('/') || value.includes('-'))
+        model.values.push(value)
+      else if (value.length === 6 || value.length === 8)
+        model.values.push(
+          `${value.substring(0, 2)}-${value.substring(2, 4)}-${value.substring(
+            4,
+          )}`,
+        )
+      else model.values.push(value)
     }
   })
-
-  model.properties.push('host')
-  model.values.push(user.host)
 
   if (tag.length) {
     model.properties.push('tags')
@@ -105,7 +115,7 @@ export const buildSubmitData = (
   }
 
   if (forced) {
-    model.properties.push('FORCED')
+    model.properties.push('forced')
     model.values.push('1')
   }
 

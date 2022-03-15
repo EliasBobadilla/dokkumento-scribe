@@ -11,6 +11,7 @@ import {
   getFormFields,
   getForms,
   getProjects,
+  getSettings,
 } from '../helpers/db'
 
 const Main = () => {
@@ -26,25 +27,28 @@ const Main = () => {
     setFormFieldContext,
     setProjectContext,
     setDatasourceContext,
+    setSettingsContext,
   } = useAppContext()
   const role = roleContext.find((r) => r.id === userContext.roleId)
   const [tag, setTag] = useState<string>('')
 
   useEffect(() => {
     ;(async () => {
-      const [fieldTypes, projects, forms, formFields, datasource] =
+      const [fieldTypes, projects, forms, formFields, datasource, settings] =
         await Promise.all([
           getFieldTypes(),
           getProjects(),
           getForms(),
           getFormFields(),
           getDataSource(),
+          getSettings(),
         ])
       setFieldTypeContext(fieldTypes)
       setProjectContext(projects)
       setFormContext(forms)
       setFormFieldContext(formFields)
       setDatasourceContext(datasource)
+      setSettingsContext(settings)
     })()
   }, [])
 

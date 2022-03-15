@@ -27,10 +27,12 @@ export default ({ projectId, formId, tag }: Props) => {
     fieldTypeContext,
     projectContext,
     datasourceContext,
+    settingsContext,
   } = useAppContext()
 
   const ref = useRef<(any | Input | null)[]>([]) // TODO: look for BaseSelectRef type
   const [form] = Form.useForm()
+  const [fieldIndex, setFieldIndex] = useState<number>(0)
   const [data, setData] = useState<DataSourceDto>({})
   const [project, setProject] = useState<ProjectDto>()
   const [typistForm, setTypistForm] = useState<FormDto>()
@@ -55,7 +57,12 @@ export default ({ projectId, formId, tag }: Props) => {
     setData(newData)
   }
 
-  const submit = async (model: FormData) => {
+  const updateFieldIndex = (index: number) => {
+    setFieldIndex(index)
+    ref.current[index]?.focus()
+  }
+
+  const submit = async (model: FormData, forced?: boolean) => {
     const submitModel = buildSubmitData(
       project!,
       typistForm!,
@@ -63,6 +70,8 @@ export default ({ projectId, formId, tag }: Props) => {
       model,
       tag,
       userContext,
+      settingsContext,
+      forced,
     )
     const response = await submitForm(submitModel)
 
@@ -72,7 +81,7 @@ export default ({ projectId, formId, tag }: Props) => {
     }
 
     form.resetFields()
-    ref.current[0]?.focus()
+    updateFieldIndex(-1)
   }
 
   const handleSubmit = async () => {
@@ -103,17 +112,28 @@ export default ({ projectId, formId, tag }: Props) => {
       return
     }
     const model = form.getFieldsValue()
-    await submit(model)
+    await submit(model, true)
   }
 
-  const keyDownHandler = ({ key }: any) => {
-    // TODO: look for correct type
+  const handleEnter = () => {
+    ref.current[fieldIndex + 1]?.focus()
+  }
+
+  const keyDownHandler = (event: KeyboardEvent) => {
+    // @ts-expect-error: shortcuts are only valid into a forms
+    if (!event.target?.form) return
+
+    const { key } = event
+
     switch (String(key)) {
       case 'F2':
         handleSubmit()
         break
       case 'F8':
         handleForceSubmit()
+        break
+      case 'Enter':
+        handleEnter()
         break
       default:
     }
@@ -151,9 +171,13 @@ export default ({ projectId, formId, tag }: Props) => {
                         onSearch(field.datasource, field.code, value)
                       }
                       options={data[field.code] || []}
+                      onFocus={() => updateFieldIndex(index)}
                     />
                   ) : (
-                    <Input ref={(el) => (ref.current[index] = el)} />
+                    <Input
+                      ref={(el) => (ref.current[index] = el)}
+                      onFocus={() => updateFieldIndex(index)}
+                    />
                   )}
                 </Form.Item>
               )

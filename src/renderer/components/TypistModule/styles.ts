@@ -14,10 +14,13 @@ export const FormSection = styled.div`
   height: 80vh;
   bottom: 2px;
   overflow-y: auto;
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  grid-auto-rows: min-content;
-  grid-gap: 25px;
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+  // display: grid;
+  // grid-template-columns: repeat(2, 1fr);
+  // grid-auto-rows: min-content;
+  // grid-gap: 25px;
 `
 
 export const ButtonSection = styled.div`
