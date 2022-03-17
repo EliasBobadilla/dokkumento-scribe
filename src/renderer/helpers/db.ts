@@ -53,3 +53,6 @@ export const getDataFromDigTable = (model: {
 
 export const getSettings = () =>
   window.electron.ipc.invoke<SettingsDto>('getSettings')
+
+export const getDbValidation = (model: string) =>
+  window.electron.ipc.invoke<{ COUNT: number }[]>('getDbValidation', model)

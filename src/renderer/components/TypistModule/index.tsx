@@ -1,14 +1,14 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useRef, useState } from 'react'
 import useEventListener from '@use-it/event-listener'
-import { AutoComplete, Button, Form, Input, message } from 'antd'
+import { AutoComplete, Button, Form, Input, message, Space } from 'antd'
 import { DataSourceDto } from '../../../dtos/datasource'
 import { FormDto } from '../../../dtos/form'
 import { FormData } from '../../../dtos/general'
 import { FormFieldDto } from '../../../dtos/formField'
 import { ProjectDto } from '../../../dtos/project'
 import { useAppContext } from '../../context'
-import { ButtonSection, Container, FormSection } from './styles'
+import { ButtonSection, Container, FormSection, SummarySection } from './styles'
 import { buildSubmitData, customValidator } from '../../helpers/forms'
 import { submitForm } from '../../helpers/db'
 
@@ -37,6 +37,10 @@ export default ({ projectId, formId, tag }: Props) => {
   const [project, setProject] = useState<ProjectDto>()
   const [typistForm, setTypistForm] = useState<FormDto>()
   const [formFields, setFormFields] = useState<FormFieldDto[]>([])
+  const [summary, setSummary] = useState<{ count: number; row: string }>({
+    count: 0,
+    row: '',
+  })
 
   useEffect(() => {
     setProject(projectContext.find((x) => x.id === projectId))
@@ -62,6 +66,12 @@ export default ({ projectId, formId, tag }: Props) => {
     ref.current[index]?.focus()
   }
 
+  const buildSummary = (row: string[]) => {
+    const count = (summary?.count || 0) + 1
+    const date = new Date().toTimeString().split(' ')
+    setSummary({ count, row: `[${date[0]}] | ${row.join(' | ')}` })
+  }
+
   const submit = async (model: FormData, forced?: boolean) => {
     const submitModel = buildSubmitData(
       project!,
@@ -80,8 +90,9 @@ export default ({ projectId, formId, tag }: Props) => {
       return
     }
 
+    buildSummary(submitModel.values)
     form.resetFields()
-    updateFieldIndex(-1)
+    updateFieldIndex(0)
   }
 
   const handleSubmit = async () => {
@@ -159,7 +170,7 @@ export default ({ projectId, formId, tag }: Props) => {
                   rules={[
                     {
                       validator: (_, value) =>
-                        customValidator(value, field, type!, language),
+                        customValidator(value, field, type!, language, tag),
                     },
                   ]}
                 >
@@ -185,6 +196,10 @@ export default ({ projectId, formId, tag }: Props) => {
         </FormSection>
       </Form>
 
+      <SummarySection>
+        <span>{summary.row}</span>
+        <span>{`${language.typist.rowCount}: ${summary.count}`}</span>
+      </SummarySection>
       <ButtonSection>
         <Button onClick={handleSubmit} type='primary' size='large'>
           {language.typist.save} (F2)

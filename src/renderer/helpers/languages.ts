@@ -54,6 +54,9 @@ interface TypistScreen {
   emptyFormMessage: string
   maxLenError: string
   minLenError: string
+  dbValidationError: string
+  dbValidationConfigError: string
+  rowCount: string
 }
 
 interface Commons {
@@ -154,6 +157,10 @@ export const languages: AvailableLanguages = {
       emptyFormMessage: 'No se puede guardar un formularios vacio',
       maxLenError: 'La longitud maxima permita es ',
       minLenError: 'La longitud minima requerida es ',
+      dbValidationError: 'Rechazado por reglas del negocio',
+      dbValidationConfigError:
+        'El query de validacion debe incluir SELECT COUNT(*) AS COUNT FROM [NOMBRE DE LA TABLA] WHERE [CONDICIONES]',
+      rowCount: 'Digitados',
     },
     commons: {
       tag: 'Lote / Caja',

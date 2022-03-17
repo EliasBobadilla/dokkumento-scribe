@@ -17,10 +17,6 @@ export const FormSection = styled.div`
   display: flex;
   flex-direction: column;
   gap: 25px;
-  // display: grid;
-  // grid-template-columns: repeat(2, 1fr);
-  // grid-auto-rows: min-content;
-  // grid-gap: 25px;
 `
 
 export const ButtonSection = styled.div`
@@ -31,4 +27,15 @@ export const ButtonSection = styled.div`
   align-items: center;
   justify-content: space-between;
   padding: 0 1.5em;
+`
+
+export const SummarySection = styled.div`
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  background-color: #c6edfa;
+  justify-content: space-between;
+  padding: 0 1.5em;
+  font-weight: bold;
+  color: #4434ad;
 `

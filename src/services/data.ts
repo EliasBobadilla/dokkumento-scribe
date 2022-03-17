@@ -43,9 +43,5 @@ export const getSettings = () => {
   }
 }
 
-/*
-export const getDigTableList = async () =>
-  rawSelect<string[]>(
-    `SELECT name FROM SYSOBJECTS WHERE xtype='U' AND name LIKE 'DIG%' AND name NOT LIKE '%DELETED%'`,
-  )
-*/
+export const getDbValidation = (query: string) =>
+  rawSelect<{ COUNT: number }>(query)

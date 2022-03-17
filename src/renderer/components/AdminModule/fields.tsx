@@ -283,7 +283,7 @@ export default () => {
                           >
                             <Switch />
                           </Form.Item>
-                          <Space>
+                          <div style={{ width: '900px' }}>
                             <Form.Item
                               {...rest}
                               label={language.field.code}
@@ -292,8 +292,7 @@ export default () => {
                             >
                               <Input.TextArea
                                 rows={2}
-                                placeholder='TODO: ejemplo de query'
-                                style={{ width: '95%' }}
+                                placeholder='SELECT COUNT(ID) AS COUNT FROM $TABLE (NOLOCK) WHERE [FIRST]=[$CODE] AND [TAGS]=[$TAG]'
                               />
                             </Form.Item>
                             {!dbFields[index]?.id && (
@@ -301,7 +300,7 @@ export default () => {
                                 onClick={() => remove(name)}
                               />
                             )}
-                          </Space>
+                          </div>
                         </Space>
                       ))}
                     </>

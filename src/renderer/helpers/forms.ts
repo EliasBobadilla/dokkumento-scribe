@@ -6,6 +6,7 @@ import { ProjectDto } from '../../dtos/project'
 import { FormDto } from '../../dtos/form'
 import { FormFieldDto } from '../../dtos/formField'
 import { FormData, SubmitFormDto } from '../../dtos/general'
+import { getDbValidation } from './db'
 
 const regexValidator = (value: string, type: FieldTypeDto): string | null => {
   if (!type.pattern) return null
@@ -38,11 +39,20 @@ const lenValidator = (
   return null
 }
 
-export const customValidator = (
+const dbValidator = async (query: string, language: Language) => {
+  if (!query.includes('SELECT COUNT(ID) AS COUNT FROM'))
+    return language.typist.dbValidationConfigError
+
+  const response = await getDbValidation(query)
+  return response[0].COUNT ? language.typist.dbValidationError : null
+}
+
+export const customValidator = async (
   value: string,
   field: FormFieldDto,
   type: FieldTypeDto,
   language: Language,
+  tag: string,
 ) => {
   const regexHasError = regexValidator(value, type)
   if (regexHasError) return Promise.reject(new Error(regexHasError))
@@ -50,29 +60,16 @@ export const customValidator = (
   const lenHasError = lenValidator(value, field, type, language)
   if (lenHasError) return Promise.reject(new Error(lenHasError))
 
+  if (field.dbValidation) {
+    const query = field.dbValidation
+      .replaceAll(`$${field.code}`, value)
+      .replaceAll('$TAG', tag)
+
+    const dbHasError = await dbValidator(query, language)
+    if (dbHasError) return Promise.reject(new Error(dbHasError))
+  }
+
   return Promise.resolve()
-}
-
-export const validateFormData = (
-  value: string,
-  field: FormFieldDto,
-  rule?: FieldTypeDto,
-): boolean => {
-  if (!rule) return true
-  let isValidRegex = true
-  let isValidRequiredAndLen = true
-
-  if (rule.pattern) {
-    const regex = new RegExp(rule.pattern)
-    isValidRegex = regex.test(value)
-  }
-
-  if (field.required && !rule.code.includes('DATE')) {
-    const len = value.length
-    isValidRequiredAndLen = len >= field.minLength && len <= field.maxLength
-  }
-
-  return isValidRegex && isValidRequiredAndLen
 }
 
 export const buildSubmitData = (
